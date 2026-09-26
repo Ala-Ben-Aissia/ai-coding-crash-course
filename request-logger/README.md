@@ -329,6 +329,14 @@ of these happened:
    read an OPENAI_BASE_URL variable. Version 0.133.0 does not. It ignores the
    variable in silence, so the only sign is an empty logs folder. Use the
    command this tool prints.
+6. **You are on OpenCode V2 and the configuration shape changed.** V2 renamed
+   every key that points OpenCode at a provider: the block is `providers` now,
+   not `provider`, the runtime package is `package`, not `npm`, and its
+   settings live under `settings`, not `options`. OpenCode does not complain
+   about the old spelling — it skips it as an unknown block — so the model then
+   fails to resolve with `Model unavailable: request-logger/<model>`, no request
+   is ever opened, and this folder stays empty. The command this tool prints
+   writes the V2 shape. If you copied an older one by hand, copy it again.
 
 ## How much this was tested
 
@@ -339,7 +347,9 @@ Be fair to the tool when you judge a failure.
   built this tool.
 - **The others were verified** by reading the published code of each agent and
   by driving them against a local listener. They were not each run through a
-  full course of the lesson. Claude Code on Google Vertex AI is in this
+  full course of the lesson. OpenCode's custom OpenAI-compatible route is the
+  one that has since also been driven end to end, on OpenCode 2.x, after V2's
+  configuration rename above. Claude Code on Google Vertex AI is in this
   group — verified against Anthropic's own Vertex documentation, not yet
   driven against a real Vertex project.
 - **Junie is the least-verified entry in the catalogue.** Junie CLI is
