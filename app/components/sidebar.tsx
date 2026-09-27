@@ -15,6 +15,7 @@ import {
   Sun,
   LogOut,
   Settings,
+  BookMarked,
 } from "lucide-react";
 
 interface CurrentUser {
@@ -52,6 +53,12 @@ const navItems: NavItem[] = [
     label: "Browse Courses",
     to: "/courses",
     icon: <BookOpen className="size-4" />,
+    roles: "all",
+  },
+  {
+    label: "Course Sections",
+    to: "/lessons",
+    icon: <BookMarked className="size-4" />,
     roles: "all",
   },
   {
@@ -121,13 +128,30 @@ export function Sidebar({
         </NavLink>
       </div>
 
-      <nav className="flex-1 space-y-1 p-3">
-        {navItems
-          .filter((item) => isVisible(item, currentUserRole))
-          .map((item) => (
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <nav className="space-y-1 p-3">
+          {navItems
+            .filter((item) => isVisible(item, currentUserRole))
+            .map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )
+                }
+              >
+                {item.icon}
+                {item.label}
+              </NavLink>
+            ))}
+          {isTeamAdmin && (
             <NavLink
-              key={item.to}
-              to={item.to}
+              to="/team"
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -137,68 +161,53 @@ export function Sidebar({
                 )
               }
             >
-              {item.icon}
-              {item.label}
+              <UsersRound className="size-4" />
+              Team
             </NavLink>
-          ))}
-        {isTeamAdmin && (
-          <NavLink
-            to="/team"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              )
-            }
-          >
-            <UsersRound className="size-4" />
-            Team
-          </NavLink>
-        )}
-      </nav>
+          )}
+        </nav>
 
-      {recentCourses.length > 0 && (
-        <div className="border-t border-sidebar-border p-3">
-          <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/50">
-            Recent Courses
-          </div>
-          <div className="space-y-1">
-            {recentCourses.map((course) => (
-              <NavLink
-                key={course.courseId}
-                to={`/courses/${course.slug}`}
-                className={({ isActive }) =>
-                  cn(
-                    "block rounded-md px-3 py-2 transition-colors",
-                    isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  )
-                }
-              >
-                <div className="truncate text-sm font-medium">
-                  {course.title}
-                </div>
-                <div className="mt-1 flex items-center gap-2">
-                  <div className="h-1.5 flex-1 rounded-full bg-sidebar-accent">
-                    <div
-                      className="h-1.5 rounded-full bg-primary"
-                      style={{ width: `${course.progress}%` }}
-                    />
+        {recentCourses.length > 0 && (
+          <div className="border-t border-sidebar-border p-3">
+            <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/50">
+              Recent Courses
+            </div>
+            <div className="space-y-1">
+              {recentCourses.map((course) => (
+                <NavLink
+                  key={course.courseId}
+                  to={`/courses/${course.slug}`}
+                  className={({ isActive }) =>
+                    cn(
+                      "block rounded-md px-3 py-2 transition-colors",
+                      isActive
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    )
+                  }
+                >
+                  <div className="truncate text-sm font-medium">
+                    {course.title}
                   </div>
-                  <span className="shrink-0 text-xs text-sidebar-foreground/50">
-                    {course.progress}%
-                  </span>
-                </div>
-              </NavLink>
-            ))}
+                  <div className="mt-1 flex items-center gap-2">
+                    <div className="h-1.5 flex-1 rounded-full bg-sidebar-accent">
+                      <div
+                        className="h-1.5 rounded-full bg-primary"
+                        style={{ width: `${course.progress}%` }}
+                      />
+                    </div>
+                    <span className="shrink-0 text-xs text-sidebar-foreground/50">
+                      {course.progress}%
+                    </span>
+                  </div>
+                </NavLink>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      <div className="border-t border-sidebar-border p-3 space-y-1">
+      <div className="shrink-0 border-t border-sidebar-border p-3 space-y-1">
         <button
           onClick={toggleDarkMode}
           className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"

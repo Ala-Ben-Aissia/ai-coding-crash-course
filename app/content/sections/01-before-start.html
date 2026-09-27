@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>01 Before Start</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1e2333;
+      --border: #2a3045;
+      --accent: #6c8ef5;
+      --accent2: #a78bfa;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --code-bg: #0d1117;
+      --code-border: #30363d;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #f87171;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* ── Layout ── */
+    .page-wrap {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav.sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.5rem 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-logo span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-logo strong {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    nav.sidebar ul { list-style: none; padding: 0 0.75rem; }
+
+    nav.sidebar li a {
+      display: block;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    nav.sidebar li a:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    nav.sidebar li a.active {
+      background: rgba(108,142,245,0.15);
+      color: var(--accent);
+    }
+
+    nav.sidebar .nav-section {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 1rem 1.5rem 0.3rem;
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 3rem 2rem 6rem;
+      max-width: 820px;
+    }
+
+    /* ── Chapter / Section ── */
+    .chapter {
+      margin-bottom: 5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chapter:last-child { border-bottom: none; }
+
+    h1.chapter-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    h1.chapter-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 2.5rem 0 0.75rem;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin: 1.75rem 0 0.5rem;
+    }
+
+    h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 1.5rem 0 0.4rem;
+    }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(108,142,245,0.3);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    a:hover {
+      border-color: var(--accent);
+      color: #8facff;
+    }
+
+    strong { color: var(--text); font-weight: 700; }
+
+    /* ── Images ── */
+    .lesson-img {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .img-caption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: -0.75rem;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    /* ── Code ── */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.875em;
+      background: rgba(108,142,245,0.12);
+      color: #a5b4fc;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: #c9d1d9;
+    }
+
+    .diff-add { color: var(--green); }
+
+    /* ── Tables ── */
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr { background: var(--surface2); }
+    th, td { padding: 0.6rem 1rem; border: 1px solid var(--border); text-align: left; }
+    th { font-weight: 700; color: var(--text); }
+    td { color: var(--muted); }
+    td code { color: #a5b4fc; }
+    td strong { color: var(--text); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; padding: 0; margin: 0.75rem 0 1.25rem; }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.45rem 0;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .checklist li::before {
+      content: '☐';
+      color: var(--accent);
+      font-size: 1.1em;
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+
+    /* ── Callouts ── */
+    .callout {
+      border-left: 4px solid var(--yellow);
+      background: rgba(251,191,36,0.07);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .callout strong { color: var(--yellow); }
+
+    .callout-info {
+      border-color: var(--accent);
+      background: rgba(108,142,245,0.08);
+    }
+
+    .callout-info strong { color: var(--accent); }
+
+    /* ── CommitMap ── */
+    .commit-map {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .commit-map-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .commit-map-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.4rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .commit-map-item:first-of-type { border-top: none; }
+
+    .commit-id {
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      background: rgba(108,142,245,0.15);
+      color: var(--accent);
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 0.1em;
+    }
+
+    /* ── Prompt block ── */
+    .prompt-block {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: rgba(15,17,23,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 2rem;
+      z-index: 100;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── ul / ol ── */
+    ul.body-list, ol.body-list {
+      padding-left: 1.5rem;
+      margin: 0.5rem 0 1.25rem;
+    }
+
+    ul.body-list li, ol.body-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav.sidebar { display: none; }
+      main { padding: 2rem 1.25rem 4rem; }
+      h1.chapter-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span>Section 01</span>
+      <strong>Before Start</strong>
+    </div>
+    <p class="nav-section">Lessons</p>
+    <ul>
+      <li><a href="#where-were-going">Where We're Going</a></li>
+      <li><a href="#choosing-plan-model">Choosing Your Plan and Model</a></li>
+      <li><a href="#setting-up-project">Setting Up the Project</a></li>
+      <li><a href="#installing-claude-code">Installing Claude Code</a></li>
+      <li><a href="#how-to-run-exercises">How To Run the Exercises</a></li>
+      <li><a href="#database-migrations">Database Migrations</a></li>
+      <li><a href="#resetting-clean-slate">Resetting to a Clean Slate</a></li>
+      <li><a href="#installing-request-logger">Installing The Request Logger</a></li>
+    </ul>
+  </nav>
+
+  <!-- Content -->
+  <main>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 1. Where We're Going -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="where-were-going">
+      <h1 class="chapter-title">Where We're Going</h1>
+
+      <p>Welcome to the AI Coding Crash Course. My name is Matt Pocock. I'm delighted to be your instructor. Thanks for joining.</p>
+      <p>This course is really the distillation of about two years of playing around with AI coding and trying to bring software fundamentals back to AI coding.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785858290/ai-hero-images/gbl3qtijliifxrquvjpp.png" alt="GitHub repository showing mattpocock/skills with 200,000+ stars" />
+      <p class="img-caption">GitHub repository showing mattpocock/skills with 200,000+ stars</p>
+
+      <p>Many of you are probably here because of my <a href="https://github.com/mattpocock/skills">skills repository</a> which, at the time of recording, just crossed 200,000 stars.</p>
+      <p>That puts it in the top 20 most starred GitHub repos of all time. We are crossing 13 million downloads of the skills.</p>
+
+      <h2>What You'll Learn</h2>
+      <p>What I wanted to do with this course is give you a set of practices that you can use in your workplace to actually start shipping code.</p>
+      <p>I'm going to show you a five-step system that goes from <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grilling</a>, to creating a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a>, to creating <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a> for that spec, to implementing, and then doing review.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785858291/ai-hero-images/pswtqhfo8ayjla4j7jwl.png" alt="Five-step system: grilling, spec, tickets, implementation, review" />
+      <p class="img-caption">Five-step system: grilling, spec, tickets, implementation, review</p>
+
+      <p>I felt comfortable creating a course at this point because these five steps have really remained unchanged, no matter what else I do, what else I'm playing around with.</p>
+      <p>Having these five steps feel absolutely essential to shipping great work.</p>
+
+      <h2>Context Management and Breaking Up Work</h2>
+      <p>I'm going to take you through how we make decisions on context management, thinking deeply about how <a href="https://www.aihero.dev/ai-coding-dictionary/attention-degradation">attention degrades</a> as you get further into the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>.</p>
+      <p>When you should <a href="https://www.aihero.dev/ai-coding-dictionary/compaction">compact</a>, when you should <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a>, when you should <a href="https://www.aihero.dev/ai-coding-dictionary/handoff">hand off</a>.</p>
+      <p>And we'll be going deep on breaking up huge chunks of work into things that <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a> can handle.</p>
+
+      <h2>The Playground: Cadence</h2>
+      <p>We're going to be doing this by using a playground. This is Cadence, a TypeScript and Node application with a pretty mature set of features where people buy courses, they work through lessons, take quizzes.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785858291/ai-hero-images/khzk5arkpumfxbjfymwi.png" alt="Cadence application codebase showing TypeScript and Node structure" />
+      <p class="img-caption">Cadence application codebase showing TypeScript and Node structure</p>
+
+      <p>And so this is a practical course. You're going to be working with your agent, shipping features, working through the exact software lifecycle that I've been working through the last 10 years and that I've discovered works incredibly well with agents.</p>
+
+      <h2>Which Agent Should You Use?</h2>
+      <p>You're probably thinking, which agent should I use? Well, my answer to that is to use any agent that can run in a terminal and use <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a>.</p>
+      <p>So that is basically all of them. Claude Code, Codex, OpenCode, GitHub Copilot, whatever the Gemini one is.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785858292/ai-hero-images/agxrhainft5zak68lcyb.png" alt="List of coding agents: Claude Code, Codex, OpenCode, GitHub Copilot" />
+      <p class="img-caption">List of coding agents: Claude Code, Codex, OpenCode, GitHub Copilot</p>
+
+      <p>This course is not about focusing on one particular agent, learning the quirks of that agent. It's about teaching you the fundamentals so that you can use any agent well.</p>
+      <p>And everything that we're going to be covering is going to be delivered through skills. So you can take those skills and use them in any agent.</p>
+
+      <h3>The Demonstration Agent: Claude Code</h3>
+      <p>However, the agent I'll be using as my demonstration agent is Claude Code.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785858293/ai-hero-images/dwuo81hg1lpy6xnmtasi.png" alt="Claude Code interface as the demonstration agent" />
+      <p class="img-caption">Claude Code interface as the demonstration agent</p>
+
+      <p>This is my daily driver and it's also maybe the most popular coding agent at the time of recording.</p>
+      <p>For folks who have never touched AI coding before, I will give you a specific section on Claude Code just to get good enough at it to take the course.</p>
+      <p>But other than that, we're not going to be talking about Claude Code really at all once we get into the meat of the course.</p>
+      <p>This crash course is all about fundamentals that you can use with any <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a>, any agent.</p>
+
+      <h2>Prerequisites</h2>
+      <p>The prerequisites for this course are really two things:</p>
+      <ul class="body-list">
+        <li>Can you read code? Good.</li>
+        <li>Can you use a terminal?</li>
+      </ul>
+      <p>Reading code will allow you to navigate the code base a little bit easier, understand exactly what's going on. You don't necessarily even need to be able to write code.</p>
+      <p>Just an understanding for the vague shapes of things will be helpful.</p>
+      <p>And then you'll also need to be able to find the terminal to use some basic terminal commands like <code>cd</code> and <code>ls</code> and understand vaguely what's happening in there.</p>
+
+      <h2>What You'll Be Able to Do</h2>
+      <p>Once you're done with the course, you'll be able to ship enormous amounts of work at super high quality.</p>
+      <p>This won't be done by making the <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> better, it will be done by making you better, by giving you the skills you need to drive agents better.</p>
+      <p>This approach is incredibly light in terms of <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> load. It just demands a little bit of understanding from you.</p>
+      <p>And that's what this course is for, to level you up to be able to take your software development with AI to the next level.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 2. Choosing Your Plan and Model -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="choosing-plan-model">
+      <h1 class="chapter-title">Choosing Your Plan and Model</h1>
+
+      <p>Before you begin this AI coding course, you need to set up your AI access. This means choosing the right subscription plan and understanding what you'll need.</p>
+
+      <h2>You Need a Paid Plan</h2>
+      <p>Unfortunately, you need a paid plan to complete this course.</p>
+      <p>The free tiers of the major model labs are not sized for <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agentic</a> work of this kind. You will hit a wall in the first serious <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>.</p>
+
+      <h2>Anthropic Pricing</h2>
+      <p>Looking at <a href="https://support.claude.com/en/articles/11049762-choosing-a-claude-plan">Anthropic's pricing page</a>, the free tier won't be enough to complete the course.</p>
+      <p><strong>Pro</strong> is just enough, and that's where I recommend you start. It gives you access to a mid-tier <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> that will get you through the course.</p>
+      <p>If you're doing this work professionally, I recommend upgrading to <strong>Max</strong>. Max comes in two flavors: 5X or 20X.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785914282/ai-hero-images/tvc8kwnln1wqholvfdtc.png" alt="Anthropic's pricing page showing Free, Pro, and Max subscription tiers" />
+      <p class="img-caption">Anthropic's pricing page showing Free, Pro, and Max subscription tiers</p>
+
+      <h2>OpenAI Pricing</h2>
+      <p>OpenAI's pricing is similar, with an additional Go tier in the middle.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785914283/ai-hero-images/ayofpodmv1vza2xaush2.png" alt="OpenAI's pricing page showing Plus, Go, and Pro subscription tiers" />
+      <p class="img-caption">OpenAI's pricing page showing Plus, Go, and Pro subscription tiers</p>
+
+      <p><strong>Plus</strong> is equivalent to Anthropic's Pro and provides basic access - start here. If you hit usage limits, upgrade to <strong>Pro</strong>.</p>
+
+      <h2>What I Used While Recording</h2>
+      <p>This course was recorded with a 20X Anthropic Max subscription.</p>
+      <p>However, the maximum you'll need is a 5X. That's about £89 per month (roughly $100).</p>
+
+      <h2>Subscriptions vs API Keys</h2>
+      <p>You might be wondering how subscriptions compare to API keys, where you pay per <a href="https://www.aihero.dev/ai-coding-dictionary/token">token</a>.</p>
+      <p>My advice: get a subscription. It's a much better deal - often 20 to 50X cheaper, depending on your tier and how much work you fit into the usage limits.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785914284/ai-hero-images/scdpmcotjexz8yr5p08b.png" alt="Tweet from Theo showing $50,000 in token spend equating to $800 in subscriptions" />
+      <p class="img-caption">Tweet from Theo showing $50,000 in token spend equating to $800 in subscriptions</p>
+
+      <p>For example, Theo came close to $50,000 in token spend in a single month. With subscriptions, that would have been just three $200 Claude subs plus one $200 Codex sub.</p>
+      <p>That's $800 for around $50,000 worth of token spend.</p>
+
+      <h2>The Psychological Impact of Pay-Per-Token</h2>
+      <p>There's also a psychological impact when you see the cost of every session.</p>
+      <p>It's like having an electricity meter at home - you become reluctant to use any electricity, and it changes how you work. You optimize for tokens instead of efficiency.</p>
+      <p>You'll make slightly irrational decisions when focusing on cost instead of quality. You might drop to a cheaper model just to keep the number down.</p>
+      <p>With a subscription, you know upfront what you'll pay and what you'll get. No budget stress.</p>
+
+      <h2>My Recommendations</h2>
+
+      <h3>Default: Claude Code with Pro</h3>
+      <p>This course was recorded with <a href="https://code.claude.com/docs/en/setup">Claude Code</a>. If you have no preference, use Claude Code as your default. Start with a Pro subscription.</p>
+
+      <h3>For Professionals: Max Subscription</h3>
+      <p>If you're serious about AI coding professionally, go for Max.</p>
+
+      <h2>Choosing Your Model</h2>
+      <p>Use the default model that comes with your plan. If you're on Pro, avoid Opus - it will drain your usage limit very quickly.</p>
+      <p>We'll revisit model choices later. For now, lock in a subscription before you start.</p>
+
+      <h2>Get Help on Discord</h2>
+      <p>If you have questions about choosing between Anthropic and OpenAI, or which models to use on different tiers, head to the <a href="https://aihero.dev/discord">Discord</a> for help.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 3. Setting Up the Project -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="setting-up-project">
+      <h1 class="chapter-title">Setting Up the Project</h1>
+
+      <p>Most of what we're going to be doing is working within a terminal. The <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> we're going to be running is a terminal program.</p>
+      <p>The recommended IDE for this course is <a href="https://code.visualstudio.com/">Visual Studio Code</a>. It's been the presenter's tool of choice since 2017 for a few good reasons:</p>
+      <ul class="body-list">
+        <li>Completely free</li>
+        <li>Works across platforms</li>
+        <li>Very approachable</li>
+        <li>Has a <strong>built-in terminal</strong></li>
+      </ul>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786012733/ai-hero-images/bdhhdedelbkpup0ayxuf.png" alt="Visual Studio Code website at code.visualstudio.com" />
+      <p class="img-caption">Visual Studio Code website at code.visualstudio.com</p>
+
+      <p>If you already have an IDE you're comfortable with, just use that - as long as it has a terminal inside and you can use it to view code, you're good to go.</p>
+
+      <h2>The VSCode Terminal</h2>
+      <p>On Mac and Windows you already have a terminal. On Windows, you can also use the Windows Subsystem for Linux (WSL) to get a Linux terminal, giving access to commands like <code>cd</code> and <code>ls</code>.</p>
+      <p>Once you have VS Code installed and open, press <strong>Ctrl+`</strong> to open the integrated terminal. This opens the terminal in whatever folder VS Code currently has open.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786012734/ai-hero-images/dgapvaehyrpzheaf1fko.png" alt="VS Code with the integrated terminal panel open" />
+      <p class="img-caption">VS Code with the integrated terminal panel open</p>
+
+      <p>You can drag it up and down, split the editor, or delete and reopen the terminal. Once you have the terminal visible, choose where you want the project directory to go. For example, <code>cd</code> into a <code>repos</code> folder:</p>
+      <pre><code>cd repos/learning
+ls</code></pre>
+      <p>Having some basic familiarity with the terminal will be very useful. If that's a weakness for you, head to the Discord for resources.</p>
+
+      <h2>Cloning the Project with Git</h2>
+      <p>The project lives on GitHub. You'll need <code>git</code> to clone it. Run the following to check whether you have it installed:</p>
+      <pre><code>git --version</code></pre>
+      <p>If you don't have <code>git</code> installed, a link to download it is provided below.</p>
+      <p>Once you have <code>git</code>, go to the GitHub page for the AI Coding Crash Course. Click the <strong>Code</strong> button, select <strong>HTTPS</strong>, and copy the URL. Then back in the terminal, run:</p>
+      <pre><code>git clone https://github.com/ai-hero-dev/ai-coding-crash-course.git</code></pre>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786012736/ai-hero-images/otzrhq2jheh5tr24wwdf.png" alt="Terminal showing git clone command running and completing" />
+      <p class="img-caption">Terminal showing git clone command running and completing</p>
+
+      <p>It should clone into <code>ai-coding-crash-course</code>. Once that's done, open the folder in VS Code. You can do this from the terminal with:</p>
+      <pre><code>code ai-coding-crash-course</code></pre>
+      <p>You should now see the file explorer on the left-hand side with all the project files.</p>
+
+      <h2>Installing Node</h2>
+      <p>This project uses Node.js to run JavaScript on your computer. Check whether you have it installed:</p>
+      <pre><code>node --version</code></pre>
+      <p>The current installed version is <code>22.21.1</code>. You want an <strong>LTS</strong> (Long-Term Support) version, as it's the most stable. Here's what the version labels mean:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Label</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>LTS</strong></td><td>Long-term support - most stable, recommended</td></tr>
+            <tr><td><strong>Current</strong></td><td>Latest, fanciest version</td></tr>
+            <tr><td><strong>EOL</strong></td><td>End of life - no longer supported</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>You can install Node.js from the <a href="https://nodejs.org/en/download">Node.js download page</a>. Aim for version 22 or 24. If you're having trouble seeing <code>node</code> after installing it, kill the terminal and reopen it to refresh the PATH:</p>
+      <pre><code>node --version</code></pre>
+      <p>Node ships with <code>npm</code> (Node Package Manager). Check it's available too:</p>
+      <pre><code>npm --version</code></pre>
+
+      <h2>Installing Dependencies</h2>
+      <p>With Node installed, run the following inside the project directory to pull down all the necessary packages from the npm package registry:</p>
+      <pre><code>npm install</code></pre>
+      <p>This may show some warnings or vulnerability notices - that's normal for npm. Once it's done, you'll see a <code>node_modules</code> folder appear in the file tree.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786012737/ai-hero-images/noq4gtopk9zufc78tcse.png" alt="Terminal showing npm install completing with node_modules folder visible" />
+      <p class="img-caption">Terminal showing npm install completing with node_modules folder visible</p>
+
+      <p>These node modules are packages that people have published on npm. For example, <code>ai-hero-sandcastle</code> is one of the packages this project depends on.</p>
+
+      <h2>Setting Up the Database</h2>
+      <p>The app stores its data in a local file. A fresh clone doesn't include it, so two commands are needed to build it.</p>
+      <p>First, create the database by running:</p>
+      <pre><code>npm run db:migrate</code></pre>
+      <p>This creates a local <code>data.db</code> file in the project root. Then, fill it with seed data:</p>
+      <pre><code>npm run db:seed</code></pre>
+      <p>These scripts, along with others, are defined in <code>package.json</code>:</p>
+      <pre><code>{
+  "scripts": {
+    "db:migrate": "...",
+    "db:seed": "...",
+    "dev": "..."
+  }
+}</code></pre>
+
+      <h2>Running the App</h2>
+      <p>Now run the dev server:</p>
+      <pre><code>npm run dev</code></pre>
+      <p>If everything is set up correctly, you'll see a local URL printed, something like <code>localhost:5173</code>. You can <strong>Ctrl+click</strong> the URL in VS Code and it will open right inside the IDE.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786012739/ai-hero-images/ilom2uwh2zuowapwatjo.png" alt="VS Code showing the app running at localhost:5175 inside the IDE browser panel" />
+      <p class="img-caption">VS Code showing the app running at localhost:5175 inside the IDE browser panel</p>
+
+      <h2>The Cadence App</h2>
+      <p>This is <strong>Cadence</strong>, the application we'll be building features on throughout this course using AI. It's a reasonably sized application.</p>
+      <p>Switch it to dark mode to save your eyes.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786012740/ai-hero-images/ei1kk0goajesq3dla7hd.png" alt="Cadence app showing Emma Wilson's dashboard with TypeScript and Node.js courses" />
+      <p class="img-caption">Cadence app showing Emma Wilson's dashboard with TypeScript and Node.js courses</p>
+
+      <p>One key feature to know about is the <strong>dev UI</strong> at the bottom, which lets you switch the user you're currently logged in as. For instance, logging in as Emma Wilson shows she has access to two courses: TypeScript and Node.js.</p>
+      <p>The app has been seeded with dummy data - courses, lessons, and users created by Marcus Johnson. Once you can see this dummy data visible inside VS Code, you're done with this lesson.</p>
+      <p>You have successfully set up all the dependencies of the project. Detailed steps are provided below, and if you run into any issues, head to the <a href="https://aihero.dev/discord">Discord</a>.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 4. Installing Claude Code -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="installing-claude-code">
+      <h1 class="chapter-title">Installing Claude Code</h1>
+
+      <p>The project is set up and the terminal is ready. The only thing missing is the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> itself.</p>
+      <p>This lesson uses <a href="https://code.claude.com/docs/en/setup">Claude Code</a> as the agent. If you're using a different coding agent, install it from its own docs and log in!</p>
+
+      <h2>Steps To Complete</h2>
+
+      <h3>Install Claude Code</h3>
+      <ul class="checklist">
+        <li>Open a new terminal in VS Code inside your project folder</li>
+        <li>Navigate to the <a href="https://code.claude.com/docs/en/setup">Claude Code setup page</a> and copy the install command for your platform:</li>
+      </ul>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Platform</th><th>Command</th></tr></thead>
+          <tbody>
+            <tr><td>Linux / WSL / macOS</td><td><code>npm install -g @anthropic-ai/claude-code</code></td></tr>
+            <tr><td>Windows PowerShell</td><td>(see setup page)</td></tr>
+            <tr><td>Windows CMD</td><td>(see setup page)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="checklist">
+        <li>Paste and run the command in your terminal</li>
+      </ul>
+
+      <h3>Log In</h3>
+      <ul class="checklist">
+        <li>Launch Claude Code from inside your project folder:</li>
+      </ul>
+      <pre><code>claude</code></pre>
+      <ul class="checklist">
+        <li>When prompted <strong>do you trust this workspace?</strong>, answer <strong>Yes</strong></li>
+      </ul>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786013117/ai-hero-images/otjxjac38kmztnqyoepq.png" alt="Claude Code terminal prompt asking 'Do you trust this workspace?' with Yes option" />
+      <p class="img-caption">Claude Code terminal prompt asking "Do you trust this workspace?" with Yes option</p>
+
+      <ul class="checklist">
+        <li>When prompted to log in:
+          <ul class="body-list" style="margin-top:0.35rem">
+            <li>Choose the <strong>subscription</strong> option</li>
+            <li>Let it open your browser</li>
+            <li>Authorise there</li>
+            <li>Come back to the terminal</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>Set Your Model and Effort</h3>
+      <ul class="checklist">
+        <li>Run <code>/model</code> to open the <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> picker:</li>
+      </ul>
+      <pre><code>/model</code></pre>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786013118/ai-hero-images/k2srsc4npvpwdbb9gjxy.png" alt="Claude Code model picker showing available models with default selected" />
+      <p class="img-caption">Claude Code model picker showing available models with default selected</p>
+
+      <ul class="checklist">
+        <li>Select the <strong>default</strong> for your subscription tier (e.g. Opus 5 with a 1 million token <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>)</li>
+        <li>Set the <a href="https://www.aihero.dev/ai-coding-dictionary/effort">effort</a> level to <strong>medium</strong> using the left and right arrow keys - it defaults to <code>xhigh</code>, so make sure to dial it down</li>
+      </ul>
+      <p>The course was recorded on Opus 5 at medium effort. Higher effort burns through <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> faster and runs slower - on the work in this course it doesn't buy a better answer.</p>
+
+      <h3>Verify Everything Works</h3>
+      <ul class="checklist">
+        <li>Send a quick sanity check message:</li>
+      </ul>
+      <pre><code>hello</code></pre>
+      <p>You should get a <code>hello</code> back. Once you see that, you're done with the setup.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786013119/ai-hero-images/vv1iissmsn8e8kwasgvg.png" alt="Claude Code terminal showing hello message sent and hello response received" />
+      <p class="img-caption">Claude Code terminal showing hello message sent and hello response received</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 5. How To Run the Exercises -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="how-to-run-exercises">
+      <h1 class="chapter-title">How To Run the Exercises</h1>
+
+      <div class="commit-map">
+        <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">main</span>
+          <span>Start the lesson: the course repo exactly as you clone it</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">try-the-cli</span>
+          <span>Verify the tooling: the checkpoint that changes the <code>description</code> field in <code>package.json</code></span>
+        </div>
+      </div>
+
+      <p>This course works by giving you exercises to complete - plan this feature, add this change, fix this bug. The challenge with any code course is drift: you make a change the video didn't make, and three lessons later your codebase and the one on screen are different.</p>
+      <p>To fix that, there are three CLI tools built into the project. They let you jump to any exercise's starting state on demand.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Command</th><th>What it does to your work</th></tr></thead>
+          <tbody>
+            <tr><td><code>npm run reset</code></td><td>Replaces it - your commits are gone</td></tr>
+            <tr><td><code>npm run cherry-pick</code></td><td>Adds to it - checkpoint lands on top</td></tr>
+            <tr><td><code>npm run pull</code></td><td>Updates around it - fetches upstream changes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Steps To Complete</h2>
+
+      <h3>Create Your Development Branch</h3>
+      <ul class="checklist">
+        <li>Create a new <code>dev</code> branch to work from</li>
+      </ul>
+      <p>This is your throwaway learning branch. All three tools work on this branch, and it keeps <code>main</code> clean.</p>
+      <pre><code>git checkout -b dev</code></pre>
+      <div class="callout">
+        <strong>⚠️ Warning:</strong> If you skip this step, the tools will refuse to run. You'll see errors like <code>Cannot reset to main while on the main branch.</code>
+      </div>
+
+      <h3>Reset to an Exercise Checkpoint</h3>
+      <ul class="checklist">
+        <li>Run <code>npm run reset</code> to see the full list of course checkpoints</li>
+      </ul>
+      <pre><code>npm run reset</code></pre>
+      <p>This opens an interactive picker showing every checkpoint in the course, in order. You can type to search - for example, typing <code>try the cli</code> will narrow to <code>try-the-cli</code>.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786013951/ai-hero-images/mv0uyjie1uuavdlghzsi.png" alt="The npm run reset interactive picker showing the list of course checkpoints" />
+      <p class="img-caption">The npm run reset interactive picker showing the list of course checkpoints</p>
+
+      <ul class="checklist">
+        <li>Select a checkpoint and choose <strong>Reset current branch</strong></li>
+      </ul>
+      <p>The tool will rewind your branch to that exact commit. You'll see output like:</p>
+      <pre><code>Resetting to try-the-cli...
+✓ Reset to try-the-cli</code></pre>
+      <p>You can also pass the checkpoint name directly to skip the picker:</p>
+      <pre><code>npm run reset try-the-cli</code></pre>
+      <div class="callout">
+        <strong>⚠️ Reset is destructive.</strong> It rewinds the entire working branch - not just the files an exercise touches. Uncommitted work is gone. Commit or stash anything you want to keep <em>before</em> you reset.
+      </div>
+
+      <h3>Keep Your Own Work With Cherry-Pick</h3>
+      <ul class="checklist">
+        <li>Add a script to <code>package.json</code> to experiment with, for example:</li>
+      </ul>
+      <pre><code>"foobar": "echo 'foobar'"</code></pre>
+      <ul class="checklist">
+        <li>Commit that change via VS Code's Source Control panel (<strong>Ctrl+Shift+G</strong>) or the terminal</li>
+        <li>Run <code>npm run cherry-pick</code> instead of <code>reset</code></li>
+      </ul>
+      <pre><code>npm run cherry-pick</code></pre>
+      <p>This shows the same picker, but instead of rewinding your branch, it <strong>applies the checkpoint's commit on top of your existing work</strong>. Your commits stay underneath it.</p>
+      <pre><code>Cherry-picking c4a46e5 onto current branch...
+✓ Successfully cherry-picked lesson try-the-cli</code></pre>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Command</th><th>What it does to your work</th></tr></thead>
+          <tbody>
+            <tr><td><code>npm run reset</code></td><td>Replaces it - your commits are gone</td></tr>
+            <tr><td><code>npm run cherry-pick</code></td><td>Adds to it - checkpoint lands on top</td></tr>
+            <tr><td><code>npm run pull</code></td><td>Updates around it - fetches upstream changes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-info">
+        If you're not comfortable with Git and resolving merge conflicts, stick to <code>reset</code> throughout the course.
+      </div>
+
+      <h3>Pull in Course Updates</h3>
+      <ul class="checklist">
+        <li>Run <code>npm run pull</code> to fetch any updates shipped to the course</li>
+      </ul>
+      <pre><code>npm run pull</code></pre>
+      <p>This fetches from the upstream repo and brings changes into your branch. It does <strong>not</strong> reset, and it does not touch your commits. You'll mostly need this when a fix is announced in Discord.</p>
+      <pre><code>Fetching main from upstream...
+Merging upstream/main into dev...
+✓ Successfully merged upstream/main into dev</code></pre>
+
+      <h3>Verify the Setup</h3>
+      <ul class="checklist">
+        <li>Run <code>npm run reset</code>, pick <code>try-the-cli</code>, and confirm that <code>package.json</code> updates its <code>description</code> field from <code>"An awesome horse platform"</code> to <code>"An awesome course platform"</code></li>
+        <li>Run <code>npm run reset</code> again, pick <code>main</code>, and confirm it reverts back to <code>"An awesome horse platform"</code></li>
+      </ul>
+      <p>If you see those two strings swap back and forth, the tooling is working correctly.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 6. Database Migrations -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="database-migrations">
+      <h1 class="chapter-title">Database Migrations</h1>
+
+      <div class="commit-map">
+        <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">try-the-cli</span>
+          <span>Start the lesson: the repo with the CLI check applied, before any schema change</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">make-a-schema-change</span>
+          <span>Follow along: the <code>notes</code> column added to <code>schema.ts</code>, plus its migration</span>
+        </div>
+      </div>
+
+      <p>This lesson exists because a lot of folks who've taken this course before have run into difficulties on this point. If you're already familiar with what a database is and the difference between a database and source code, you can skip this lesson, but it's pretty essential information, so it's worth covering in depth.</p>
+
+      <h2>The Two Units</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Unit</th><th>What it is</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Source code</strong></td>
+              <td>Files you edit to change the behaviour of your application</td>
+              <td><code>app/db/schema.ts</code>, <code>app/components/dev-ui.tsx</code></td>
+            </tr>
+            <tr>
+              <td><strong>Database</strong></td>
+              <td>A separate store of actual data</td>
+              <td><code>data.db</code> (a file on disk)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The project uses <a href="https://sqlite.org/">SQLite</a>, and the database is literally just a file on disk called <code>data.db</code>. The source code, things like <code>app/components/course-image.tsx</code> and <code>app/components/dev-ui.tsx</code>, is readable text you can modify to change how the application behaves.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014206/ai-hero-images/d8mrvllr88iovnn9vq9w.png" alt="The file tree showing data.db at the repo root alongside the source code folders" />
+      <p class="img-caption">The file tree showing data.db at the repo root alongside the source code folders</p>
+
+      <p>If we look inside <code>app/db/schema.ts</code>, we can see that the source code is actually defining the shape of the database, declaring tables and their columns.</p>
+
+      <h2>How Database Migrations Work</h2>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014207/ai-hero-images/bvwx7actgcpdbyxe5zkt.png" alt="Diagram showing the directional relationship between source code and the database, with migrations as the step in between" />
+      <p class="img-caption">Diagram showing the directional relationship between source code and the database, with migrations as the step in between</p>
+
+      <div class="callout callout-info">
+        <strong>Key insight:</strong> The source code defines how the database should look, but you need to manually do something before the database catches up.
+      </div>
+
+      <p>That step is a <strong>database migration</strong>: you manually update the database to match what the schema says it should look like.</p>
+      <p>The reason this is done manually is because traditionally, the database holds pretty important information: all of your user data, the stuff that's very sacred. In real applications, you need to do a manual migration to synchronise them.</p>
+      <p>This means your source code and your database need to be versioned together:</p>
+      <ul class="body-list">
+        <li>If your source code changes but the database hasn't been migrated to keep up, you'll probably get an error.</li>
+        <li>In this project, <code>app/db/schema.ts</code> is the source code, and <code>data.db</code> is the live state of the database.</li>
+        <li>To migrate them, you run:</li>
+      </ul>
+      <pre><code>npm run db:migrate</code></pre>
+
+      <h2>Hands-On Migration Walkthrough</h2>
+      <p>To see this in action, open <code>app/db/schema.ts</code> and run <code>npm run reset</code> in a fresh terminal. Select the <code>make-a-schema-change</code> lesson commit ("Make a Schema Change" in the picker) and reset the current branch.</p>
+      <p>This makes a very subtle change: it adds a <code>notes</code> column to the <code>courses</code> table in <code>schema.ts</code>.</p>
+      <pre><code>  description: text("description").notNull(),
+<span class="diff-add">+ notes: text("notes"),</span>
+  salesCopy: text("sales_copy"),</code></pre>
+      <p>It has also generated a new migration file inside the <code>drizzle/</code> folder, <code>0003_lean_hex.sql</code>:</p>
+      <pre><code>ALTER TABLE `courses` ADD `notes` text;</code></pre>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014208/ai-hero-images/ryubvk7jelsvsy4nxfis.png" alt="The drizzle/ folder showing four migration SQL files" />
+      <p class="img-caption">The drizzle/ folder showing four migration SQL files</p>
+
+      <p>The <code>drizzle/</code> folder is basically the history of all database migrations that have been applied. Reading them newest-to-oldest:</p>
+      <ul class="body-list">
+        <li><code>0003_lean_hex.sql</code> - adds <code>notes</code> column to <code>courses</code> <em>(just added)</em></li>
+        <li><code>0002_lying_shriek.sql</code> - adds coupons</li>
+        <li><code>0001_cynical_sunspot.sql</code> - adds <code>github_repo_url</code> to lessons</li>
+        <li><code>0000_dizzy_fenris.sql</code> - the initial migration</li>
+      </ul>
+      <p>The <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> is going to be the one responsible for managing these, and they'll grow as the application develops. You won't have to worry too much about them directly.</p>
+
+      <h2>Debugging the Schema Mismatch Error</h2>
+      <p>Even this tiny addition is enough to break things if you run the dev server without migrating.</p>
+      <p>Open <code>http://localhost:5175</code> and browse to a specific course. The front page looks fine, but the course detail page errors.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014210/ai-hero-images/fjczpgcrhmkkpgp4ucsd.png" alt="The course detail page showing an error in the browser" />
+      <p class="img-caption">The course detail page showing an error in the browser</p>
+
+      <p>Looking at the terminal, there's a <code>SqliteError</code>:</p>
+      <pre><code>no such column: notes</code></pre>
+      <p>This is coming from the <code>getCourseBySlug</code> function. The schema file has been changed, but <code>data.db</code> hasn't been updated to match.</p>
+      <p>This is something you'll run into a lot when you reset the state of the source code. <strong><code>npm run reset</code> only touches the source code. It doesn't run <code>db:migrate</code> for you.</strong></p>
+      <p>The fix is to open another terminal and run:</p>
+      <pre><code>npm run db:migrate</code></pre>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014210/ai-hero-images/s5tl0ldib6t9qhpokjmq.png" alt="Terminal running npm run db:migrate" />
+      <p class="img-caption">Terminal running npm run db:migrate</p>
+
+      <p>Once that's done, refresh the page and it's working. The <code>data.db</code> and the schema are now in sync.</p>
+
+      <h2>Breaking and Resetting Your Database</h2>
+      <p>It's also worth saying that you can absolutely break your database at any time. This is <strong>not</strong> production data.</p>
+      <p>There's a seed script that you ran during the intro to seed the database. Here's what it does:</p>
+      <ol class="body-list">
+        <li>Deletes all the tables</li>
+        <li>Recreates them</li>
+        <li>Adds a bunch of dummy data</li>
+      </ol>
+      <p>The dummy data includes users like the admin Alex Rivera, and instructors Sarah Chen and Marcus Johnson.</p>
+      <p>This is something the agent might want to update if you're testing certain scenarios and need specific seed data.</p>
+
+      <h2>The Flow to Remember</h2>
+      <p>When the agent makes changes to <code>schema.ts</code>, you'll need to either get the agent to migrate itself, or migrate manually. This is especially true after running <code>npm run reset</code>, as the schema will probably be out of sync with the database.</p>
+      <p>Here's a quick reference for the three key scripts:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>npm run db:generate</code></td><td>Writes a new migration file to <code>drizzle/</code> from a changed <code>schema.ts</code></td></tr>
+            <tr><td><code>npm run db:migrate</code></td><td>Applies pending migration files to <code>data.db</code></td></tr>
+            <tr><td><code>npm run db:seed</code></td><td>Wipes and refills the database with dummy data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>After any <code>npm run reset</code> that touches <code>schema.ts</code>, always run <code>npm run db:migrate</code>.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 7. Resetting to a Clean Slate -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="resetting-clean-slate">
+      <h1 class="chapter-title">Resetting to a Clean Slate</h1>
+
+      <p>Most folks who take this course have already tried fiddling around with some kind of <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agentic</a> setup.</p>
+      <p>You've maybe tried:</p>
+      <ul class="body-list">
+        <li>Some <a href="https://www.aihero.dev/ai-coding-dictionary/mcp">MCP</a> servers</li>
+        <li>Fiddling with settings</li>
+        <li>Installing a bunch of <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a></li>
+        <li>Plugins</li>
+      </ul>
+      <p>All of this probably means you've <strong>over-configured your setup</strong>. Most people come into this course with way too much config already there.</p>
+
+      <h2>Delete It (Or Back It Up)</h2>
+      <p>The recommendation here is probably to <strong>delete all of it</strong>. A lot of it you simply don't need. It's best to work from a small starting point.</p>
+      <p>But if you're precious about it and want to retain it, make sure you back it up first.</p>
+
+      <h2>Let Your Agent Do It</h2>
+      <p>The recommended way to do this is to <strong>get your agent to do it</strong>. Your agent should be an expert on its own configuration.</p>
+      <p>Use the prompt below, copy and paste it to your agent to tell it to revert things to a blank slate, with everything backed up.</p>
+
+      <div class="prompt-block">You are the expert on your own configuration. Reset me to a clean slate (the config a fresh install would have) with everything I have now preserved so you can restore it on request later.
+
+<strong>1. Inventory.</strong> Consult your own documentation for where your configuration lives, then find every piece of it that applies to me, both global (user-level) and local (this project). Cover settings files, instruction/memory files, MCP servers, skills, plugins/extensions, subagents, custom commands, hooks, and output styles. Report every path you find with a one-line description of what it does. Done when every location named in your docs has been checked and reported, including the ones that turned out to be empty.
+
+<strong>2. Back it up.</strong> Create `~/agent-config-backup-&lt;today's date&gt;/` and MOVE each item there, mirroring its original path inside the backup so the layout is self-describing. The backup is the only surviving copy, so verify each move landed before continuing.
+
+<strong>3. Write the restore instructions.</strong> Add `RESTORE.md` at the root of the backup listing every backed-up item, its original absolute path, and the exact commands to put it all back. Written well enough that a future agent with no memory of this conversation can restore everything from that file alone.
+
+<strong>4. Verify.</strong> Re-run the inventory from step 1. Report what remains and confirm each remaining item is a genuine default rather than something I configured.
+
+Keep me signed in - leave auth, credential, and session files exactly where they are. Keep this project's source code untouched; only configuration moves.
+
+Finish with a table of what was moved and the one-line command I can give you later to restore it.</div>
+
+      <p>That way you can remind it later to restore from that backup. It should be pretty simple since most of this configuration is file-based, it'll save everything in a separate directory and be able to rehydrate back whenever needed.</p>
+
+      <h2>What Happens When You Run It</h2>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014395/ai-hero-images/gnvt1xnkq3waicwbvawu.png" alt="Claude Code terminal running the reset prompt" />
+      <p class="img-caption">Claude Code terminal running the reset prompt</p>
+
+      <p>In Claude Code, it's going to check its own documentation for where configuration lives, and then inventory everything.</p>
+      <p>Once the inventory is done, it starts backing up your config to a safe place.</p>
+      <p>Here's an example of what the inventory table looks like:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Path</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>~/.claude/settings.json</code></td><td>Main settings: tool denies, <code>defaultMode</code>, <code>effortLevel</code>, <code>tui</code>, auto-memory, etc.</td></tr>
+            <tr><td><code>~/.claude/settings.local.json</code></td><td><code>WebFetch</code> allow rules + <code>WebSearch</code></td></tr>
+            <tr><td><code>~/.claude/CLAUDE.md</code></td><td>Global memory file</td></tr>
+            <tr><td><code>~/.claude/skills/</code></td><td>User skills (often symlinks)</td></tr>
+            <tr><td><code>~/.claude/hooks/</code></td><td>Executable hook scripts</td></tr>
+            <tr><td><code>~/.claude/plugins/</code></td><td>Installed plugins</td></tr>
+            <tr><td><code>~/.claude.json</code></td><td>MCP servers, per-project permissions/trust, plus auth + identity</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>It also checks locations that turned out to be empty, such as <code>~/.claude/agents/</code>, <code>commands/</code>, <code>output-styles/</code>, and <code>rules/</code>.</p>
+
+      <h2>After the Backup</h2>
+      <p>Once the backup is done, your agent will give you a short prompt you can use later to restore everything. Something like:</p>
+      <pre><code>Restore my config from ~/agent-config-backup-&lt;date&gt;/RESTORE.md</code></pre>
+
+      <h2>Trying the Restore</h2>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014396/ai-hero-images/cye0fumy5jso6ho4smbz.png" alt="Claude Code terminal after running /clear, about to restore config" />
+      <p class="img-caption">Claude Code terminal after running /clear, about to restore config</p>
+
+      <p>To test it, <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> your agent <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> (don't worry if you don't know what this means yet, it'll be covered later), then paste that restore command in. Your agent will read <code>RESTORE.md</code> and put everything back.</p>
+
+      <h2>Why Bother?</h2>
+      <p>If you have a very in-depth configuration that you've worked hard on, you don't want to lose it. But it's worth seeing what it's like without it.</p>
+      <p>Run the prompt above, do the course, and then afterwards you can choose exactly what you want to restore.</p>
+      <p>Doing this will mean the course material doesn't interact with your dumpster fire.</p>
+      <p>…sorry, not dumpster fire. Your very carefully curated Olympic torch.</p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- 8. Installing The Request Logger -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <section class="chapter" id="installing-request-logger">
+      <h1 class="chapter-title">Installing The Request Logger</h1>
+
+      <p><a href="https://www.aihero.dev/ai-coding-dictionary/agent">Agents</a> can feel like a black box. You type a message, the <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a> sends a request to the <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider">model provider</a>, and you never see what's in it, not the <a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt">system prompt</a>, not the <a href="https://www.aihero.dev/ai-coding-dictionary/tool">tool</a> definitions, not any of it.</p>
+      <p>The course repo ships a <strong>request logger</strong> to fix that. It's a small proxy that sits between your agent and the model provider, passes everything through untouched, and writes a readable copy of every <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request">request</a> to disk.</p>
+
+      <h2>Steps To Complete</h2>
+
+      <h3>Start The Request Logger</h3>
+      <ul class="checklist">
+        <li>In a terminal, start the request logger from the repo root:</li>
+      </ul>
+      <pre><code>npm run request-logger</code></pre>
+      <p>The first time you run it, it asks which coding agent you use. If your agent can use more than one model provider, it asks which one. Then it asks whether to remember your answer, so it only has to ask once.</p>
+      <p>It then starts a local web server listening on <code>localhost:8787</code>, and prints the exact command for the agent you picked.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014759/ai-hero-images/t5aykyifb0qwyqmrdjqa.png" alt="Terminal showing the request logger listening on localhost:8787" />
+      <p class="img-caption">Terminal showing the request logger listening on localhost:8787</p>
+
+      <ul class="checklist">
+        <li>In a second terminal, copy and paste the command the request logger printed, and run it</li>
+      </ul>
+      <p>That command starts your agent pointed at the logger. Do not write it yourself. The logger builds it for your agent, so it is correct as printed. Some agents also need a small config file, and the logger prints that too.</p>
+      <p>The command sets everything at startup, so your agent must be launched with it.</p>
+      <ul class="checklist">
+        <li>Send a short message to the agent and confirm it responds as normal</li>
+      </ul>
+      <p>The proxy passes everything through untouched. Your agent should feel identical to use.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014760/ai-hero-images/ioaevqmr7z5d5kr7ubbx.png" alt="Agent responding normally while the request logger is running" />
+      <p class="img-caption">Agent responding normally while the request logger is running</p>
+
+      <h3>Explore The Log Files</h3>
+      <ul class="checklist">
+        <li>Open the <code>request-logger/logs/</code> folder</li>
+      </ul>
+      <p>After sending a message, you'll see timestamped files appear. Each timestamp is in UTC.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014760/ai-hero-images/zqzsalw3zkmr9ao3gkng.png" alt="The request-logger/logs folder showing timestamped log files" />
+      <p class="img-caption">The request-logger/logs folder showing timestamped log files</p>
+
+      <ul class="checklist">
+        <li>Open the newest <code>.md</code> file - this is the readable render and the one to start from</li>
+      </ul>
+      <p>The three file types for each request are:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td><code>.md</code></td><td>The readable render - start here</td></tr>
+            <tr><td><code>.request.txt</code></td><td>The verbatim request body</td></tr>
+            <tr><td><code>.response.txt</code></td><td>The raw response stream</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="checklist">
+        <li>Note that you may see more than one log entry per message you send</li>
+      </ul>
+      <p>Claude Code fires a quota probe at startup, a deliberate one-token request to check subscription headroom. That probe lands as its own log entry (often a 429 error), separate from the real <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turn</a>. So two entries for one message is expected, not a retry.</p>
+
+      <h3>Navigate The Readable Render</h3>
+      <ul class="checklist">
+        <li>Familiarise yourself with the XML tag structure of the <code>.md</code> file</li>
+      </ul>
+      <p>The file uses XML tags rather than Markdown headings to delimit sections, because the captured content is itself full of Markdown headings. The sections are:</p>
+      <pre><code>&lt;meta&gt;         - timestamp, model, endpoint, status
+&lt;headers&gt;      - request headers (authorization is redacted)
+&lt;request&gt;
+  &lt;params&gt;     - max_tokens, stream, thinking settings
+  &lt;/params&gt;
+  &lt;system-prompt&gt;
+  &lt;/system-prompt&gt;
+  &lt;tools&gt;
+  &lt;/tools&gt;
+  &lt;messages&gt;
+  &lt;/messages&gt;
+&lt;/request&gt;
+&lt;response&gt;     - stop reason and token usage
+&lt;/response&gt;</code></pre>
+
+      <ul class="checklist">
+        <li>Scroll through the <code>&lt;tools&gt;</code> block and note how large it is relative to the rest of the file</li>
+      </ul>
+      <p>Tool schemas are JSON and take up the majority of the file. On a one-word prompt like <code>Hello!</code>, this can run to over 1,000 lines out of roughly 1,300 total.</p>
+
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014761/ai-hero-images/abvgx5bs47gxuq2btcip.png" alt="The readable .md log file open, showing the large tools block" />
+      <p class="img-caption">The readable .md log file open, showing the large tools block</p>
+
+      <ul class="checklist">
+        <li>Find the <code>&lt;system-prompt&gt;</code> block and read what's in it</li>
+      </ul>
+      <p>This is the standing brief your agent prepends to every request before you've typed anything. It includes things like your working directory, platform, and <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> guidance.</p>
+
+      <ul class="checklist">
+        <li>Find the <code>&lt;messages&gt;</code> block and locate your actual message inside it</li>
+      </ul>
+      <p>You'll also see a system-reminder turn injected before your message with context like the current date. This is a message, not part of the system prompt, only visible here because of the logger.</p>
+
+      <ul class="checklist">
+        <li>Check the <code>&lt;response&gt;</code> block for the <a href="https://www.aihero.dev/ai-coding-dictionary/token">token</a> usage figures</li>
+      </ul>
+      <p>Even a single <code>Hello!</code> can result in tens of thousands of <a href="https://www.aihero.dev/ai-coding-dictionary/cache-tokens">cached tokens</a> being read. The full system prompt and tool definitions are sent on every turn.</p>
+      <p>You can shut the request logger down now. We'll call it out specifically when we need it again later in the course.</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('section.chapter');
+  const navLinks = document.querySelectorAll('nav.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`nav.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

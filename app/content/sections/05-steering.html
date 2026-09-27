@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05 Steering</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1e2333;
+      --border: #2a3045;
+      --accent: #6c8ef5;
+      --accent2: #a78bfa;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --code-bg: #0d1117;
+      --code-border: #30363d;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #f87171;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .page-wrap { display: flex; min-height: 100vh; }
+
+    nav.sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.5rem 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-logo span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-logo strong {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    nav.sidebar ul { list-style: none; padding: 0 0.75rem; }
+
+    nav.sidebar li a {
+      display: block;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    nav.sidebar li a:hover { background: var(--surface2); color: var(--text); }
+    nav.sidebar li a.active { background: rgba(108,142,245,0.15); color: var(--accent); }
+
+    nav.sidebar .nav-section {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 1rem 1.5rem 0.3rem;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 3rem 2rem 6rem;
+      max-width: 820px;
+    }
+
+    .chapter {
+      margin-bottom: 5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chapter:last-child { border-bottom: none; }
+
+    h1.chapter-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    h1.chapter-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    h2 { font-size: 1.3rem; font-weight: 700; color: var(--text); margin: 2.5rem 0 0.75rem; }
+    h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent2); margin: 1.75rem 0 0.5rem; }
+    h4 { font-size: 0.95rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.4rem; }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(108,142,245,0.3);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    a:hover { border-color: var(--accent); color: #8facff; }
+    strong { color: var(--text); font-weight: 700; }
+    em { color: var(--muted); font-style: italic; }
+
+    .lesson-img {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .img-caption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: -0.75rem;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.875em;
+      background: rgba(108,142,245,0.12);
+      color: #a5b4fc;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+    }
+
+    pre code { background: none; padding: 0; color: #c9d1d9; }
+    .diff-add { color: var(--green); }
+
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr { background: var(--surface2); }
+    th, td { padding: 0.6rem 1rem; border: 1px solid var(--border); text-align: left; }
+    th { font-weight: 700; color: var(--text); }
+    td { color: var(--muted); }
+    td code { color: #a5b4fc; }
+    td strong { color: var(--text); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+    .checklist { list-style: none; padding: 0; margin: 0.75rem 0 1.25rem; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.45rem 0;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .checklist li::before {
+      content: '☐';
+      color: var(--accent);
+      font-size: 1.1em;
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+
+    .callout {
+      border-left: 4px solid var(--yellow);
+      background: rgba(251,191,36,0.07);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .callout strong { color: var(--yellow); }
+    .callout-info { border-color: var(--accent); background: rgba(108,142,245,0.08); }
+    .callout-info strong { color: var(--accent); }
+
+    blockquote {
+      border-left: 4px solid var(--accent2);
+      background: rgba(167,139,250,0.08);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .commit-map {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.875rem;
+    }
+    .commit-map-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .commit-map-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.4rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .commit-map-item:first-of-type { border-top: none; }
+    .commit-id {
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      background: rgba(108,142,245,0.15);
+      color: var(--accent);
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 0.1em;
+    }
+
+    .prompt-block {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    ul.body-list, ol.body-list {
+      padding-left: 1.5rem;
+      margin: 0.5rem 0 1.25rem;
+    }
+    ul.body-list li, ol.body-list li { margin-bottom: 0.35rem; }
+
+    .quiz-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 2rem 0 1.5rem;
+    }
+    .quiz-block-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+    .quiz-question {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+    .quiz-question:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+    .quiz-q-text { font-weight: 600; margin-bottom: 0.75rem; color: var(--text); }
+    .quiz-choices { list-style: none; padding: 0; margin: 0 0 0.75rem; }
+    .quiz-choices li {
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.3rem;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .quiz-choices li.correct {
+      background: rgba(52,211,153,0.1);
+      border-color: rgba(52,211,153,0.3);
+      color: var(--green);
+    }
+    .quiz-answer {
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+    .quiz-answer-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+
+    @media (max-width: 768px) {
+      nav.sidebar { display: none; }
+      main { padding: 2rem 1.25rem 4rem; }
+      h1.chapter-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span>Section 05</span>
+      <strong>Steering</strong>
+    </div>
+    <p class="nav-section">Lessons</p>
+    <ul>
+      <li><a href="#the-steering-map">The Steering Map</a></li>
+      <li><a href="#steering-with-a-pointer">Steering With A Pointer</a></li>
+      <li><a href="#steering-with-a-pointer-solution">Steering With A Pointer Solution</a></li>
+      <li><a href="#what-are-agent-skills">What Are Agent Skills?</a></li>
+      <li><a href="#write-a-skill">Write A Skill</a></li>
+      <li><a href="#write-a-skill-solution">Write A Skill Solution</a></li>
+      <li><a href="#user-vs-project-skills">User Vs Project Skills</a></li>
+      <li><a href="#navigation-pointers">Navigation Pointers</a></li>
+      <li><a href="#pruning">Pruning</a></li>
+      <li><a href="#trying-out-pruning">Trying Out Pruning</a></li>
+      <li><a href="#trying-out-pruning-solution">Trying Out Pruning Solution</a></li>
+      <li><a href="#claude-codes-automatic-memory">Claude Code&#x27;s Automatic Memory</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section class="chapter" id="the-steering-map">
+      <h1 class="chapter-title">The Steering Map</h1>
+
+      <p>Every time you start a fresh <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>, the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> wakes up knowing nothing about how you work. That isn&#x27;t a bug - it&#x27;s what <a href="https://www.aihero.dev/ai-coding-dictionary/stateless"><strong>stateless</strong></a> means. The <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> carries nothing from one session to the next, so your conventions, your edge cases, and the patterns that you want to encode in your project are gone the moment you <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear the context</a>.</p>
+      <p><strong>Steering</strong> is the question of how you guide the agent&#x27;s behavior across different sessions. Which instructions should reach the agent every time, and how do you deliver them without having to restate them every time you do more work?</p>
+      <p><strong>So where should those steering instructions live?</strong> That&#x27;s what this section answers.</p>
+      <h2>Understanding Context Load</h2>
+      <p>Before we answer that, we need to tackle the idea that the rest of this section depends on.</p>
+      <p><strong>Anything that you load into the agent up front, you pay for on every single <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request">model provider request</a>.</strong></p>
+      <p>A session can contain multiple <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turns</a>, and each of these turns contains many model provider requests, where you send a request and receive a response. A single turn can last 15 minutes and contain hundreds of model provider requests. There can be many, many turns within a session.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240099/ai-hero-images/kpatkbzczx6ceeukphjb.png" alt="Diagram showing a session with three turns, each turn containing multiple model provider requests represented as light blue dots" />
+      <p class="img-caption">Diagram showing a session with three turns, each turn containing multiple model provider requests represented as light blue dots</p>
+      <p>Each model provider request carries all of the history and everything new along with it. <strong>Any little instruction that you add early in the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> is going to be passed in on every single request.</strong></p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240100/ai-hero-images/w0nkvqqwigeaoxedqi9o.png" alt="Context load diagram showing five numbered requests, each row containing blocks representing the growing payload with a violet block at the front being re-sent every time" />
+      <p class="img-caption">Context load diagram showing five numbered requests, each row containing blocks representing the growing payload with a violet block at the front being re-sent every time</p>
+      <p>You still get some <a href="https://www.aihero.dev/ai-coding-dictionary/prefix-cache">caching</a>, so the cost is slightly lowered based on what you would expect, but it is still frustrating to have that thing in the window if it&#x27;s not needed on every request.</p>
+      <h3>The Two Costs of Context Load</h3>
+      <p><strong>You&#x27;re paying <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> to include these steering instructions on every request.</strong> But there&#x27;s a second cost: <strong>you&#x27;re also paying in <a href="https://www.aihero.dev/ai-coding-dictionary/attention-budget">attention</a>.</strong></p>
+      <p>Every extra instruction that you load makes every other instruction a little bit quieter and pushes the agent a little bit closer to the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">dumb zone</a>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240100/ai-hero-images/ilerrt0gymc12zmde3om.png" alt="Attention diagram showing five empty boxes with arrows scattered across them, clustered densely at the left and thinning out toward the right" />
+      <p class="img-caption">Attention diagram showing five empty boxes with arrows scattered across them, clustered densely at the left and thinning out toward the right</p>
+      <p>That combined cost, paying more tokens and spreading your agent&#x27;s attention thinner, is what we&#x27;ll call <strong>context load</strong>. And every time you have a steering instruction, you need to think about the context load that steering instruction is providing.</p>
+      <p><strong>So when we talk about steering, we&#x27;re not just thinking about writing good rules for our agent. It&#x27;s about figuring out which rules, which patterns we encode in the context window, because we pay a cost in context load for everything we add.</strong></p>
+      <h2>Push vs Point: Two Strategies for Steering</h2>
+      <p>Whenever we want to steer our agent, there are really two choices on how we can choose to steer it. We can either <strong>push</strong> that instruction or we can <strong>point</strong> at the instruction.</p>
+      <h3>Push: Always-On Steering</h3>
+      <p>Imagine the agent&#x27;s context window looks like a box, and our instruction is a yellow blob sitting inside it. When we push the instruction to the agent, it means that steering instruction is always on. It sits in the context window for every single session. The agent cannot miss it because it&#x27;s already in its context window.</p>
+      <p>That means it&#x27;s costing us context load whether this turn needs it or not.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240101/ai-hero-images/hirqymqtrxl7yrzo3fea.png" alt="Push diagram showing the context window with a large yellow block inside representing a steering instruction that is always present" />
+      <p class="img-caption">Push diagram showing the context window with a large yellow block inside representing a steering instruction that is always present</p>
+      <h3>Point: On-Demand Steering</h3>
+      <p>When you point, you put the steering instructions somewhere in the <a href="https://www.aihero.dev/ai-coding-dictionary/environment">environment</a>. You put one little line in the context window just to point to it. This line could read: &quot;when you&#x27;re doing a certain kind of work, then use these instructions.&quot; That line is a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer"><strong>context pointer</strong></a>.</p>
+      <p>It&#x27;s a pointer that sits in the context window so that when the agent needs it, it goes and follows the pointer, pulls in the full instruction.</p>
+      <p>Most turns a context pointer will cost you almost nothing.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240102/ai-hero-images/ydjdzsmqfdihbebfljqe.png" alt="Point diagram showing the context window with a tiny yellow square inside and a yellow arrow leading down to a full yellow block outside the window" />
+      <p class="img-caption">Point diagram showing the context window with a tiny yellow square inside and a yellow arrow leading down to a full yellow block outside the window</p>
+      <div class="table-wrap"><table><thead><tr><th>Strategy</th><th>Cost</th><th>Availability</th></tr></thead><tbody><tr><td>Push</td><td>High on every request</td><td>Always present</td></tr><tr><td>Point</td><td>Minimal most turns</td><td>Only when needed</td></tr></tbody></table></div>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240103/ai-hero-images/ahd4ovjwdm5s4szn7fn7.png" alt="Side-by-side comparison of Push and Point strategies, showing the context window with a large block inside for Push versus a tiny pointer square for Point" />
+      <p class="img-caption">Side-by-side comparison of Push and Point strategies, showing the context window with a large block inside for Push versus a tiny pointer square for Point</p>
+      <h2>Where Pushed Steering Lives: AGENTS.md</h2>
+      <p>So how do you push to an agent context window? One technique is the <a href="https://www.aihero.dev/ai-coding-dictionary/agents-md">AGENTS.md</a> file. This is a file often at the root of your project that the <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a> loads into the context window at the session start.</p>
+      <p><code>AGENTS.md</code> is a cross-harness convention, so whatever tool that you&#x27;re using probably will understand it. The big exception here is Claude Code, which calls it <code>CLAUDE.md</code> for reasons beyond understanding. I&#x27;m going to call it <code>AGENTS.md</code>, not because I&#x27;m pedantic, but because someday I hope that <code>CLAUDE.md</code> will actually join in the bandwagon.</p>
+      <h2>When Pushed Rules Misfire</h2>
+      <p>We understand the cost of pushing steering rules now - it&#x27;s paid in context load on every request. But there&#x27;s a bigger problem: <strong>agents can&#x27;t tell when the rules apply, and so they will often take rules that you&#x27;ve put as pushed steering rules and apply them in the wrong situations.</strong></p>
+      <p>Someone sent a really funny example of when an agent was too overeager to follow an instruction. And it actually happened not in a coding harness, but in claude.ai.</p>
+      <p>In claude.ai you can open up the settings and see instructions for Claude which act exactly like the <code>AGENTS.md</code> file. They are pushed into the agent&#x27;s <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240104/ai-hero-images/wh6llq9dpga8yg67rtym.png" alt="Claude.ai settings screen showing the Instructions for Claude section" />
+      <p class="img-caption">Claude.ai settings screen showing the Instructions for Claude section</p>
+      <p>Someone had an instruction kind of like this in their global instructions:</p>
+      <blockquote><p>I work under PCI DSS card payment compliance. Anything security relevant should be flagged.</p></blockquote>
+      <p>Then they asked the agent how to bake a chocolate cake. It gave them the recipe but then added a note at the end that since they handle credit cards under PCI DSS they should consider the security implications of the chocolate cake.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240105/ai-hero-images/wddma0p6p1i8blmghtne.png" alt="Browser showing a Claude.ai conversation titled &#x27;Chocolate cake recipe&#x27; with the agent&#x27;s response about PCI DSS compliance implications for baking" />
+      <p class="img-caption">Browser showing a Claude.ai conversation titled &#x27;Chocolate cake recipe&#x27; with the agent&#x27;s response about PCI DSS compliance implications for baking</p>
+      <p>In other words, <strong>these pushed rules can make the agents do strange things.</strong> And we better make sure that the way that we&#x27;re using the agent matches up to the rules that we have in there.</p>
+      <h2>The Epidemic of Over-Pushing</h2>
+      <p>This advice will run counter to what a lot of people are doing right now. They are pushing tons of instructions into <code>CLAUDE.md</code> or <code>AGENTS.md</code>, and I think they&#x27;re seeing worse results because of it.</p>
+      <p>There is an epidemic of pushing right now and so much so many tokens are being wasted. So much context load is being placed on these agents when I think instead you need to be considering techniques for pointing.</p>
+      <p><strong>In this course, in practice: you point by default.</strong> And you let the agent decide whether to pull in those instructions or not.</p>
+      <p>That&#x27;s how we&#x27;re going to tackle the rest of the section. We&#x27;re going to show techniques both for pushing and pointing. There are situations where you do want to push, and we&#x27;ll show you about <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a>, about documentation inside the repo, and all the cool techniques that you can use to steer your agent without pushing too much context load.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="steering-point-by-default">
+        <p class="quiz-q-text">A convention for writing database migrations comes up about once a week in your project, and it runs to forty lines. Where do you put it?</p>
+        <ul class="quiz-choices">
+          <li class="correct">In its own file, with a one-line pointer in AGENTS.md</li>
+          <li>Inline in AGENTS.md, so the agent can never miss it</li>
+          <li>In a note you paste into prompts when it is relevant</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Inlining pays all forty lines on every model provider request, in every session, for a rule needed once a week - and every extra instruction makes the others a little quieter. Pasting it by hand moves the cost onto you, and you will forget on the week it matters. A pointer costs almost nothing most turns, and the agent pulls the file in when the work calls for it.
+        </div>
+      </div>
+      <div class="quiz-question" id="context-load-is-tokens-and-attention">
+        <p class="quiz-q-text">Loading forty lines at the start of every session costs you tokens on every request. What is the second cost you pay?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Attention: every other instruction gets quieter</li>
+          <li>Latency: each request takes longer to come back</li>
+          <li>Caching: the discount no longer applies at all</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Caching does not go away - you still get some, which lowers the cost slightly, so the discount is not what you lose. Speed is not what suffers either. Attention is: every extra instruction loaded makes every other instruction a little quieter and pushes the agent closer to the dumb zone.
+        </div>
+      </div>
+      <div class="quiz-question" id="pushed-rules-fire-out-of-context">
+        <p class="quiz-q-text">Your always-on instructions say to flag anything security-relevant. The agent now appends compliance notes to work that has nothing to do with security. What fixes it?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Move the rule behind a pointer that says when to use it</li>
+          <li>Keep it pushed, and add wording about when it applies</li>
+          <li>Restate the rule further down so the agent reads it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The failure is that a pushed rule sits in front of the agent for every task, and the agent cannot tell when it applies. Extra wording leaves it pushed, so it still costs context load on every request and is still there during the chocolate cake question. Restating it makes it louder in exactly the situations where it should be silent. Put it in the environment and leave one line pointing at it.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="steering-with-a-pointer">
+      <h1 class="chapter-title">Steering With A Pointer</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">pushed-migration-steps</span>
+          <span>Start the lesson: the migration steps pushed into <code>AGENTS.md</code>, with the <code>/writing-for-agents</code> skill available</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">migration-steps-doc</span>
+          <span>See my solution: the steps moved into <code>docs/database-migrations.md</code> behind a pointer</span>
+        </div>
+    </div>
+      <p>The database schema is worth special care in this project. Whenever you change the schema, add a table, modify a column, there&#x27;s a hidden second step. You also have to update <code>scripts/seed.ts</code>, the script that fills the database with its starting data.</p>
+      <p>If you change the schema and forget the seed script, the next reseed leaves you with data that no longer matches the shape. The type safety you get from Drizzle stops at the schema, the raw SQL in the <code>DROP TABLE IF EXISTS</code> block has no guard rails, so mismatches slip through silently and break things downstream.</p>
+      <p>There&#x27;s a second thing worth saying. In this project, <strong>the database is disposable</strong>. It lives on <code>data.db</code>, gitignored, holding nothing but seed data. You can migrate freely, throw it away, and reseed from scratch. Those are real constraints, the kind of thing you&#x27;d explain to a new teammate on their first day. And <strong>the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> can&#x27;t know them unless you tell it</strong>, because <strong>they aren&#x27;t derivable from the code</strong>.</p>
+      <h2>The Problem</h2>
+      <p>The obvious move is to push all those steps into <code>AGENTS.md</code> so the agent always has them. But look at what that costs.</p>
+      <p>Every request carries the full migration steps. Every <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turn</a> for the rest of the <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> pays <a href="https://www.aihero.dev/ai-coding-dictionary/input-tokens">input tokens</a> for a document it doesn&#x27;t need, right now, maybe the agent is building a UI feature that touches nothing in the database. The steps compete for <a href="https://www.aihero.dev/ai-coding-dictionary/attention-budget">attention budget</a>. Picture a project with ten sets of instructions like this, all pushed into <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>. The cost compounds.</p>
+      <h2>The Doc-Plus-Pointer Pattern</h2>
+      <p>You don&#x27;t need the steps on every request. You need them <strong>reachable</strong> from every request. Those are different things.</p>
+      <p>Take the steps out of <code>AGENTS.md</code> and give them their own document. Leave one short line in <code>AGENTS.md</code>: <em>when you&#x27;re changing the database schema, read this doc first</em>. The context load becomes a single sentence. The steps load only when the agent follows the pointer and needs them.</p>
+      <p>That&#x27;s the <strong>doc-plus-pointer</strong> pattern. A <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">context pointer</a> is a reference in the agent&#x27;s context that names some material and encodes the condition for reaching it. It needs two things to work:</p>
+      <ul class="body-list"><li><strong>A stable path</strong> - the agent needs to know where to find it.</li><li><strong>Clear description</strong> - the agent needs to know when following it is worth it. A bare path is a pointer the agent has no reason to use. Word it the way the task actually presents.</li></ul>
+      <h2>The /writing-for-agents Skill</h2>
+      <p>Writing a good document for an agent is its own skill. You&#x27;re going to use the <code>/writing-for-agents</code> skill to do it. This <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> takes the steps in your head and turns them into a document an agent can follow: clear, ordered, no waffle. It&#x27;s built exactly for writing <code>AGENTS.md</code> and for writing the kind of focused docs that sit behind pointers.</p>
+      <h2>Steps To Complete</h2>
+      <ul class="checklist"><li>Run <code>npm run reset</code> to grab the <code>/writing-for-agents</code> skill</li></ul>
+      <p>This will reset the repo to the commit that includes the skill.</p>
+      <ul class="checklist"><li>Open the <code>/writing-for-agents</code> skill and read through it</li></ul>
+      <p>Understand what it&#x27;s asking for, particularly the section on context pointers and the two loads (context load and cognitive load). This is the vocabulary you&#x27;ll be using.</p>
+      <ul class="checklist"><li>Create a new <code>docs/</code> folder in the repo root</li></ul>
+      <p>This is where your migration steps doc will live.</p>
+      <ul class="checklist"><li>Use <code>/writing-for-agents</code> to move the migration steps out of <code>AGENTS.md</code> into a new document called <code>database-migrations.md</code> inside the <code>docs/</code> folder</li></ul>
+      <p>The skill will guide you. Ask it to take the steps currently in <code>AGENTS.md</code> and restructure them as a standalone document. The doc should stand on its own, it won&#x27;t have <code>AGENTS.md</code> above it, so promote the headings one level.</p>
+      <ul class="checklist"><li>Replace the migration steps in <code>AGENTS.md</code> with a single pointer line</li></ul>
+      <p>The pointer should describe when and why the agent should reach for the document. Something like: &quot;When making a database schema change, consult <code>docs/database-migrations.md</code> for the exact steps.&quot;</p>
+      <ul class="checklist"><li>Make a small, real schema change to test the pointer</li></ul>
+      <p>Open an agent and ask it to make a simple change to the schema, maybe add a non-nullable column to an existing table, or add a new field. Watch what happens.</p>
+      <p>The agent should see your pointer line in <code>AGENTS.md</code>, recognize that it&#x27;s doing a schema change, and pull in the full doc from <code>docs/database-migrations.md</code>. It should then follow the steps: update the schema, generate the migration, update <code>scripts/seed.ts</code>, reseed, and typecheck.</p>
+      <ul class="checklist"><li>Verify the change worked</li></ul>
+      <p>Check that <code>npm run db:seed</code> runs without error, that <code>npm run typecheck</code> passes, and that the data in the database matches the new schema.</p>
+      <ul class="checklist"><li>Commit your changes and reset the project when you&#x27;re done</li></ul>
+      <p>Once you&#x27;ve verified it works, commit to your branch. When you&#x27;re ready to move on, run <code>npm run reset</code> to return to the original state.</p>
+    </section>
+
+    <section class="chapter" id="steering-with-a-pointer-solution">
+      <h1 class="chapter-title">Steering With A Pointer Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">pushed-migration-steps</span>
+          <span>Start the lesson: the migration steps pushed into <code>AGENTS.md</code></span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">migration-steps-doc</span>
+          <span>See my solution: <code>docs/database-migrations.md</code> plus the pointer, and the <code>salesCopy</code> schema change that tests it</span>
+        </div>
+    </div>
+      <p>All right, we&#x27;re going to kick things off by running the <code>/writing-for-agents</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> here, and I&#x27;m then going to dictate what I want to happen.</p>
+      <pre><code>I would like you to take the AGENTS.md file, especially the stuff about the database migrations and all of those steps, and put that behind a context pointer. It&#x27;s just a little bit too large right now, and I don&#x27;t want to have this in every model provider request.</code></pre>
+      <p>Okay, let&#x27;s run this and see what happens.</p>
+      <p>So it&#x27;s going ahead and creating a <code>docs/database-migrations.md</code> and leaving <code>AGENTS.md</code> as a pointer. This is, as you can imagine, a very simple change here. What we end up with is a database migrations doc, which is a one-to-one representation of what was in the original.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240422/ai-hero-images/ak0pryvyhmqoqkhp1sne.png" alt="The docs/database-migrations.md file showing the migration steps" />
+      <p class="img-caption">The docs/database-migrations.md file showing the migration steps</p>
+      <p>And then in <code>AGENTS.md</code>, we have this database migrations pointer.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240423/ai-hero-images/gxd1rklyhbrgurd96jl8.png" alt="AGENTS.md showing the pointer to database-migrations.md" />
+      <p class="img-caption">AGENTS.md showing the pointer to database-migrations.md</p>
+      <h2>Understanding Pointers</h2>
+      <p>So as you can see, a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">pointer</a> is basically made up of two parts:</p>
+      <ol class="body-list"><li>The link - the actual thing that&#x27;s pointing to it</li><li>The text around the pointer - what tells the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> when to use it</li></ol>
+      <p>Keep in mind this is the stuff that will actually get pushed to the agent, and it will only go and look at this file when it actually needs to. And so the description on the pointer is actually really important.</p>
+      <p>To me, I&#x27;m not exactly happy with this pointer description. It&#x27;s certainly quite concrete, like, &quot;read before editing this specific file, read whenever a schema change needs this thing updated, or when this particular command fails to start.&quot; That&#x27;s very concrete and very specific, but I think I want to make it a bit broader.</p>
+      <p>So I&#x27;m going to say:</p>
+      <pre><code>Update the description of the pointer in AGENTS.md to be a bit broader to say: whenever we make a database change, follow these steps.</code></pre>
+      <p>That way the agent has a really clear rationale and understands exactly when it needs to. Of course it will use its own judgment too - it might look at the name of the file, for instance, and just say &quot;okay, database migrations, I&#x27;ll do it whenever database migration is needed.&quot; But this reads a little bit better to me, and it&#x27;s also a little bit shorter, which always helps.</p>
+      <p>So I&#x27;m happy with how the pointer looks. Let&#x27;s now <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> the <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> and test this out.</p>
+      <h2>Making A Schema Change</h2>
+      <p>The change that I want to test this out with is we&#x27;re going to go into <code>app/db/schema.ts</code> here. We&#x27;re going to look at <code>salesCopy</code> under <code>courses</code> and we notice that most of these have <code>.notNull()</code> attached to them, meaning that they have to have a value in the database, even if it&#x27;s an empty string. So for <code>salesCopy</code>, we&#x27;re going to make it not nullable.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240424/ai-hero-images/uyfr4u8sly6dxss2y3xn.png" alt="app/db/schema.ts showing the salesCopy field in the courses table" />
+      <p class="img-caption">app/db/schema.ts showing the salesCopy field in the courses table</p>
+      <p>It kind of makes sense to me because all courses need to have some kind of sales copy.</p>
+      <pre><code>Make the salesCopy attribute of courses non-nullable. Make it a required field when creating new courses, and make sure that it&#x27;s non-empty.</code></pre>
+      <p>So there we go, we&#x27;ve got a small, quite well-scoped feature that needs a database migration. Let&#x27;s see if it picks up the database migration.</p>
+      <p>And there we go - reading two files, one of which is, it just went by very, very quickly, but one of which was the database migrations doc.</p>
+      <p>You should be able to press Ctrl+O here and zoom up and we should see it up here.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240425/ai-hero-images/lgfifo3l3bt0tjfjaawb.png" alt="Agent tool call list showing Read of docs/database-migrations.md" />
+      <p class="img-caption">Agent tool call list showing Read of docs/database-migrations.md</p>
+      <p>Yep, there we go. Read <code>…/ai-coding-crash-course/docs/database-migrations.md</code></p>
+      <p>So our pointer has worked and it&#x27;s now pulled in the correct doc into its <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>.</p>
+      <h2>The Agent Works It Out</h2>
+      <p>You can see too that it immediately changed the <code>salesCopy</code> text here, and it looked like it ran a shell command - yeah, it ran <code>npm run db:generate</code>, fantastic.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240426/ai-hero-images/oywmaoqlow6rzuagy8s6.png" alt="Terminal output showing npm run db:generate command execution" />
+      <p class="img-caption">Terminal output showing npm run db:generate command execution</p>
+      <p>And now it&#x27;s going through and making the required changes.</p>
+      <p>The question is: has it updated the seed script? That&#x27;s the really important bit.</p>
+      <p>It actually looks like it hasn&#x27;t needed to because both of the courses in the seed script both already pass a <code>salesCopy</code>. But it looks like it&#x27;s now running the reseed, so it&#x27;s reseeding from scratch, type checking, and running tests.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240427/ai-hero-images/dktcrmabfdhaa4grieax.png" alt="Terminal output showing database reseed with row counts and test results" />
+      <p class="img-caption">Terminal output showing database reseed with row counts and test results</p>
+      <p>So even though it didn&#x27;t need to, it reseeded the database, which I think is good practice. It&#x27;s certainly aware that the seed script exists, which it probably might not have been if we hadn&#x27;t included it in that doc.</p>
+      <p>So our experiment worked. Almost as if they were in <code>AGENTS.md</code> themselves, this pointer was effective enough that it was able to direct the agent to the documentation when it was needed.</p>
+      <h2>The Key Takeaway</h2>
+      <p>So whenever you&#x27;re thinking about adding or doing some steering in the global scope, I recommend pointing over pushing.</p>
+      <p>And this pattern of having local docs inside the repo, hidden behind a pointer, is very, very effective.</p>
+      <p>However, it does have some weaknesses, and that&#x27;s what we&#x27;re going to be exploring in the next couple of lessons.</p>
+      <p>Nice work, and I will see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="what-are-agent-skills">
+      <h1 class="chapter-title">What Are Agent Skills?</h1>
+
+      <p>The pattern of a document paired with a pointer works well, but it hits an interesting constraint. Everything about it lives just inside one repository. There&#x27;s no easy way to package it up and ship it to your teammates.</p>
+      <p>You can&#x27;t carry these between projects - they have to be manually extracted and pasted in each time. Every instance means copying files by hand, and every team member has to repeat the work.</p>
+      <h2>Skills: A Pointer, Packaged</h2>
+      <p>This problem is what <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> are designed for. A <strong>skill</strong> is the same setup you saw before, a pointer to a document, but packaged and standardized. It&#x27;s a self-contained folder that does the same job as the doc-plus-pointer approach. You keep the steering files on disk and pull them in only when they&#x27;re relevant, bundled into one portable, shareable unit.</p>
+      <p>A skill folder contains a <code>SKILL.md</code> file (the main document), alongside any supporting files it needs. Here&#x27;s what makes skills portable:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240639/ai-hero-images/upofvz83alclqqmxpj1a.png" alt="Skill folder structure showing SKILL.md file" />
+      <p class="img-caption">Skill folder structure showing SKILL.md file</p>
+      <ul class="body-list"><li><strong>One line always on</strong>: the skill&#x27;s name and description</li><li><strong>Everything else loads on demand</strong>: the body and any linked files only load when the agent reaches for them</li><li><strong>Bundled together</strong>: all files live in one folder, ready to share</li></ul>
+      <p>The description acts as the <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">context pointer</a> for the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>. It reads the description to decide whether the skill is relevant right now. Once it sees the description, it decides whether to load that skill into its <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>.</p>
+      <p>For example, a skill called <code>writing-for-agents</code> with the description &quot;Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.&quot; tells the agent exactly when to reach for it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240640/ai-hero-images/k7kipxybnnpvucxf0931.png" alt="writing-for-agents skill showing frontmatter with name and description" />
+      <p class="img-caption">writing-for-agents skill showing frontmatter with name and description</p>
+      <h2>More Than One File</h2>
+      <p>A skill isn&#x27;t limited to a single file. Everything inside the skill folder gets bundled in with it. So a skill might contain:</p>
+      <ul class="body-list"><li><code>SKILL.md</code> (the main entry point)</li><li>Supporting files like <code>SKILL-MECHANICS.md</code></li><li>Additional reference materials</li></ul>
+      <p>The main <code>SKILL.md</code> can point to these supporting files with context pointers, and the agent follows those links only when it needs them. This is <a href="https://www.aihero.dev/ai-coding-dictionary/progressive-disclosure">progressive disclosure</a> one layer down - the agent pays no context load for the supporting files until it commits to using the skill.</p>
+      <p>For instance, you might write in <code>SKILL.md</code>: &quot;When the document you&#x27;re writing is a skill, read <code>SKILL-MECHANICS.md</code> for frontmatter, invocation choice, and router skills.&quot;</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240641/ai-hero-images/zesddzibslodabbzkaeu.png" alt="SKILL.md showing context pointer to SKILL-MECHANICS.md" />
+      <p class="img-caption">SKILL.md showing context pointer to SKILL-MECHANICS.md</p>
+      <p>This creates a layered structure:</p>
+      <ul class="body-list"><li>Context window → name and description</li><li>Name and description → <code>SKILL.md</code></li><li><code>SKILL.md</code> → <code>SKILL-MECHANICS.md</code> (and other files)</li></ul>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240641/ai-hero-images/pkxlmmnoe4k561xrijtc.png" alt="Diagram showing layered structure from context window to SKILL.md to reference files" />
+      <p class="img-caption">Diagram showing layered structure from context window to SKILL.md to reference files</p>
+      <h2>The Open Standard</h2>
+      <p>Skills are an open standard, defined at <a href="https://agentskills.io/home">agentskills.io</a>. This is significant because a skill written once for one agent can work in pretty much any agent that supports skills. They&#x27;re totally portable.</p>
+      <p>This portability means you can:</p>
+      <ul class="body-list"><li>Write a skill once</li><li>Share it with your team</li><li>Reuse it across projects</li><li>Package huge amounts of information into one portable unit</li></ul>
+      <h2>Two Ways To Invoke A Skill</h2>
+      <p>There are two main ways a skill can get invoked, and they trade off two different kinds of load:</p>
+      <div class="table-wrap"><table><thead><tr><th>Invocation Type</th><th>How It Works</th><th>Context Load</th><th>Cognitive Load</th></tr></thead><tbody><tr><td><strong>Model-invoked</strong></td><td>Description is in the context window. The agent can see it, notice it&#x27;s relevant, and pull it in on its own.</td><td>Higher</td><td>Lower</td></tr><tr><td><strong>User-invoked</strong></td><td>Description is hidden from the agent. Only you can invoke it by typing its name.</td><td>Zero</td><td>Higher (you must remember it)</td></tr></tbody></table></div>
+      <p>The difference comes down to a single line in the skill&#x27;s frontmatter.</p>
+      <h3>Model-Invoked Skills</h3>
+      <p>Keep the description in the frontmatter and the agent can discover the skill autonomously. The agent reads the description, recognizes when it&#x27;s relevant, and invokes it without you mentioning it. You can still type the skill&#x27;s name yourself - model-invocation always includes user reach, it just adds agent discovery on top.</p>
+      <p>The description is the skill&#x27;s top-level context pointer, and it stays loaded at all times. That&#x27;s a permanent context load, but you get automatic discoverability.</p>
+      <h3>User-Invoked Skills</h3>
+      <p>Add <code>disable-model-invocation: true</code> to the frontmatter to hide the description from the agent. Now only you can invoke the skill by name - the agent can&#x27;t reach it at all, even if it would be helpful. Zero context load, but you have to remember the skill exists and remember to use it.</p>
+      <p>Here&#x27;s what a user-invoked skill&#x27;s frontmatter looks like:</p>
+      <pre><code>---
+name: handoff
+description: Compact the current conversation into a handoff document for another agent to pick up.
+disable-model-invocation: true
+---</code></pre>
+      <p>With <code>disable-model-invocation: true</code>, the description becomes human-facing rather than agent-facing - a one-line summary for you to read, not for the agent to parse.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240642/ai-hero-images/obx95tezqnbl6wukehfu.png" alt="handoff skill frontmatter showing disable-model-invocation: true" />
+      <p class="img-caption">handoff skill frontmatter showing disable-model-invocation: true</p>
+      <h2>The Trade-Off</h2>
+      <p>The choice between model-invoked and user-invoked is a trade-off:</p>
+      <ul class="body-list"><li><strong>More model-invoked skills</strong> = higher context load, but the agent can discover them</li><li><strong>More user-invoked skills</strong> = zero additional context load, but higher cognitive load on you</li></ul>
+      <p>There&#x27;s something appealing about paying zero context load for user-invoked skills. You can have a lot of them without bloating your context window. This is why many personal skill sets tend to lean toward user-invoked skills - they&#x27;re &quot;free&quot; in terms of <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>.</p>
+      <h2>Listing Your Skills</h2>
+      <p>To see what skills you have available, run the <code>/skills</code> command. This brings up a menu listing the name and description of every skill you have access to. This is the context load you&#x27;re paying - one line per model-invoked skill.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785240643/ai-hero-images/zduh7hycsbb04qoqwwvy.png" alt="/skills command output showing list of available skills" />
+      <p class="img-caption">/skills command output showing list of available skills</p>
+      <p>In that list, you&#x27;ll see which ones are user-invoked. For example:</p>
+      <ul class="body-list"><li><code>grill-me</code> is user-invoked (no description shown to the agent)</li><li><code>writing-for-agents</code> is model-invoked (description shown to the agent)</li></ul>
+      <p>You can invoke user-invoked skills by typing their name, just like any command.</p>
+      <h2>Skills as Portable Pointers</h2>
+      <p>A skill is just a pointer, packaged. It&#x27;s the same setup as a document in your repository with a pointer line in <code>AGENTS.md</code>, except here you can:</p>
+      <ul class="body-list"><li>Bundle it up</li><li>Pass it to your team</li><li>Distribute it on the web</li><li>Carry it between projects</li></ul>
+      <p>The concept of something you can easily share is powerful. And now you&#x27;re ready to build one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="skill-description-is-the-pointer">
+        <p class="quiz-q-text">For a skill the agent can discover on its own, what is sitting in the context window at all times?</p>
+        <ul class="quiz-choices">
+          <li class="correct">The skill&#x27;s name and description, one line</li>
+          <li>All of SKILL.md, minus the supporting files</li>
+          <li>Every file bundled inside the skill&#x27;s folder</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The body of SKILL.md and any file it links to load only when the agent reaches for the skill, so neither is in the window up front. Bundling puts the files in one folder so the skill can be shared - it does not put them in context. One line per discoverable skill is the whole standing cost.
+        </div>
+      </div>
+      <div class="quiz-question" id="model-vs-user-invoked-choice">
+        <p class="quiz-q-text">You wrote a skill you will need maybe twice a month, and you know you will forget it exists. Which frontmatter do you ship?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Leave the description on, so the agent can find it</li>
+          <li>Set disable-model-invocation and invoke it by name</li>
+          <li>Paste the skill&#x27;s body into AGENTS.md instead of it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Hiding the description costs zero context load, but the agent cannot reach the skill at all, and the cognitive load lands on you - which is exactly what fails for a skill you will forget. Pasting the body into AGENTS.md pays for the whole document on every request rather than one line. One description line buys the agent the chance to notice it.
+        </div>
+      </div>
+      <div class="quiz-question" id="skill-supporting-file-disclosure">
+        <p class="quiz-q-text">Your SKILL.md has grown a long section on frontmatter details that matters in one case out of ten. What do you do with that section?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Move it to a second file, pointed at from SKILL.md</li>
+          <li>Keep it in SKILL.md, since the folder ships as one</li>
+          <li>Make it a separate skill with its own description</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Leaving it in SKILL.md means it loads every time the skill fires, including the nine cases where it does not apply - the folder shipping as one unit is about sharing, not about what enters the window. A separate skill adds another description line that is loaded permanently. A pointer to a supporting file costs nothing until the agent follows it.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="write-a-skill">
+      <h1 class="chapter-title">Write A Skill</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">migration-steps-doc</span>
+          <span>Start the lesson: the migration steps in <code>docs/database-migrations.md</code> behind a pointer</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">migration-steps-skill</span>
+          <span>See my solution: the doc converted into a <code>database-migrations</code> skill</span>
+        </div>
+    </div>
+      <p>You&#x27;ve built documentation for database migrations and pointed your <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a> to it with <code>AGENTS.md</code>. But a pointer leaves you with a problem: every agent has to fetch the doc when it might need it.</p>
+      <p><a href="https://www.aihero.dev/ai-coding-dictionary/skill">Skills</a> solve this. A skill is a pointer, but packaged. Its name and description tell the agent whether it&#x27;s relevant, and the body loads only when the agent reaches for it.</p>
+      <p>This lesson turns your doc-and-pointer into a skill. You can do it by hand or let the agent handle it with the <code>writing-for-agents</code> skill. Then you&#x27;ll use the request logger to confirm the skill gets invoked at exactly the right moment.</p>
+      <h2>Steps To Complete</h2>
+      <h3>Set Up The Request Logger</h3>
+      <ul class="checklist"><li>Run <code>npm run request-logger</code></li></ul>
+      <p>This starts a proxy server that logs every request your agent sends. It asks which coding agent you use, listens on <code>http://localhost:8787</code>, and prints the exact command to start that agent through it.</p>
+      <ul class="checklist"><li>In another terminal, copy and paste the printed command to run the agent through the proxy</li></ul>
+      <ul class="checklist"><li>Send a dummy request</li></ul>
+      <p>Type <code>Hello!</code> to see what gets loaded before any work happens.</p>
+      <ul class="checklist"><li>Check the log in <code>request-logger/logs</code></li></ul>
+      <p>Open the markdown file that was created. Look for:</p>
+      <ul class="body-list"><li>The contents of <code>CLAUDE.md</code>, which shows the pointer to <code>docs/database-migrations.md</code></li><li>The skills list (search for &quot;skills&quot;). You should see only <code>grilling</code> and <code>writing-for-agents</code> available, because the other skills have <code>disable-model-invocation: true</code> set</li><li>The Skill <a href="https://www.aihero.dev/ai-coding-dictionary/tool">tool</a> definition, which shows how the agent invokes skills by name and the <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a> resolves the <code>SKILL.md</code> file</li></ul>
+      <p>This is your baseline - what the wire looks like before the conversion.</p>
+      <h3>Convert The Doc Into A Skill</h3>
+      <ul class="checklist"><li>Ask the agent to convert the database migrations doc into a skill</li></ul>
+      <p>You can dictate something like:</p>
+      <pre><code>I&#x27;d like you to take the documentation on database migrations and move it
+into its own skill project based in this repo.</code></pre>
+      <p>Don&#x27;t manually invoke the <code>writing-for-agents</code> skill. Let the agent decide whether it needs it.</p>
+      <ul class="checklist"><li>Watch what happens in the request logger</li></ul>
+      <p>The agent should invoke the <code>writing-for-agents</code> skill, load it into context, then create the new skill in <code>.agents/skills/database-migrations/</code>.</p>
+      <ul class="checklist"><li>Verify the skill was created</li></ul>
+      <p>Check that:</p>
+      <ul class="body-list"><li><code>.agents/skills/database-migrations/SKILL.md</code> exists with frontmatter containing a name and description</li><li>The skill body contains the migration steps from the original doc</li><li>The pointer line was removed from <code>AGENTS.md</code></li><li>The original <code>docs/database-migrations.md</code> file was deleted</li></ul>
+      <h3>Test The Skill</h3>
+      <ul class="checklist"><li><a href="https://www.aihero.dev/ai-coding-dictionary/clearing">Clear</a> the agent&#x27;s <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> and send another dummy message</li></ul>
+      <p>This creates a fresh log showing what changed.</p>
+      <ul class="checklist"><li>Check the new log in <code>request-logger/logs</code></li></ul>
+      <p>Search for &quot;skills&quot; again. You should now see the <code>database-migrations</code> skill in the list with its description - the <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">context pointer</a> moved from <code>CLAUDE.md</code> to the skills list.</p>
+      <ul class="checklist"><li>Run <code>npm run reset</code> to clear the database</li></ul>
+      <ul class="checklist"><li>Ask the agent to make a schema change</li></ul>
+      <p>For example, rename <code>pricePaid</code> to <code>amountPaid</code> in the <code>purchases</code> table:</p>
+      <pre><code>In the purchases table, change pricePaid to amountPaid.</code></pre>
+      <ul class="checklist"><li>Watch the agent invoke the skill immediately</li></ul>
+      <p>The <code>database-migrations</code> skill should be invoked the moment the agent recognizes it needs the migration steps.</p>
+      <ul class="checklist"><li>If the agent hits an interactive prompt, complete it manually</li></ul>
+      <p>For example, <code>npm run db:generate</code> might need you to confirm a column rename. Run the command yourself and tell the agent it&#x27;s done.</p>
+      <ul class="checklist"><li>Verify the agent follows the skill&#x27;s steps</li></ul>
+      <p>It should use the same terms from the skill: reseed, verify, typecheck.</p>
+      <ul class="checklist"><li>Compare what changed on the wire</li></ul>
+      <p>The pointer moved from <code>CLAUDE.md</code> to the skills list, but the agent&#x27;s behaviour stayed the same. The packaging changed, the guidance didn&#x27;t.</p>
+    </section>
+
+    <section class="chapter" id="write-a-skill-solution">
+      <h1 class="chapter-title">Write A Skill Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">migration-steps-doc</span>
+          <span>Start the lesson: the migration steps in <code>docs/database-migrations.md</code> behind a pointer</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">migration-steps-skill</span>
+          <span>See my solution: the <code>database-migrations</code> skill, plus the <code>pricePaid</code> to <code>amountPaid</code> rename that tests it</span>
+        </div>
+    </div>
+      <p>I&#x27;ve sent off a dummy request here just saying &quot;Hello&quot; to see the system set up. Let&#x27;s go into the logs and check out the <code>AGENTS.md</code> file.</p>
+      <p>We can see the contents of <code>CLAUDE.md</code> inside the request log. It just has a little pointer there pointing to the database migrations documentation.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242252/ai-hero-images/s1vmk0zd9peumcl9tnb6.png" alt="CLAUDE.md contents showing the database migrations pointer" />
+      <p class="img-caption">CLAUDE.md contents showing the database migrations pointer</p>
+      <p>If we search for &quot;skills&quot;, we notice we&#x27;ve only got the <code>grilling</code> and <code>writing-for-agents</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> available in the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>. That&#x27;s because the other two skills in the repo have <code>disable-model-invocation: true</code> set in their frontmatter, so the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> can&#x27;t call them on its own.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242253/ai-hero-images/zsute8bxbbpu1222xvq7.png" alt="Skills list showing only grilling and writing-for-agents" />
+      <p class="img-caption">Skills list showing only grilling and writing-for-agents</p>
+      <p>If we look for the Skill <a href="https://www.aihero.dev/ai-coding-dictionary/tool">tool</a>, which is defined above, we can see how it works. Once the agent decides it needs to go and find a skill file, it&#x27;s going to invoke the Skill tool with the name of that file. Then the <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a> will go and resolve where the actual <code>SKILL.md</code> file is.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242254/ai-hero-images/jh0j6lsuktgyhizqqksy.png" alt="Skill tool definition in the request log" />
+      <p class="img-caption">Skill tool definition in the request log</p>
+      <h2>Making the move</h2>
+      <p>Let&#x27;s actually go ahead and make the move. I&#x27;m going to dictate into Claude Code what I want.</p>
+      <pre><code>I&#x27;d like you to take the documentation on database migrations and move it
+into its own skill project based in this repo.</code></pre>
+      <p>As a little experiment, I&#x27;m not going to manually invoke the writing-for-agents skill - I&#x27;m just going to leave it and see if it does it itself.</p>
+      <p>And there we go. The <code>writing-for-agents</code> skill has been invoked here. It&#x27;s actually loading up the skill into its context window.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242255/ai-hero-images/nypybox4u31atla8m1da.png" alt="writing-for-agents skill being invoked" />
+      <p class="img-caption">writing-for-agents skill being invoked</p>
+      <p>It&#x27;s now gone ahead and created the skill inside <code>.agents</code>. It&#x27;s under the database migrations folder, and we&#x27;ve got <code>SKILL.md</code> that looks like our original <code>AGENTS.md</code> did.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242256/ai-hero-images/k7k4mln6am4ylflrwynu.png" alt="New database-migrations skill folder with SKILL.md" />
+      <p class="img-caption">New database-migrations skill folder with SKILL.md</p>
+      <p>Now it&#x27;s going ahead and removing the old pointer, so <code>AGENTS.md</code> is now completely empty. The docs file has been removed too.</p>
+      <h2>Testing with a second session</h2>
+      <p>So now, if I <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear the context</a>, I&#x27;m going to create another dummy message. Let&#x27;s go into the request logs and we should be able to see that things have changed.</p>
+      <p>Here we go. The following skills are now available. You can see &quot;Database schema changes - generate the migration, update the seed, reseed. Use when editing the schema, when adding or altering a table column or enum, or when npm run db:seed fails to start.&quot;</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242257/ai-hero-images/ejmyfdbcmelz7o8b8tps.png" alt="Skills list now showing database-migrations skill" />
+      <p class="img-caption">Skills list now showing database-migrations skill</p>
+      <p>So we have a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">context pointer</a> here for a skill. And now all we need to do to get this to work with our colleagues&#x27; skills is just go up to the top here, zip up the database-migrations folder and send it off to them.</p>
+      <h2>The schema change test</h2>
+      <p>For this <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>&#x27;s schema change, let&#x27;s go into purchases and I&#x27;m going to change <code>pricePaid</code> to <code>amountPaid</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242257/ai-hero-images/zvg7zmqtjryjqaxldcth.png" alt="Schema file showing the pricePaid field" />
+      <p class="img-caption">Schema file showing the pricePaid field</p>
+      <p>We need to change the name of a property. So in purchases, instead of <code>pricePaid</code>, I want it to be <code>amountPaid</code>.</p>
+      <p>Looking at the original schema:</p>
+      <pre><code>export const purchases = sqliteTable(&quot;purchases&quot;, {
+  id: integer(&quot;id&quot;).primaryKey({ autoIncrement: true }),
+  userId: integer(&quot;user_id&quot;)
+    .notNull()
+    .references(() =&gt; users.id),
+  courseId: integer(&quot;course_id&quot;)
+    .notNull()
+    .references(() =&gt; courses.id),
+  pricePaid: integer(&quot;price_paid&quot;).notNull(),
+  country: text(&quot;country&quot;),
+  createdAt: text(&quot;created_at&quot;)
+    .notNull()
+    .$defaultFn(() =&gt; new Date().toISOString()),
+});</code></pre>
+      <p>And now hopefully this will invoke the correct skill at the right moment. Oh, and there it goes immediately.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242258/ai-hero-images/mfxe02pces41arzptu5x.png" alt="database-migrations skill being invoked immediately" />
+      <p class="img-caption">database-migrations skill being invoked immediately</p>
+      <p>It should now go through and do the rest of the work that it needs to.</p>
+      <p>Looks like it needs a TTY, an interactive terminal. So I&#x27;m going to grab what it sent me and I&#x27;m going to run <code>npm run db:generate</code> myself.</p>
+      <pre><code>npm run db:generate</code></pre>
+      <p>We are renaming this, so I&#x27;m going to select rename column and then I&#x27;ll go back and tell it that I was able to complete it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242259/ai-hero-images/hxpspvkr4ebnrftnc8iy.png" alt="Interactive terminal prompting for rename column selection" />
+      <p class="img-caption">Interactive terminal prompting for rename column selection</p>
+      <p>Yep, done.</p>
+      <p>And just like before, it now understands that it has reseed and verify. It&#x27;s using the same terms as in our skill.</p>
+      <p>I&#x27;m feeling pretty confident that is going to be okay.</p>
+      <h2>The portable pointer</h2>
+      <p>So there we go. Skills are just the same as our doc and pointer approach, except they&#x27;re just more portable.</p>
+      <p>We really swapped around the context pointer. Instead of it being in <code>CLAUDE.md</code>, it now turned up in the skills list instead.</p>
+      <p>Both times we were able to successfully call it and pull it out at the right moment because we had a well-written description.</p>
+      <p>If we wanted to avoid this context load cost, then we could just make it a user-invoked skill instead - pull it out of here and then rely on the user to call it at the right moment.</p>
+      <p>But for me, it makes sense here to just make this part of the application. Make this part of the <a href="https://www.aihero.dev/ai-coding-dictionary/environment">environment</a> that the agent operates in. And I think it&#x27;s a pretty nice skill.</p>
+      <p>So nice work on your first skill. I&#x27;ll see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="user-vs-project-skills">
+      <h1 class="chapter-title">User Vs Project Skills</h1>
+
+      <p><a href="https://www.aihero.dev/ai-coding-dictionary/skill">Skills</a> can live in one of two places, and the choice matters.</p>
+      <h2>Two Levels for Skills</h2>
+      <p>The first level is your <strong>user directory</strong> at <code>~/.agents/skills</code>. A skill there is personal to you and follows you everywhere: every project you open on your machine has it available.</p>
+      <p>The second level is the <strong>project itself</strong>, in its <code>.agents/skills</code> folder. A skill there is checked into the repo, scoped to that one project, but shared with anyone who clones the repository.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242729/ai-hero-images/bhc0ovk7ovgjqph5rz4m.png" alt="User-level skills directory at ~/.agents/skills/" />
+      <p class="img-caption">User-level skills directory at ~/.agents/skills/</p>
+      <p><strong>Personal and portable, versus shared and checked in.</strong> That&#x27;s the choice.</p>
+      <h2>Where Skills Live</h2>
+      <div class="table-wrap"><table><thead><tr><th>Level</th><th>Location</th><th>Scope</th><th>Sharing</th></tr></thead><tbody><tr><td>User</td><td><code>~/.agents/skills/</code></td><td>Personal to you</td><td>Global across all your projects</td></tr><tr><td>Project</td><td><code>.agents/skills/</code></td><td>Scoped to one project</td><td>Shared with everyone who clones</td></tr></tbody></table></div>
+      <p>Skills at the user level are the same under two conventions, you&#x27;ll also see them referred to as living in <code>~/.claude/skills/</code>. Both paths refer to the same set of skills on your machine.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242730/ai-hero-images/d8pqicjizgx7okziz1vs.png" alt="Project-level skills directory inside the repository" />
+      <p class="img-caption">Project-level skills directory inside the repository</p>
+      <p>At the project level, skills are checked into the repository. This means they&#x27;re part of the git history and automatically shared with everyone who clones the project. The project <code>ai-coding-crash-course</code> includes five skills at this point:</p>
+      <pre><code>.agents/skills/database-migrations/
+.agents/skills/grill-me/
+.agents/skills/grilling/
+.agents/skills/handoff/
+.agents/skills/writing-for-agents/</code></pre>
+      <h2>How to Choose: Personal or Team?</h2>
+      <p>Here&#x27;s the rule: If it&#x27;s a personal quality-of-life thing, the way you like to work or a shortcut that&#x27;s yours, put it in your user directory.</p>
+      <p>The moment a skill is something the team relies on, something that encodes how this project is meant to be worked, it belongs in the project. The project is the stronger default, because:</p>
+      <ul class="body-list"><li>It&#x27;s version-controlled</li><li>It evolves with the codebase</li><li>Everyone who clones the repo gets it automatically</li><li>You never have to tell a teammate to install anything</li></ul>
+      <p>When in doubt, and it&#x27;s about the work rather than about you, put it in the project.</p>
+      <h2>Two Different Flavors</h2>
+      <div class="table-wrap"><table><thead><tr><th>User-Level</th><th>Project-Level</th></tr></thead><tbody><tr><td>Personal</td><td>Checked-in</td></tr><tr><td>Global</td><td>Single-project</td></tr><tr><td></td><td>Communal</td></tr></tbody></table></div>
+      <p><strong>Personal:</strong> It&#x27;s yours alone, nobody else sees it, and nobody else has to use it.</p>
+      <p><strong>Global:</strong> It follows you everywhere. Install it once in your user directory, and it&#x27;s available in every project you open on your machine with no setup and no copying.</p>
+      <p><strong>Checked-in:</strong> The skill is part of your repository. It&#x27;s tracked in git history and travels with the project.</p>
+      <p><strong>Single-project:</strong> It won&#x27;t follow you to your next project, but it&#x27;s scoped to this one for good reason.</p>
+      <p><strong>Communal:</strong> Everyone who edits the project can also contribute to the skill. The skill automatically grows with the project, and everyone on the team gets to build it up over time.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785242731/ai-hero-images/uazwufxlurewh35auiec.png" alt="Whiteboard diagram showing user-level vs project-level skill characteristics" />
+      <p class="img-caption">Whiteboard diagram showing user-level vs project-level skill characteristics</p>
+      <h2>Solo or Team?</h2>
+      <p>If you&#x27;re working mostly solo, user-level skills are probably going to be more convenient because they follow you everywhere.</p>
+      <p>As soon as you have a team or multiple people contributing to the same project, project-level skills are the way to go. They become really beneficial for everyone working in the codebase.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="skill-scope-team-vs-personal">
+        <p class="quiz-q-text">A skill encodes how database migrations must be run in this repo, and two teammates keep getting it wrong. Where does it belong?</p>
+        <ul class="quiz-choices">
+          <li class="correct">The project&#x27;s .agents/skills, checked into the repo</li>
+          <li>Your ~/.agents/skills, so it follows you everywhere</li>
+          <li>Your user directory, and you tell them to copy it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          A skill in your user directory is personal to you and nobody else sees it, so the two teammates getting it wrong still get nothing. Telling them to copy it makes every person repeat the work by hand and lets the copies drift apart. Checked in, it arrives with the clone, sits in git history, and anyone on the team can improve it.
+        </div>
+      </div>
+      <div class="quiz-question" id="user-level-skill-follows-the-machine">
+        <p class="quiz-q-text">You have a shortcut for how you personally like to phrase things, and you want it in every repo you open. Where does it belong?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Your user directory, global across your projects</li>
+          <li>Each project&#x27;s skills folder, checked in one by one</li>
+          <li>A repo you clone into every new project you start</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Checking a personal quality-of-life habit into each project puts your taste in everyone&#x27;s repository and makes you redo it per project - the project level is for what the team relies on. Cloning it in each time is the manual copying the user directory exists to remove. Installed once in your user directory, it is there in every project with no setup.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="navigation-pointers">
+      <h1 class="chapter-title">Navigation Pointers</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">migration-steps-skill</span>
+          <span>Start the lesson: <code>AGENTS.md</code> emptied out, with the migration steps living in a skill</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">seed-script-nav-pointer</span>
+          <span>See my solution: the navigation pointer to <code>scripts/seed.ts</code> added to <code>AGENTS.md</code></span>
+        </div>
+    </div>
+      <p>Imagine your codebase as a satellite map. When an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> needs to find something, it doesn&#x27;t have a birds-eye view. Instead, it travels on what we can call <strong>local roads</strong>.</p>
+      <p>The agent scans directories, opens files one at a time, and follows chains of references to find what it&#x27;s looking for. It gets there eventually, but the journey is slow. Every file opened along the way adds to the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>, consuming <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> that could be used for solving the actual problem.</p>
+      <p>But there&#x27;s another way. A <strong>highway</strong> is different from a local road.</p>
+      <h2>Navigation Pointers: Highways for Your Agent</h2>
+      <p>A <strong>navigation pointer</strong> is a short line in <code>AGENTS.md</code> that sends the agent straight to an important part of the codebase with no scanning in between. It&#x27;s a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">context pointer</a> with a specific job: instead of telling the agent what to do, it tells the agent where to look.</p>
+      <p>You don&#x27;t build highways to everywhere. That would push your entire file tree into <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>, imposing serious context load. You build highways to the places the agent needs often, and let it take local roads for the final stretch once it&#x27;s arrived.</p>
+      <h2>The Quiz Example</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785243611/ai-hero-images/ze6o4bqd3nnshafwsrjj.png" alt="Searching for &#x27;quiz&#x27; in the codebase showing multiple file matches" />
+      <p class="img-caption">Searching for &#x27;quiz&#x27; in the codebase showing multiple file matches</p>
+      <p>When searching for &quot;quiz&quot; in a codebase, an agent might find hits scattered across many files:</p>
+      <pre><code>app/db/schema.ts
+app/routes.ts
+app/services/quizService.ts
+scripts/seed.ts
+...and more</code></pre>
+      <p>The agent then has to follow chains of references to understand the structure.</p>
+      <p>In <code>app/db/schema.ts</code>, it might find:</p>
+      <pre><code>export const quizzes = sqliteTable(&quot;quizzes&quot;, {
+  id: integer(&quot;id&quot;).primaryKey({ autoIncrement: true }),
+  lessonId: integer(&quot;lesson_id&quot;)
+    .notNull()
+    .references(() =&gt; lessons.id),
+  title: text(&quot;title&quot;).notNull(),
+  passingScore: real(&quot;passing_score&quot;).notNull(),
+});
+
+export const quizQuestions = sqliteTable(&quot;quiz_questions&quot;, {
+  id: integer(&quot;id&quot;).primaryKey({ autoIncrement: true }),
+  quizId: integer(&quot;quiz_id&quot;)
+    .notNull()
+    .references(() =&gt; quizzes.id),
+  questionText: text(&quot;question_text&quot;).notNull(),
+  questionType: text(&quot;question_type&quot;).notNull().$type&lt;QuestionType&gt;(),
+  position: integer(&quot;position&quot;).notNull(),
+});</code></pre>
+      <p>The agent has to travel down these chains of references one by one. With a navigation pointer, it knows exactly where to go.</p>
+      <h2>Adding a Navigation Pointer to the Seed Script</h2>
+      <p>In recent lessons, migrations kept breaking because the agent wasn&#x27;t updating <code>scripts/seed.ts</code>. The seed script is a critical file that the agent lands in often, but it tends to miss it when searching.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785243612/ai-hero-images/lhn7rc5nqyph5ll33hrb.png" alt="Prompting the agent to add a navigation pointer to AGENTS.md" />
+      <p class="img-caption">Prompting the agent to add a navigation pointer to AGENTS.md</p>
+      <p>The solution is to add a navigation pointer. Instead of letting the agent discover the seed script through exploration, we point it there directly in <code>AGENTS.md</code>:</p>
+      <pre><code># Navigation
+
+- `scripts/seed.ts` - the definition of the database&#x27;s starting data, rebuilt from scratch on every `npm run db:seed`. Every schema change lands here too.</code></pre>
+      <p>This is extremely light. Three lines. One bullet point. But it gives the agent a crucial leg up for a file that&#x27;s hard to discover but essential to change.</p>
+      <p>When the agent is editing the schema, it now knows: &quot;Every schema change lands in the seed script too.&quot; That&#x27;s the trigger. The agent goes looking for it without needing a <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> to fire.</p>
+      <h2>A Real-World Example: My Skills Repo</h2>
+      <p>Consider a more complex repository where navigation pointers earn their weight.</p>
+      <p>In <a href="https://github.com/mattpocock/skills">my skills repository</a>, the structure looks like this:</p>
+      <pre><code>skills/
+  engineering/
+  productivity/
+  misc/
+  personal/
+  in-progress/
+  deprecated/
+
+docs/
+  engineering/
+  productivity/
+
+.claude-plugin/
+  plugin.json</code></pre>
+      <p>Every skill that gets created has non-obvious dependencies:</p>
+      <ol class="body-list"><li>It goes into a bucket folder under <code>skills/</code> (e.g., <code>skills/productivity/</code>)</li><li>If it&#x27;s in <code>engineering/</code> or <code>productivity/</code>, it must have an entry in <code>.claude-plugin/plugin.json</code></li><li>If it&#x27;s in <code>engineering/</code> or <code>productivity/</code>, it must have a human-facing docs page at <code>docs/&lt;bucket&gt;/&lt;skill-name&gt;.md</code></li><li>If it&#x27;s in <code>engineering/</code> or <code>productivity/</code>, it must be referenced in the top-level <code>README.md</code></li><li>Skills in <code>misc/</code>, <code>personal/</code>, <code>in-progress/</code>, or <code>deprecated/</code> must not appear in the plugin manifest or docs</li></ol>
+      <p>These are invisible on the <a href="https://www.aihero.dev/ai-coding-dictionary/filesystem">filesystem</a>. An agent scanning the directory tree won&#x27;t understand why a new skill in <code>productivity/</code> also needs entries in three other places.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785243612/ai-hero-images/ni1nndzee7eawspsk1is.png" alt="The AGENTS.md file showing navigation pointers and bucket rules" />
+      <p class="img-caption">The AGENTS.md file showing navigation pointers and bucket rules</p>
+      <p>A detailed <code>AGENTS.md</code> with navigation pointers makes the dependencies explicit:</p>
+      <pre><code>Every skill in `engineering/` or `productivity/` (the promoted buckets) must
+have a reference in the top-level `README.md` and an entry in
+`.claude-plugin/plugin.json`&#x27;s `skills` array. Skills in `misc/`, `personal/`,
+`in-progress/`, and `deprecated/` must not appear in either.</code></pre>
+      <h2>The Cost of Stale Pointers</h2>
+      <p>Navigation pointers go out of date. Here&#x27;s the danger: if you move a file but forget to update its pointer in <code>AGENTS.md</code>, the pointer doesn&#x27;t error. It doesn&#x27;t warn you. It just keeps pointing at the old location.</p>
+      <p>Now you have a highway to nowhere. The agent trusts the information in your steering files. It acts on it. A stale pointer sends it to the wrong place, wasting tokens as it tries to figure out why the file isn&#x27;t there.</p>
+      <p>The rule is simple: <strong>whenever you change your project structure, check your navigation pointers</strong>. A stale highway is worse than no highway, because the agent believes it.</p>
+      <h2>Navigation Pointers in a Single Prompt</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785243613/ai-hero-images/ixxmc9rauigey7subet2.png" alt="Using an @-mention to add a file to context" />
+      <p class="img-caption">Using an @-mention to add a file to context</p>
+      <p>The same idea works inside a single message. When you <strong>@-mention</strong> a file in a prompt, you&#x27;re creating a navigation pointer scoped to one <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turn</a>:</p>
+      <div class="table-wrap"><table><thead><tr><th>Scope</th><th>Mechanism</th><th>Location</th></tr></thead><tbody><tr><td>Every session</td><td>Navigation pointer</td><td><code>AGENTS.md</code></td></tr><tr><td>One turn</td><td>@-mention</td><td>Chat message</td></tr></tbody></table></div>
+      <p>Both send the agent straight to a file without scanning. A navigation pointer in <code>AGENTS.md</code> is permanent and applies to every task. An @-mention applies to a single prompt. Same mechanism, different scope.</p>
+      <h2>When to Use Navigation Pointers</h2>
+      <p>Use navigation pointers for files that are:</p>
+      <ul class="body-list"><li>Hard to discover by scanning</li><li>Critical to change when solving a problem</li><li>Part of non-obvious workflows</li></ul>
+      <p>Don&#x27;t use them for everything. Fewer pointers means less maintenance when your codebase changes. But for repositories where structure matters and dependencies are invisible, a good <code>AGENTS.md</code> with navigation pointers can be the difference between an agent that explores effectively and one that keeps missing key files.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="navigation-pointer-for-hard-to-find-file">
+        <p class="quiz-q-text">Migrations keep breaking because the agent never updates the seed script, a file it does not turn up when it searches. What do you add?</p>
+        <ul class="quiz-choices">
+          <li class="correct">A one-line navigation pointer to it in AGENTS.md</li>
+          <li>The seed script&#x27;s contents, pasted into AGENTS.md</li>
+          <li>A rule telling it to search harder before editing</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Pasting the file pushes its whole contents into context in every session, for a file the agent only sometimes needs. Telling it to search harder leaves it on local roads - opening files one at a time - which is the thing that already failed here. One bullet naming the file and why every schema change lands there is enough to send it straight.
+        </div>
+      </div>
+      <div class="quiz-question" id="stale-pointer-costs-more-than-none">
+        <p class="quiz-q-text">You moved three files during a refactor. Nothing errored, the build is green, and the agent seems fine. What still needs checking?</p>
+        <ul class="quiz-choices">
+          <li class="correct">The pointers in AGENTS.md that name the old paths</li>
+          <li>Nothing - the agent will find the new paths itself</li>
+          <li>Whether the tests still cover the files you moved</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          A stale pointer never errors and never warns, so a green build tells you nothing about it - the agent trusts it, acts on it, and burns tokens working out why the file is not there. Leaving it to find the paths by scanning gives up the reason the pointer existed. Whenever project structure changes, the pointers get checked.
+        </div>
+      </div>
+      <div class="quiz-question" id="at-mention-is-a-one-turn-pointer">
+        <p class="quiz-q-text">You need the agent to read one particular config file for this task, and you will not need it again after today. What matches that scope?</p>
+        <ul class="quiz-choices">
+          <li class="correct">@-mention the file in the message you are writing</li>
+          <li>Add the file to the Navigation section of AGENTS.md</li>
+          <li>Describe the folder and let the agent scan for it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          A pointer in AGENTS.md is permanent and applies to every task, so a file you need once would ride along in every session after this one, and would be one more line to keep current. Leaving it to scan puts the agent back on local roads, spending tokens on the journey. An @-mention is the same mechanism scoped to a single turn.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="pruning">
+      <h1 class="chapter-title">Pruning</h1>
+
+      <p>There&#x27;s one big problem with storing files in your project repository that everyone contributes to.</p>
+      <p>They only grow. They always get bigger and very rarely do they get smaller. Every rule in there goes in for a reason, and none of them tend to come out. A file starts at five lines, then grows to 500, then to 1,000.</p>
+      <p>The reason is psychological. Adding a rule feels cheap and it feels safe, especially when you&#x27;re contributing to a group document. Removing one feels like you&#x27;re saying that rule doesn&#x27;t matter anymore, like you&#x27;re stamping over someone&#x27;s work.</p>
+      <p>But this idea of pruning matters. <strong>Pruning is going back through the file, cutting stuff out of it on a regular basis.</strong> It&#x27;s critical for reducing the overall context load.</p>
+      <p>Almost every <code>AGENTS.md</code> file in the real world is far, far too big. The good news is that you can learn to prune them effectively.</p>
+      <h2>The Pruning Toolkit</h2>
+      <p>You need a way to decide, line by line, what stays. The solution is a set of three tests you can run over any steering file. These three tests form the pruning toolkit.</p>
+      <div class="table-wrap"><table><thead><tr><th>Test</th><th>Definition</th></tr></thead><tbody><tr><td>Single Source Of Truth</td><td>Every fact should live in exactly one authoritative place</td></tr><tr><td>Sediment</td><td>Lines that were once true but aren&#x27;t true now</td></tr><tr><td>No-Ops</td><td>Instructions that change nothing about the agent&#x27;s behavior</td></tr></tbody></table></div>
+      <p>Anything that fails these three tests is not earning its place in the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>. Cut it, and you&#x27;ll notice that your steering improves massively.</p>
+      <h2>Test 1: Single Source Of Truth</h2>
+      <p>Every fact that the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> needs should live in exactly one authoritative place. One single source of truth for every single fact.</p>
+      <p>This means avoiding duplication. You might write a rule in your <code>AGENTS.md</code>, then paste a slightly different version into a doc. Maybe they&#x27;re being edited in different places, or they come in from different pull requests. Now you have these different, often competing sources of truth for what is exactly the same information.</p>
+      <p>When you have lots of duplication, the agent often can&#x27;t tell which copy is live, so it trusts the wrong one. You can even have duplication within the same file when it&#x27;s particularly long.</p>
+      <h3>The Cost of Duplication</h3>
+      <p>Duplication costs you in three ways:</p>
+      <ol class="body-list"><li><strong>Maintenance</strong> - Every time you need to change the behavior, you have to change it in multiple places.</li></ol>
+      <ol class="body-list"><li><strong>Context load</strong> - You&#x27;re paying <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> saying the same thing over and over.</li></ol>
+      <ol class="body-list"><li><strong>Prominence</strong> - That duplicated information becomes more prominent than the stuff that hasn&#x27;t been duplicated, so it weights much higher than its actual real importance.</li></ol>
+      <p>This means duplicated content drowns out other important information that just hasn&#x27;t been duplicated. A fact with three homes is a fact you no longer control.</p>
+      <p>Keep every fact in one place, and point at that place from everywhere else.</p>
+      <h2>Test 2: Sediment</h2>
+      <p>Sediment is the second thing that rots a steering file. Sediment is really a psychological problem, it&#x27;s a problem in how teams tend to work with these files.</p>
+      <p>Sediment layers build up in your <code>AGENTS.md</code> file over time because <strong>adding feels safe and removing feels risky</strong>. Any steering file without a strong pruning discipline will fall into sediment, becoming longer and longer and longer.</p>
+      <p>Every rule makes sense the day you write it. But projects move. The library gets swapped, conventions change, the bug you were guarding against gets fixed. And the rule you wrote for it stays. Nobody deletes it. It settles at the bottom of the file, dragging the agent toward a world that no longer exists.</p>
+      <p>This means your <code>AGENTS.md</code> file slowly becomes more irrelevant for more tasks. Having sediment means you get a lot of irrelevant stuff in the context window loading up the <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> and making the agent perform worse.</p>
+      <h3>Identifying Sediment</h3>
+      <p>Sediment is particularly dangerous because it was probably once correct. It might have been correct for a bit, or it might just be correct but not applicable in all situations. <strong>You need to be ruthless with removing it or putting it behind a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">pointer</a>.</strong></p>
+      <p>Ask of every line: is this still true?</p>
+      <h2>Test 3: No-Ops</h2>
+      <p>No-ops are probably the most pernicious problem, the most easy to add and hardest to remove.</p>
+      <p>A <strong>no-op</strong> is an instruction that just does nothing, it changes nothing about the output. This happens in two ways:</p>
+      <ul class="body-list"><li>The <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> already does it by default</li><li>It does nothing in the context of that particular steering instruction</li></ul>
+      <p>Imagine you&#x27;ve written an <code>/implement</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> and it has an instruction saying &quot;write a detailed commit message.&quot; Is that instruction actually needed? What would happen if you deleted it? Would it still write a good commit message? Probably it would.</p>
+      <p>So you&#x27;re paying context load to tell it what it would have done regardless.</p>
+      <h3>Detecting No-Ops</h3>
+      <p>The way you get rid of a no-op is simple: <strong>remove it and then see if the behavior has changed.</strong> If it hasn&#x27;t changed, then that line was probably a no-op and could be deleted.</p>
+      <p>This test is one question: does this line change behaviour versus the default?</p>
+      <p><strong>An instruction can be perfectly relevant to the situation and still be a no-op.</strong> It can be true, on-topic, and still not worth a single token, because the agent didn&#x27;t need telling.</p>
+      <p>And a no-op isn&#x27;t free. It&#x27;s still in context, still paying context load, still diluting the lines around it that matter.</p>
+      <h2>Putting It Together</h2>
+      <p>So here&#x27;s the pruning toolkit, three tests to run over every steering file:</p>
+      <ol class="body-list"><li><strong>Is this instruction duplicated</strong>, breaking single source of truth?</li><li><strong>Is this instruction a piece of sediment</strong> that is true once but not true now?</li><li><strong>Is this line a no-op?</strong> Does it actually do anything to change behavior?</li></ol>
+      <p>Anything that fails these three tests is not earning its place in the context window. It&#x27;s just costing you context load for no gain.</p>
+      <p>Cut it, and you&#x27;ll notice that your steering improves massively.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="no-op-relevant-but-earns-nothing">
+        <p class="quiz-q-text">Your implement skill says &#x27;write a detailed commit message.&#x27; You delete the line and the commit messages come out the same. What now?</p>
+        <ul class="quiz-choices">
+          <li class="correct">It was a no-op, so the line stays deleted</li>
+          <li>Put it back - it was holding the quality up</li>
+          <li>Move it into AGENTS.md so it always applies</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The behaviour did not change against the default, which is the whole test - so nothing was holding the quality up, the model was already doing it. Moving the line to AGENTS.md makes it worse: it now costs context load on every request instead of only when the skill fires, and it still changes nothing. An instruction can be true and on topic and still not worth a token.
+        </div>
+      </div>
+      <div class="quiz-question" id="one-home-per-fact">
+        <p class="quiz-q-text">The same naming convention is written in AGENTS.md and, in slightly different words, on a docs page. What do you do?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Keep one copy and point at it from the other place</li>
+          <li>Edit both copies until the wording matches exactly</li>
+          <li>Leave both - saying it twice makes the rule stick</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Matching the wording still leaves two places to change every time the rule changes, and still gives the agent no way to tell which copy is live. Saying it twice does make it weigh heavier, but that prominence is the cost, not the prize: it outranks its real importance and drowns out the lines said only once. One authoritative home, pointed at from everywhere else.
+        </div>
+      </div>
+      <div class="quiz-question" id="sediment-goes-or-goes-behind-a-pointer">
+        <p class="quiz-q-text">A rule in your steering file guards against a quirk in a library your project swapped out last quarter. What happens to the line?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Cut it, or put what survives of it behind a pointer</li>
+          <li>Keep it, in case the old library ever comes back</li>
+          <li>Rewrite it as advice about libraries more broadly</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Keeping a line that describes a world that no longer exists drags the agent toward that world, and you pay context load for it in every session while it does so. Generalising it produces a line that is true of everything and changes no behaviour - a no-op, which is not an upgrade on a false rule. Sediment gets cut, or moved behind a pointer where it costs nothing.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="trying-out-pruning">
+      <h1 class="chapter-title">Trying Out Pruning</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">init-generated-claude-md</span>
+          <span>Start the lesson: the bloated <code>AGENTS.md</code> that <code>/init</code> generated</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">pruned-claude-md</span>
+          <span>See my solution: <code>AGENTS.md</code> pruned to a navigation layer, with <code>testing-services</code> and <code>adding-a-route</code> extracted as skills</span>
+        </div>
+    </div>
+      <p>An <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> can generate an <code>AGENTS.md</code> file from scratch using the <code>/init</code> command. It will scan your codebase and create steering guidance automatically.</p>
+      <p>The problem? It usually creates something <strong>enormous</strong>. Generic advice, boilerplate, directory listings, command tables - many things that don&#x27;t actually change how the agent behaves. And all of it costs <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> every time the agent runs.</p>
+      <p>Your job is to read through a generated file and prune it ruthlessly. Keep only what earns its place in every <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>. Delete the rest.</p>
+      <h2>The Three Tests</h2>
+      <p>Use these three filters from the pruning toolkit to decide what stays and what goes:</p>
+      <p><strong>Single source of truth</strong> Is this fact already true somewhere else in your codebase, or duplicated inside the file itself? If the agent can discover it by reading code, you don&#x27;t need to steer it toward it.</p>
+      <p><strong>Sediment</strong> Is this actually true of your specific project, or is it generic filler that could apply to any codebase? &quot;Write unit tests for all new utilities&quot; is sediment. &quot;Our tests run on Vitest in watch mode with <code>npm run test:watch</code>&quot; is not.</p>
+      <p><strong>No-ops</strong> Does this change the agent&#x27;s behaviour versus what it already does by default? If it doesn&#x27;t influence decisions, it&#x27;s taking up space for nothing.</p>
+      <p>Everything that fails any of these tests should be cut. Behind what remains, ask yourself: does every line earn a place in every session?</p>
+      <h2>Steps To Complete</h2>
+      <ul class="checklist"><li>Open the generated <code>AGENTS.md</code> file and read it through from top to bottom</li></ul>
+      <p>Get a sense of its structure. Note sections that feel generic, sections that duplicate what&#x27;s obvious from the code, and sections that repeat information already in the file.</p>
+      <ul class="checklist"><li>Identify no-ops</li></ul>
+      <p>Look for advice that reads like best practices rather than project-specific guidance. Examples: &quot;Write unit tests for all new utilities&quot;, &quot;Provide helpful error messages to users&quot;, &quot;Never include sensitive information in commits&quot;. These don&#x27;t steer the agent - they describe what it already does.</p>
+      <p>Mark them for deletion.</p>
+      <ul class="checklist"><li>Identify sediment</li></ul>
+      <p>Find lines that could apply to any codebase rather than your specific one. A generic project overview, a command table listing every npm script without context, directory listings, generic development tips. These aren&#x27;t lies, but they&#x27;re not earning their tokens.</p>
+      <p>Mark them for deletion.</p>
+      <ul class="checklist"><li>Identify duplication</li></ul>
+      <p>Scan for facts repeated within the file. Check if any section duplicates information that lives in a <code>README.md</code>, <code>package.json</code>, code comments, or type definitions elsewhere in the repo. If the agent can read the source, you don&#x27;t need to transcribe it.</p>
+      <p>Mark the redundant copy for deletion.</p>
+      <ul class="checklist"><li>Run <code>/context</code> in a fresh terminal to measure token usage</li></ul>
+      <p>Open a new agent session in the same directory and run <code>/context</code>. Note the token count for the Memory Files section - this shows what <code>AGENTS.md</code> is costing you per session.</p>
+      <p>You&#x27;ll use this number to verify your pruning worked.</p>
+      <ul class="checklist"><li>Delete or refactor marked sections using <code>/writing-for-agents</code></li></ul>
+      <p>For each section you marked, decide: delete it entirely, or move it behind a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">pointer</a> (a link or reference to where the agent can find the real source)?</p>
+      <p>Use the <code>/writing-for-agents</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> to help you edit the file. It will guide you through rewriting sections to be tighter and more precise, or removing them entirely.</p>
+      <p>If a section is truly important but already documented elsewhere, add a pointer instead. If it&#x27;s genuinely generic or redundant, delete it outright.</p>
+      <ul class="checklist"><li>Run <code>/context</code> again and compare</li></ul>
+      <p>Open a fresh agent session and run <code>/context</code> again. The Memory Files token count should drop noticeably. This is your proof that pruning worked.</p>
+      <ul class="checklist"><li>Verify the file still makes sense</li></ul>
+      <p>Read through the pruned <code>AGENTS.md</code> one more time. Does every remaining line steer the agent toward decisions it wouldn&#x27;t make otherwise? If yes, you&#x27;re done. If you spot more that could go, cut it.</p>
+    </section>
+
+    <section class="chapter" id="trying-out-pruning-solution">
+      <h1 class="chapter-title">Trying Out Pruning Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">init-generated-claude-md</span>
+          <span>Start the lesson: the bloated <code>AGENTS.md</code> that <code>/init</code> generated</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">pruned-claude-md</span>
+          <span>See my solution: the 11-line <code>AGENTS.md</code>, with the testing and routing procedures behind skills</span>
+        </div>
+    </div>
+      <p>The first thing to think about when looking at a bloated <code>AGENTS.md</code> file is duplication. Not just duplication within the file itself, but duplication within easily accessible sources inside the codebase.</p>
+      <h2>Finding the Duplicates</h2>
+      <p>The most obvious duplication appears in the development commands section.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244400/ai-hero-images/keliqrzuuf7vvwjptaxv.png" alt="The development commands section showing npm run dev, npm build, and npm start" />
+      <p class="img-caption">The development commands section showing npm run dev, npm build, and npm start</p>
+      <p>You&#x27;ll find <code>npm run dev</code>, <code>npm run build</code>, and <code>npm run start</code> listed there, but these commands already live in <code>package.json</code>:</p>
+      <pre><code>{
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;react-router dev&quot;,
+    &quot;build&quot;: &quot;react-router build&quot;,
+    &quot;start&quot;: &quot;react-router-serve ./build/server/index.js&quot;
+  }
+}</code></pre>
+      <p>It&#x27;s trivial for an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> to find these commands in <code>package.json</code>.</p>
+      <p>They&#x27;re the executable source of truth. The descriptions of what each command does can be inferred from the agent&#x27;s <a href="https://www.aihero.dev/ai-coding-dictionary/parametric-knowledge">parametric knowledge</a> - it knows that <code>npm run dev</code> starts a dev server, and it can verify that from the output it sees. There&#x27;s no need to duplicate this information.</p>
+      <p>This is a single source of truth violation. When you have two pieces of information competing to be authoritative, you should keep the executable thing as the source of truth.</p>
+      <h2>The Overview and Tech Stack Problem</h2>
+      <p>Look at the overview and tech stack sections. That same information already exists in the project&#x27;s <code>README.md</code> at the root:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244401/ai-hero-images/yqziayktbkopgjqi29h1.png" alt="README.md showing the overview and tech stack" />
+      <p class="img-caption">README.md showing the overview and tech stack</p>
+      <pre><code>&gt; The exercise repo for the AI Coding Crash Course
+
+This is a full-stack course platform (think a mini Udemy) built with React Router, TypeScript, SQLite, and Drizzle ORM.</code></pre>
+      <p>The agent knows the <code>README.md</code> exists at the root of the project. It can read it and understand the tech stack from there. It can also look at the directory structure and see that it&#x27;s a React Router project. If it needs to check the version of React Router being used, it can look inside <code>package.json</code> and see the installed version.</p>
+      <p>These sections don&#x27;t need to exist in <code>AGENTS.md</code> at all.</p>
+      <h2>The Preamble is a No-Op</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244401/ai-hero-images/ymygytr82e3dlnibjjfb.png" alt="The preamble line in AGENTS.md saying &#x27;This file provides guidance to Claude Code&#x27;" />
+      <p class="img-caption">The preamble line in AGENTS.md saying &#x27;This file provides guidance to Claude Code&#x27;</p>
+      <p>The opening line that says &quot;This file provides guidance to the agent when working with code in this repository&quot; - everyone already knows that. The agent knows it. The <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a> knows it. This is information that adds no value and should be removed entirely.</p>
+      <h2>Formatting Rules Are Assumed Knowledge</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244402/ai-hero-images/n0dftpi4bxuomvzc6rxi.png" alt="The Prettier configuration line in AGENTS.md" />
+      <p class="img-caption">The Prettier configuration line in AGENTS.md</p>
+      <p>There&#x27;s a line about Prettier being configured in <code>.prettierrc</code>. The agent can tell that Prettier is being used for several reasons:</p>
+      <ul class="body-list"><li>It can see <code>.prettierrc</code> exists at the root by running <code>ls</code></li><li>It can see Prettier in <code>package.json</code> as a dependency</li><li>It already knows Prettier conventions from its <a href="https://www.aihero.dev/ai-coding-dictionary/training">training</a></li></ul>
+      <p>There&#x27;s no reason to spell this out.</p>
+      <h2>The Directory Structure Listing</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244403/ai-hero-images/ids8xjl7pqpf7dkgmhwx.png" alt="The entire directory structure section in AGENTS.md" />
+      <p class="img-caption">The entire directory structure section in AGENTS.md</p>
+      <p>An entire directory structure is listed out, but this just repeats the source of truth that exists in the <a href="https://www.aihero.dev/ai-coding-dictionary/filesystem">filesystem</a> itself. These <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">navigation pointers</a> can be useful, but only when they point to something that&#x27;s genuinely hard to find. For example, <code>scripts/seed.ts</code> sits outside the <code>app</code> directory, so it makes sense to highlight it. But listing out <code>app/routes/</code>, <code>app/services/</code>, and <code>app/components/</code>—these are obvious from a directory listing.</p>
+      <p>Some of these pointers are worth keeping if they provide real navigation value, but the entire directory structure section is mostly redundant.</p>
+      <h2>The Architecture Section Contains Inline Documentation</h2>
+      <p>Here&#x27;s where things get interesting. The architecture section contains lots of detailed information, but much of it is already documented in the code itself.</p>
+      <p>When you look at <code>app/db/index.ts</code>, you find:</p>
+      <pre><code>// The connection is opened lazily, on first use. Opening it at module scope
+// made this module side-effectful, which meant Rollup could not drop it from
+// the client bundle when a route imported a service purely for its loader -
+// dragging better-sqlite3 into the browser. Keep this file side-effect free.</code></pre>
+      <p>This exact explanation already exists in the code.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244404/ai-hero-images/omcxouibcxumj3vhu8ya.png" alt="comment-markdown.server.ts showing the comment header" />
+      <p class="img-caption">comment-markdown.server.ts showing the comment header</p>
+      <p>Look at <code>app/lib/comment-markdown.server.ts</code> and you&#x27;ll see:</p>
+      <pre><code>// ─── Comment Rendering ───
+// Deliberately separate from renderMarkdown (~/lib/markdown.server).
+//
+// renderMarkdown handles lesson content and sales copy, which are written by
+// instructors - trusted input, raw HTML allowed through. Comments are written by
+// students, so the same treatment would be stored XSS against every reader.</code></pre>
+      <p>Again, this documentation is already there, inline with the code. The agent will read it.</p>
+      <h2>What Actually Earns Its Place</h2>
+      <p>Some information genuinely earns its place in <code>AGENTS.md</code>. For example, the fact that routing is config-based, not file-based. If an agent creates a route file and doesn&#x27;t register it in the route table, the route won&#x27;t work and returns a 404.</p>
+      <p>Without this guidance, agents will miss this step consistently. This is behavior-changing information that should stay.</p>
+      <p>The same goes for the <code>vi.mock</code> getter pattern for testing. If you use a plain object instead of a getter function, the test captures the value once at mock time. Every test after the first then runs against a stale, closed database. This fails silently - your tests pass, but they&#x27;re testing against old data.</p>
+      <h2>The Testing Block Should Go Behind a Pointer</h2>
+      <p>The testing block in <code>AGENTS.md</code> is a full procedure. It teaches you how to write tests with the database mock. This is the natural candidate for a <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> extraction.</p>
+      <p>Instead of keeping this inline in <code>AGENTS.md</code>, it should live behind a pointer. When an agent is writing a test, it should be invited to read the <code>testing-services</code> skill. When it&#x27;s adding a new route, it should see the <code>adding-a-route</code> skill.</p>
+      <p>This way, <code>AGENTS.md</code> becomes an index with navigation pointers, not a procedure manual.</p>
+      <h2>Clearing Context and Re-Evaluating</h2>
+      <p>After reading through the whole file once, <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> and start fresh. This resets your thinking.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244404/ai-hero-images/bcebhm7min7n2ot3mb8h.png" alt="The /context output showing 2.4k tokens" />
+      <p class="img-caption">The /context output showing 2.4k tokens</p>
+      <p>At this point, <code>AGENTS.md</code> is roughly 2.4k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a>. That&#x27;s about half of where it started. The question now is: can we get more aggressive?</p>
+      <h2>Running /writing-for-agents</h2>
+      <p>Ask the <code>/writing-for-agents</code> skill to do the pruning work:</p>
+      <pre><code>I want you to find me candidates in AGENTS.md that have single-source-of-truth issues between AGENTS.md and the rest of the stuff on the filesystem. I want you to give me candidates for removal or for putting behind pointers. Basically, I want you to do a whole pruning pass on AGENTS.md, and the ideal state for it should be just a few navigation pointers to different documentation.</code></pre>
+      <p>The agent will read through the file and the filesystem, checking each claim against its actual source.</p>
+      <p>It should report back with:</p>
+      <ul class="body-list"><li>Verbatim duplicates that already exist in code comments</li><li>No-ops that the agent already knows how to do</li><li>Obvious filesystem facts that don&#x27;t need stating</li><li>Lines that genuinely earn their place</li></ul>
+      <p>After the first pass, you&#x27;re down to 51 lines. Much better.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244405/ai-hero-images/moo7kywbgi4av1pb68wz.png" alt="The pruned AGENTS.md file after the first pass" />
+      <p class="img-caption">The pruned AGENTS.md file after the first pass</p>
+      <p>The agent has aggressively removed things. It kept the config-based routing requirement, the <code>vi.mock</code> getter pattern, the TypeScript typegen issue, and the dev UI error message mapping.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244406/ai-hero-images/nc6gl8gj7dt9zhr6gbxb.png" alt="The agent&#x27;s report showing what it removed and kept" />
+      <p class="img-caption">The agent&#x27;s report showing what it removed and kept</p>
+      <p>But there&#x27;s still more to prune.</p>
+      <h2>A Second Pass: Putting Things Behind Pointers</h2>
+      <p>Now ask the skill for another pass:</p>
+      <pre><code>I would like you to do another pass for me and look for opportunities where we can take even more stuff out of AGENTS.md and put them behind pointers. I agree with the deletions that you&#x27;ve made, but I think there are more opportunities for putting existing docs behind pointers and writing careful descriptions so that they are grabbed at the right time.</code></pre>
+      <p>On this second pass, the agent will:</p>
+      <ol class="body-list"><li>Extract the testing pattern into a <code>testing-services</code> skill</li><li>Extract the routing pattern into an <code>adding-a-route</code> skill</li><li>Create a triage table for error symptoms and their causes</li><li>Keep only the navigation layer in <code>AGENTS.md</code></li></ol>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244407/ai-hero-images/xqyju3l1yjpeprmfyoc7.png" alt="The final 31-line AGENTS.md file" />
+      <p class="img-caption">The final 31-line AGENTS.md file</p>
+      <p>The agent is following a principle: task procedures have predictable triggers. You know when you&#x27;re adding a route. You know when you&#x27;re writing a test. These belong behind pointers with clear descriptions. Error recovery has unpredictable triggers, so the triage table stays inline.</p>
+      <h2>What the Skills Look Like</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244408/ai-hero-images/d1dz6jdutgw0f170dws5.png" alt="The testing-services skill file" />
+      <p class="img-caption">The testing-services skill file</p>
+      <p>The <code>testing-services</code> skill contains the full <code>vi.mock</code> pattern, explains why the getter specifically matters (stale database on test 2+), and includes the single-test invocations:</p>
+      <pre><code>Use when adding or changing a test under app/services or app/lib, or when a test writes to data.db instead of an in-memory database.</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244409/ai-hero-images/vxmx1qp4e0c6visieztb.png" alt="The adding-a-route skill file" />
+      <p class="img-caption">The adding-a-route skill file</p>
+      <p>The <code>adding-a-route</code> skill contains the config-based routing explanation, the two-edit requirement, the filename convention with dots and dollar signs, and the loader/action-authorised-separately rule:</p>
+      <pre><code>Use when adding or removing a page, URL, or route, or when a new route renders a 404.</code></pre>
+      <h2>The Triage Table</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244410/ai-hero-images/un4mulbkpuiqzhdojiuq.png" alt="The &#x27;When something breaks&#x27; triage table" />
+      <p class="img-caption">The &#x27;When something breaks&#x27; triage table</p>
+      <p>What stays in <code>AGENTS.md</code> is a simple triage table that maps symptoms to causes:</p>
+      <div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Cause</th></tr></thead><tbody><tr><td>401 &quot;Select a user from the DevUI panel&quot;</td><td>No user in the session</td></tr><tr><td><code>tsc</code> reports every <code>./+types/*</code> import missing</td><td>Typegen has not run. Use <code>npm run typecheck</code></td></tr><tr><td>A test run leaves rows in <code>data.db</code></td><td>The <code>~/db</code> mock is wrong</td></tr></tbody></table></div>
+      <p>This is exactly what a navigation pointer is for. When something breaks, you don&#x27;t need the full procedure - you just need to know which lever to pull.</p>
+      <h2>Deleting the Obvious No-Ops</h2>
+      <p>After the agent&#x27;s second pass, you&#x27;ll see some things that are still no-ops:</p>
+      <ul class="body-list"><li>A line saying that the comment header convention documents modules</li><li>A directory listing that repeats the filesystem</li><li>A pointer to the database migrations skill when the skill itself is already loaded</li></ul>
+      <p>These can be deleted. The comment header is already obvious from reading the code. The directory listing is already visible. The database migrations skill is already auto-loaded as a skill, so a line in <code>AGENTS.md</code> pointing to it is a third copy of information.</p>
+      <h2>The Final File</h2>
+      <p>By the end, <code>AGENTS.md</code> is just 11 lines:</p>
+      <pre><code>Requests flow route → service → Drizzle. Routes own HTTP concerns and
+rendering; services own data access and use the shared db instance
+directly rather than receiving a handle.
+
+## When something breaks
+
+| Symptom | Cause |
+| 401 &quot;Select a user from the DevUI panel&quot; | No user in session - use the DevUI panel |
+| tsc reports ./+types/* missing | Typegen hasn&#x27;t run - use npm run typecheck |
+| Test run leaves rows in data.db | The ~/db mock is wrong - see testing-services skill |</code></pre>
+      <p>Every line is doing work. There&#x27;s no sediment. There&#x27;s no duplication. There&#x27;s no telling the agent things it already knows.</p>
+      <h2>The Discipline</h2>
+      <p>The real discipline isn&#x27;t writing more steering documentation. It&#x27;s keeping what you have honest.</p>
+      <p>When you write guidance for an agent, you&#x27;re creating a maintenance burden. Every line you keep needs to stay current. Every claim you make needs to stay true. The longer the file, the more likely it is to rot, to drift from the actual codebase, to become a liability.</p>
+      <p>The pruning process forces you to ask hard questions:</p>
+      <ul class="body-list"><li>Does the agent already know this?</li><li>Is this documented somewhere else?</li><li>Is this a real pitfall or a no-op?</li><li>Will this statement still be true in a month?</li></ul>
+      <p>By the time you&#x27;re done, what remains is lean and honest. It&#x27;s the difference between guidance that actually steers behavior and noise that the agent learns to ignore.</p>
+    </section>
+
+    <section class="chapter" id="claude-codes-automatic-memory">
+      <h1 class="chapter-title">Claude Code&#x27;s Automatic Memory</h1>
+
+      <p>There&#x27;s one more source of steering that we haven&#x27;t discussed, and that is the one that the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> writes for itself.</p>
+      <h2>How Automatic Memory Works</h2>
+      <p>Most <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harnesses</a> ship with a <a href="https://www.aihero.dev/ai-coding-dictionary/memory-system">memory system</a>, one that the agent writes to and reads from without you necessarily asking. As you work, the agent notices things worth remembering. So it notices a correction that you made to its behavior or a preference that you expressed or a fact about how you want work done and then saves it into a local file somewhere.</p>
+      <p>Those files then get read into the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> in later <a href="https://www.aihero.dev/ai-coding-dictionary/session">sessions</a>. Depending on the harness, it&#x27;s either like an <code>AGENTS.md</code>, pushed in, or as a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">pointer</a>.</p>
+      <p>This means, in theory, the agent builds up a picture of how you like to work without you needing to steer it. It&#x27;s steering itself. It&#x27;s grabbing the wheel.</p>
+      <h2>Finding Automatic Memory</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244641/ai-hero-images/rb5shn9oucfpvfyebeuk.png" alt="Claude Code /memory command showing auto-memory is on" />
+      <p class="img-caption">Claude Code /memory command showing auto-memory is on</p>
+      <p>In Claude Code, we can look at this by running <code>/memory</code> here, and we can see that automatic memory is on.</p>
+      <p>We can see that it uses <code>CLAUDE.md</code> as the name for memory, which is interesting. And there&#x27;s also an auto-memory section.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244642/ai-hero-images/weydt0owzza0llyzapjk.png" alt="Auto-memory folder opened in Chrome showing MEMORY.md file" />
+      <p class="img-caption">Auto-memory folder opened in Chrome showing MEMORY.md file</p>
+      <p>When we press &quot;open auto-memory folder,&quot; it opens in Chrome (oddly enough), and there is a little <code>MEMORY.md</code> file in here.</p>
+      <p>The auto-memory file is stored outside your repo, in Claude Code&#x27;s per-project state directory, keyed by the current working directory. That&#x27;s why it never shows up in <code>git status</code> and never gets <a href="https://www.aihero.dev/ai-coding-dictionary/human-review">code-reviewed</a>.</p>
+      <h2>What Auto-Memory Contains</h2>
+      <p>Inside <code>MEMORY.md</code> there&#x27;s an index of pointers to memory files the agent has written. In this case, there&#x27;s an entry that reads:</p>
+      <pre><code>- Editing course repos skill - this is a course repo; the governing skill lives in personal-wiki, not here</code></pre>
+      <p>That&#x27;s the agent reading its own memory back at you. It&#x27;s noticing facts about your project and stashing them for later sessions.</p>
+      <p>The linked memory file itself uses the same shape as a <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a>. It has YAML frontmatter with <code>name</code> and <code>description</code>, then a body. The agent is essentially writing itself skills behind your back.</p>
+      <h2>The Problem With Stale Memory</h2>
+      <p>Here&#x27;s the issue: automatic memory is like auto-sediment. It&#x27;s sediment that&#x27;s writing itself, building up stale layers that are very rarely removed by the agent.</p>
+      <p>The agent writes entries and doesn&#x27;t remove them. So the file only grows. Every line in it is paying a context load in every session. A preference you had once and changed becomes a wrong assumption the agent keeps trusting. A hint that fit one task becomes a rule that follows you into every task after.</p>
+      <p>And because you didn&#x27;t write these lines, you&#x27;re less likely to go in and prune them.</p>
+      <p>If you look at the memory metadata, you can see the original session that created it, often weeks old. It&#x27;s been silently riding along in the context window ever since.</p>
+      <h2>The Recommendation</h2>
+      <p>I&#x27;ve already shown you how ruthlessly I prune <code>AGENTS.md</code>, how much I dislike having the agent steer itself because of all these no-ops and the rubbish that it piles into the context window. Automatic memory is exactly that problem, except now it happens without you deciding what goes in.</p>
+      <p>So here&#x27;s what I recommend: go into auto-memory and turn it off.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785244643/ai-hero-images/m3z3pwp41hgrsfkmeyjn.png" alt="Turning off auto-memory in Claude Code settings" />
+      <p class="img-caption">Turning off auto-memory in Claude Code settings</p>
+      <p>Now no memories will be stored. This reduces the context window because you don&#x27;t have the <a href="https://www.aihero.dev/ai-coding-dictionary/tool">tool</a> in there to create memories. What a relief.</p>
+      <p>A lot of people ask me about memory systems and whether they should add them into their setups. My answer is: no. You as the user should be in control of how memories are created, how steering is done.</p>
+      <p>Because if you allow these automatic memories to just accrue and accrue, then you&#x27;re building up useless sediment in your context.</p>
+      <p>The whole point of this section is steering on purpose: choosing what earns a place in context, and keeping it current. Automatic memory works against that. It&#x27;s steering you didn&#x27;t choose, accumulating where you&#x27;re not looking.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="auto-memory-off-by-recommendation">
+        <p class="quiz-q-text">Your harness offers to remember corrections you make and feed them back in later sessions, without you asking. Do you leave it on?</p>
+        <ul class="quiz-choices">
+          <li class="correct">No - turn it off and steer with files you wrote</li>
+          <li>Yes - it learns how you work at no effort to you</li>
+          <li>Yes, but read the memory folder before you start</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The agent writes entries and does not remove them, so the file only grows and every line pays context load in every session - that is not free learning, it is sediment writing itself. Reading the folder before each session is work you will not keep doing, and lines you did not write are the ones you are least likely to prune. Turning it off also takes the memory tool out of the window.
+        </div>
+      </div>
+      <div class="quiz-question" id="auto-memory-escapes-code-review">
+        <p class="quiz-q-text">Why does an automatic memory file never turn up in a code review?</p>
+        <ul class="quiz-choices">
+          <li class="correct">It is kept outside the repo, in per-project state</li>
+          <li>It is written into the repo, but ignored by git</li>
+          <li>It is rebuilt each session, so there is no diff</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          It is not in your repository at all, so there is nothing for git to ignore - it sits in the harness&#x27;s per-project state directory, keyed by the working directory, which is why it never shows in git status. It is not rebuilt each session either: entries written weeks ago are still riding along in the context window.
+        </div>
+      </div>
+      <div class="quiz-question" id="auto-memory-is-self-writing-sediment">
+        <p class="quiz-q-text">The agent saved a preference you held three months ago and have since changed your mind about. What happens in today&#x27;s session?</p>
+        <ul class="quiz-choices">
+          <li class="correct">It loads, and the agent acts on the old preference</li>
+          <li>It ages out, since newer corrections replace it</li>
+          <li>You are asked to confirm it before it gets used</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Nothing ages these entries out and nothing asks you about them - the agent writes them and very rarely removes them, so a preference you have changed becomes a wrong assumption it keeps trusting, and a hint that fitted one task follows you into every task after. It goes on paying context load until you go in and delete it yourself.
+        </div>
+      </div>
+    </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('section.chapter');
+  const navLinks = document.querySelectorAll('nav.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`nav.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

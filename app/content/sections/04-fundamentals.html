@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04 Fundamentals</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1e2333;
+      --border: #2a3045;
+      --accent: #6c8ef5;
+      --accent2: #a78bfa;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --code-bg: #0d1117;
+      --code-border: #30363d;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #f87171;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .page-wrap { display: flex; min-height: 100vh; }
+
+    nav.sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.5rem 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-logo span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-logo strong {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    nav.sidebar ul { list-style: none; padding: 0 0.75rem; }
+
+    nav.sidebar li a {
+      display: block;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    nav.sidebar li a:hover { background: var(--surface2); color: var(--text); }
+    nav.sidebar li a.active { background: rgba(108,142,245,0.15); color: var(--accent); }
+
+    nav.sidebar .nav-section {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 1rem 1.5rem 0.3rem;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 3rem 2rem 6rem;
+      max-width: 820px;
+    }
+
+    .chapter {
+      margin-bottom: 5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chapter:last-child { border-bottom: none; }
+
+    h1.chapter-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    h1.chapter-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    h2 { font-size: 1.3rem; font-weight: 700; color: var(--text); margin: 2.5rem 0 0.75rem; }
+    h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent2); margin: 1.75rem 0 0.5rem; }
+    h4 { font-size: 0.95rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.4rem; }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(108,142,245,0.3);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    a:hover { border-color: var(--accent); color: #8facff; }
+    strong { color: var(--text); font-weight: 700; }
+    em { color: var(--muted); font-style: italic; }
+
+    .lesson-img {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .img-caption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: -0.75rem;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.875em;
+      background: rgba(108,142,245,0.12);
+      color: #a5b4fc;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+    }
+
+    pre code { background: none; padding: 0; color: #c9d1d9; }
+    .diff-add { color: var(--green); }
+
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr { background: var(--surface2); }
+    th, td { padding: 0.6rem 1rem; border: 1px solid var(--border); text-align: left; }
+    th { font-weight: 700; color: var(--text); }
+    td { color: var(--muted); }
+    td code { color: #a5b4fc; }
+    td strong { color: var(--text); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+    .checklist { list-style: none; padding: 0; margin: 0.75rem 0 1.25rem; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.45rem 0;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .checklist li::before {
+      content: '☐';
+      color: var(--accent);
+      font-size: 1.1em;
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+
+    .callout {
+      border-left: 4px solid var(--yellow);
+      background: rgba(251,191,36,0.07);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .callout strong { color: var(--yellow); }
+    .callout-info { border-color: var(--accent); background: rgba(108,142,245,0.08); }
+    .callout-info strong { color: var(--accent); }
+
+    blockquote {
+      border-left: 4px solid var(--accent2);
+      background: rgba(167,139,250,0.08);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .commit-map {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.875rem;
+    }
+    .commit-map-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .commit-map-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.4rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .commit-map-item:first-of-type { border-top: none; }
+    .commit-id {
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      background: rgba(108,142,245,0.15);
+      color: var(--accent);
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 0.1em;
+    }
+
+    .prompt-block {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    ul.body-list, ol.body-list {
+      padding-left: 1.5rem;
+      margin: 0.5rem 0 1.25rem;
+    }
+    ul.body-list li, ol.body-list li { margin-bottom: 0.35rem; }
+
+    .quiz-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 2rem 0 1.5rem;
+    }
+    .quiz-block-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+    .quiz-question {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+    .quiz-question:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+    .quiz-q-text { font-weight: 600; margin-bottom: 0.75rem; color: var(--text); }
+    .quiz-choices { list-style: none; padding: 0; margin: 0 0 0.75rem; }
+    .quiz-choices li {
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.3rem;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .quiz-choices li.correct {
+      background: rgba(52,211,153,0.1);
+      border-color: rgba(52,211,153,0.3);
+      color: var(--green);
+    }
+    .quiz-answer {
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+    .quiz-answer-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+
+    @media (max-width: 768px) {
+      nav.sidebar { display: none; }
+      main { padding: 2rem 1.25rem 4rem; }
+      h1.chapter-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span>Section 04</span>
+      <strong>Fundamentals</strong>
+    </div>
+    <p class="nav-section">Lessons</p>
+    <ul>
+      <li><a href="#your-starting-context">Your Starting Context</a></li>
+      <li><a href="#killing-bloat">Killing Bloat</a></li>
+      <li><a href="#killing-bloat-understanding-your-agents-payload">Killing Bloat: Understanding Your Agent&#x27;s Payload</a></li>
+      <li><a href="#killing-bloat-solution">Killing Bloat Solution</a></li>
+      <li><a href="#showing-context-in-the-status-line">Showing Context in the Status Line</a></li>
+      <li><a href="#codebase-exploration">Codebase Exploration</a></li>
+      <li><a href="#codebase-exploration-solution">Codebase Exploration Solution</a></li>
+      <li><a href="#the-teach-skill">The /teach Skill</a></li>
+      <li><a href="#the-teach-skill-solution">The /teach Skill Solution</a></li>
+      <li><a href="#build-a-feature">Build a Feature</a></li>
+      <li><a href="#build-a-feature-solution">Build a Feature Solution</a></li>
+      <li><a href="#why-plan-mode-sucks">Why Plan Mode Sucks</a></li>
+      <li><a href="#the-grill-execute-clear-loop">The Grill-Execute-Clear Loop</a></li>
+      <li><a href="#the-grill-execute-clear-loop-solution">The Grill-Execute-Clear Loop Solution</a></li>
+      <li><a href="#compaction">Compaction</a></li>
+      <li><a href="#handing-off">Handing Off</a></li>
+      <li><a href="#clear-compact-handoff-or-subagent">Clear, Compact, Handoff, Or Subagent</a></li>
+      <li><a href="#auto-compaction">Auto-Compaction</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section class="chapter" id="your-starting-context">
+      <h1 class="chapter-title">Your Starting Context</h1>
+
+      <p>You may have noticed during the concept section, and even if you worked through the code, that I have a strong paranoia about what is in my <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> at all times.</p>
+      <p>When you build AI-powered apps, you need to be really careful about every <a href="https://www.aihero.dev/ai-coding-dictionary/token">token</a> you put in your context window to make sure the app runs efficiently and passes your evaluations. I inherited that context paranoia, and I take that into agent coding.</p>
+      <p>Now that the real work of the course is about to begin, I want to make sure we&#x27;re all starting on a solid foundation. We can&#x27;t include any bloat in our <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a> before we even kick off.</p>
+      <p>If we&#x27;ve got tokens that aren&#x27;t supposed to be there in the context window, we are not going to have fun when we&#x27;re using these coding <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a>, and you&#x27;re not going to get the results you expect.</p>
+      <p>This demo uses Claude Code, but you can walk through this with any agent - you might just need to pass it the instructions below and achieve the same goals.</p>
+      <h2>Resetting Your Config</h2>
+      <p>The first step is to open your <code>.claude</code> directory in VS Code.</p>
+      <p>Then you&#x27;re going to do two important things:</p>
+      <ol class="body-list"><li>Go to your <code>settings.json</code> file and rename it as <code>settings-backup.json</code> - this is a backup of your settings before you start the course.</li><li>Rename your <code>skills</code> directory to <code>skills-backup</code> as well.</li></ol>
+      <p>Everything that we&#x27;ve got inside your skills and inside your settings is now reset to defaults.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723060/ai-hero-images/j1hg6oyxus3skzkvxmzk.png" alt="VS Code showing the .claude directory with settings.json and skills folder ready to be renamed" />
+      <p class="img-caption">VS Code showing the .claude directory with settings.json and skills folder ready to be renamed</p>
+      <p>Go back to your AI Coding Crash Course repository and run your agent of choice. Next, run the <code>/context</code> command to visualize the current <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>.</p>
+      <h2>What&#x27;s In Your Baseline</h2>
+      <pre><code>/context</code></pre>
+      <p>This shows you everything currently sitting in the context window - before you&#x27;ve sent any real messages.</p>
+      <p>Here&#x27;s what a fresh <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> looks like with the default configuration:</p>
+      <div class="table-wrap"><table><thead><tr><th>Category</th><th>Tokens</th></tr></thead><tbody><tr><td><a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt">System prompt</a></td><td>3k</td></tr><tr><td>System tools</td><td>17.9k</td></tr><tr><td>MCP tools (deferred)</td><td>24.5k</td></tr><tr><td>System tools (deferred)</td><td>16.9k</td></tr><tr><td>Skills</td><td>2k</td></tr><tr><td>Messages</td><td>8</td></tr><tr><td><strong>Total</strong></td><td><strong>~23k</strong></td></tr></tbody></table></div>
+      <p>That&#x27;s around 23,000 tokens - before you&#x27;ve really sent any messages. The only tokens you used are the eight tokens it took to type <code>/context</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723061/ai-hero-images/w8tyk1g4orgsd1ihe99n.png" alt="Terminal output showing /context command results with 22.9k tokens used by default configuration" />
+      <p class="img-caption">Terminal output showing /context command results with 22.9k tokens used by default configuration</p>
+      <p>As you can see, there are plenty of built-in <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> here and built-in project stuff, which is expected. You also have a ton of <a href="https://www.aihero.dev/ai-coding-dictionary/mcp">MCP</a> tools, which are loaded in from claude.ai - things like Figma, Gmail, Google Calendar, Google Drive, Slack, Todoist, and Zapier.</p>
+      <p>All of this adds up to around 23k tokens, even before you&#x27;ve really started working.</p>
+      <p>Your mileage may vary. Your agent harness might send fewer tokens than this by default, or you might notice that your config actually has tons of stuff you didn&#x27;t even know was in there.</p>
+      <h2>See The Difference</h2>
+      <p>Now, just for fun, let me go back into my <code>.claude</code> folder and re-enable my <code>settings.json</code> and my <code>skills</code> directory.</p>
+      <p>I&#x27;ll restart the agent and rerun <code>/context</code> to show you the difference.</p>
+      <pre><code>/context</code></pre>
+      <p>Now we&#x27;re only at <strong>6.6k tokens</strong> - we&#x27;ve managed to remove 16k tokens just through our settings.</p>
+      <div class="table-wrap"><table><thead><tr><th>Category</th><th>Tokens</th></tr></thead><tbody><tr><td>System prompt</td><td>2k</td></tr><tr><td>System tools</td><td>3.5k</td></tr><tr><td>MCP tools (deferred)</td><td>192</td></tr><tr><td>System tools (deferred)</td><td>9.2k</td></tr><tr><td>Skills</td><td>1.1k</td></tr><tr><td>Messages</td><td>8</td></tr><tr><td><strong>Total</strong></td><td><strong>~6.6k</strong></td></tr></tbody></table></div>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723062/ai-hero-images/gbqbttndqy0yujnilzm6.png" alt="Terminal output showing /context command results with 6.6k tokens after custom configuration restored" />
+      <p class="img-caption">Terminal output showing /context command results with 6.6k tokens after custom configuration restored</p>
+      <p>This is a crucial difference because it means you&#x27;ve got a whole lot more to work with inside the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a> - the part of your context where the agent actually thinks and reasons. It just means you&#x27;re feeling more efficient every single time you interact with the agent.</p>
+      <h2>Why We&#x27;re Doing This</h2>
+      <p>A little note: we&#x27;re not doing this in order to min-max token spend. We&#x27;re not necessarily doing this to minimize cost. We are maximizing quality.</p>
+      <p>We&#x27;re trying to extend the space inside our smart zone - the part of the context window where the agent actually thinks through your problem. The more space you have there, the better the reasoning.</p>
+      <p>You&#x27;ll probably be shocked by what you find in your own configuration, especially if you&#x27;ve never looked there before.</p>
+      <h2>Understanding Your Context</h2>
+      <p>I want to give you the skills so that you can:</p>
+      <ul class="body-list"><li>Look at your own context window usage and see what&#x27;s there</li><li>Look at other people&#x27;s configs and identify what really shouldn&#x27;t be there</li></ul>
+      <p>Hopefully you can inherit a little bit of my context paranoia - and with that, you&#x27;ll get higher quality outputs.</p>
+      <h2>Your Next Steps</h2>
+      <p>If you&#x27;re following along exactly, make sure you:</p>
+      <ol class="body-list"><li>Rename <code>settings.json</code> to <code>settings-backup.json</code></li><li>Rename the <code>skills</code> directory to <code>skills-backup</code></li></ol>
+      <p>We will not be using your default config for this course.</p>
+      <p>If you have anything else inside your context window that you just can&#x27;t seem to get rid of, message in the <a href="https://aihero.dev/discord">Discord</a> and we&#x27;ll see if we can update these instructions for your specific case.</p>
+      <hr style="border:none;border-top:1px solid var(--border);margin:2rem 0;" />
+      <p>Nice work - I&#x27;ll see you in the next one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="stripped-config-buys-smart-zone">
+        <p class="quiz-q-text">You strip the MCP servers and extra skills out of your agent config, taking a fresh session from 23k tokens down to 6.6k. What is the main thing you gain?</p>
+        <ul class="quiz-choices">
+          <li class="correct">More room in the smart zone, where the agent reasons</li>
+          <li>A cheaper session, because fewer tokens get billed</li>
+          <li>A faster startup, because less config has to load</li>
+          <li>A larger context window limit for this session</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The aim is quality, not spend. Cost does drop a little, but that is a side effect rather than the reason. Startup speed is not what the trimming buys, and the size of the window itself does not move - trimming only changes how much of it is free for the agent to think in.
+        </div>
+      </div>
+      <div class="quiz-question" id="inspect-baseline-before-prompting">
+        <p class="quiz-q-text">You want to see what is already sitting in your context window before you type a single real prompt. Which command do you run?</p>
+        <ul class="quiz-choices">
+          <li class="correct">/context</li>
+          <li>/config</li>
+          <li>/compact</li>
+          <li>/clear</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          /context prints the breakdown - system prompt, tools, MCP tools, skills, messages - so you can see the baseline. /config opens settings rather than reporting usage, /compact squeezes a session that already holds work, and /clear empties a session without ever telling you what was in it.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="killing-bloat">
+      <h1 class="chapter-title">Killing Bloat</h1>
+
+      
+    </section>
+
+    <section class="chapter" id="killing-bloat-understanding-your-agents-payload">
+      <h1 class="chapter-title">Killing Bloat: Understanding Your Agent&#x27;s Payload</h1>
+
+      <p>Every request you send to your <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> carries an invisible payload. Your <a href="https://www.aihero.dev/ai-coding-dictionary/tool">tool</a> schemas, <a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt">system prompt</a>, <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> catalogue, and feature instructions all ship together — and you&#x27;re billed for every <a href="https://www.aihero.dev/ai-coding-dictionary/token">token</a>, every <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turn</a>.</p>
+      <p>Before you type a single word, you&#x27;re already paying a hefty bill.</p>
+      <p>The problem is visibility. The <code>/context</code> command breaks your window into categories, but it lumps all your tools together into one number. You can see the total, but not which single tool is eating the most tokens. To cut precisely, you need to see the actual payload.</p>
+      <h2>Set Up The Request Logger</h2>
+      <p>Your goal is to examine what actually gets sent on each request to your agent provider, then identify and cut the biggest offenders.</p>
+      <ul class="checklist"><li>Start the request logger</li></ul>
+      <p>Run the request logger in one terminal:</p>
+      <pre><code>npm run request-logger</code></pre>
+      <p>It asks which coding agent you use, and which model provider if your agent can use more than one. It can remember your answer, so it only has to ask once. It then prints the exact command for your agent, under the line &quot;Run your agent in another terminal with:&quot;.</p>
+      <ul class="checklist"><li>Point your agent at the logger</li></ul>
+      <p>Copy and paste that command into a new terminal and run it. It is built for the agent you picked, so there is nothing to adjust. If your agent also needs a config file, the logger prints that above the command.</p>
+      <ul class="checklist"><li>Clear old logs</li></ul>
+      <p>Delete all files inside <code>request-logger/logs/</code> so you start fresh.</p>
+      <ul class="checklist"><li>Send a test message</li></ul>
+      <p>In your agent, send a simple message:</p>
+      <pre><code>Hello!</code></pre>
+      <p>Wait for the reply. Then check <code>request-logger/logs/</code> — you should now have a new log file (a <code>.md</code> render, plus <code>.request.txt</code> and <code>.response.txt</code> files).</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723322/ai-hero-images/yho1agxpyd4l4gqmyhg4.png" alt="VS Code showing the request-logger/logs/ directory with the new log files" />
+      <p class="img-caption">VS Code showing the request-logger/logs/ directory with the new log files</p>
+      <h2>Examine The Payload Structure</h2>
+      <p>Now open the log file and explore what gets sent on every request.</p>
+      <ul class="checklist"><li>Search for and read the system prompt</li></ul>
+      <p>Search for <code>&lt;system-prompt&gt;</code> inside the log file. Spend time understanding what&#x27;s there.</p>
+      <p>Pay special attention to: - The <strong><a href="https://www.aihero.dev/ai-coding-dictionary/environment">Environment</a></strong> section — this tells the agent about your OS, shell, and working directory - The <strong>Context management</strong> section — how the agent handles long conversations - Any recent git commits (if you&#x27;re using an agent like Claude Code)</p>
+      <ul class="checklist"><li>Review all available tools</li></ul>
+      <p>Find the <code>&lt;tools&gt;</code> section. Every tool available to your agent has its own definition here.</p>
+      <p>As you scroll through, notice: - How many tools are listed (you&#x27;ll likely see 70+ definitions) - Which tools you&#x27;ve actually heard of (Artifact, Bash, etc.) - Which tools are completely unknown to you — read their descriptions. Some will be obscure: <code>CronCreate</code>, <code>DesignSync</code>, <code>EnterPlanMode</code>, <code>Workflow</code> - How large some of these definitions are — there&#x27;s a lot of redundant text explaining commit message formats, PR templates, and feature flags</p>
+      <ul class="checklist"><li>Look for MCP tools</li></ul>
+      <p>Search for <code>mcp__</code> in the file. These are <a href="https://www.aihero.dev/ai-coding-dictionary/mcp">Model Context Protocol</a> tools attached via integrations.</p>
+      <p>You&#x27;ll see tools like: - <code>mcp__claude_ai_Figma__authenticate</code> - <code>mcp__claude_ai_Gmail__create_draft</code> - <code>mcp__claude_ai_Slack__authenticate</code> - <code>mcp__claude_ai_Google_Drive__search_files</code></p>
+      <p>Count how many of these are present. These tools ship on every request, whether you need them or not.</p>
+      <ul class="checklist"><li>Check the skills list</li></ul>
+      <p>Search for &quot;following skills are available&quot; to find the skills catalogue. You&#x27;ll see a list of 15-20+ skills, each with a description.</p>
+      <p>Notice which ones are project-specific versus built into your agent by default.</p>
+      <h2>Understand The Cost</h2>
+      <ul class="checklist"><li>Run <code>/context</code> in your agent</li></ul>
+      <p>Check how many tokens your system is using across different categories (system prompt, tools, skills, messages).</p>
+      <p>The request logger&#x27;s full markdown render of a single &quot;Hello!&quot; message is typically 4,000+ lines and 150-200 KB. That entire payload is sent and billed on every turn.</p>
+      <p>Now you understand the invisible cost of every request. The solution video will show you how to cut it down.</p>
+      <p>If the request logger isn&#x27;t working with your agent of choice, reach out in the <a href="https://aihero.dev/discord">AI Hero Discord</a> — we can help you set it up for your specific agent.</p>
+    </section>
+
+    <section class="chapter" id="killing-bloat-solution">
+      <h1 class="chapter-title">Killing Bloat Solution</h1>
+
+      <p>The first step is to create a <code>settings.json</code> file inside your <code>~/.claude</code> directory and initialize it with an empty object.</p>
+      <p>The instructions demonstrated here are agent-specific, but if you look at the written lesson below, you&#x27;ll see <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a> instructions for removing bloat there too if needed.</p>
+      <h2>The workflow</h2>
+      <p>Every time you make a change to <code>settings.json</code>, the process is the same:</p>
+      <ol class="body-list"><li>Edit <code>~/.claude/settings.json</code></li><li>Quit your <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a></li><li>Relaunch it</li><li>Send a <code>Hello!</code> message</li><li>Run the <code>/context</code> command</li><li>Check the logs to see what&#x27;s changed</li></ol>
+      <p>To give us a baseline marker, let&#x27;s run <code>/context</code> on a fresh start. We&#x27;re starting at <strong>68.3k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a></strong>. That&#x27;s really quite a lot.</p>
+      <h2>Disable MCP connectors</h2>
+      <p>The first thing to address is the <a href="https://www.aihero.dev/ai-coding-dictionary/mcp">MCP</a> (Model Context Protocol) stuff. There&#x27;s a bunch of Claude AI connectors that automatically enable if you&#x27;re using Claude.ai.</p>
+      <p>Inside <code>~/.claude/settings.json</code>, you can disable all of them in one go:</p>
+      <pre><code>{
+  &quot;disableClaudeAiConnectors&quot;: true
+}</code></pre>
+      <p>After restarting and running <code>/context</code>, we&#x27;ve already dropped down to <strong>47k tokens</strong>. That&#x27;s 21k tokens saved with a single setting.</p>
+      <h2>Disable workflows</h2>
+      <p>Next, you&#x27;ll notice there&#x27;s a ton of configuration related to dynamic workflows. These orchestrate multiple <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">sub-agents</a> deterministically.</p>
+      <p>If you won&#x27;t be using workflows, disable them:</p>
+      <pre><code>{
+  &quot;disableClaudeAiConnectors&quot;: true,
+  &quot;disableWorkflows&quot;: true
+}</code></pre>
+      <p>Now we&#x27;re down to <strong>39k tokens</strong>.</p>
+      <h2>Disable bundled skills</h2>
+      <p>The bundled <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> include deep research, data visualization, artifact design, config updates, and keybindings help. If you&#x27;re not using any of them, disable them all:</p>
+      <pre><code>{
+  &quot;disableClaudeAiConnectors&quot;: true,
+  &quot;disableWorkflows&quot;: true,
+  &quot;disableBundledSkills&quot;: true
+}</code></pre>
+      <p>This takes us down to <strong>37.1k tokens</strong> — and kills skills usage completely.</p>
+      <h2>Disable artifacts</h2>
+      <p>There&#x27;s a relatively new feature called Artifacts that you might not use at all. Turning this off is straightforward:</p>
+      <pre><code>{
+  &quot;disableClaudeAiConnectors&quot;: true,
+  &quot;disableWorkflows&quot;: true,
+  &quot;disableBundledSkills&quot;: true,
+  &quot;disableArtifact&quot;: true
+}</code></pre>
+      <p>That&#x27;s another 4k tokens gone, bringing us to <strong>33.1k tokens</strong>.</p>
+      <h2>Control tool access with permissions</h2>
+      <p>Now for the big one: looking at the <a href="https://www.aihero.dev/ai-coding-dictionary/tool">tool</a> definitions themselves.</p>
+      <p><strong>Here&#x27;s the key principle: if you deny your agent access to a tool via <code>permissions.deny</code>, its definition is removed from the <a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt">system prompt</a> entirely.</strong> This isn&#x27;t just a runtime block — it&#x27;s a <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> saving on every single request.</p>
+      <p>Let&#x27;s look at which tools you actually need:</p>
+      <div class="table-wrap"><table><thead><tr><th>Tool</th><th>Ask yourself...</th><th>Action</th></tr></thead><tbody><tr><td><code>NotebookEdit</code></td><td>Do you need to replace, insert or delete cells in a Jupyter notebook?</td><td>Probably not. Deny it.</td></tr><tr><td><code>DesignSync</code></td><td>Do you need to design, sync, read, and update Claude.ai design-system projects?</td><td>No. Deny it.</td></tr><tr><td><code>CronCreate</code>, <code>CronDelete</code>, <code>CronList</code></td><td>Do you need to create and manage cron jobs?</td><td>Probably not. Deny all three.</td></tr><tr><td><code>EnterPlanMode</code>, <code>ExitPlanMode</code></td><td>Do you need the agent to enter and exit <a href="https://www.aihero.dev/ai-coding-dictionary/agent-mode">plan mode</a>?</td><td>No. Deny both.</td></tr><tr><td><code>PushNotification</code>, <code>RemoteTrigger</code></td><td>Do you need push notifications or remote triggers?</td><td>No. Deny both.</td></tr><tr><td><code>ReportFindings</code></td><td>Do you need the agent to report findings?</td><td>No. Deny it.</td></tr><tr><td><code>ScheduleWakeup</code></td><td>Do you need wake-up scheduling?</td><td>No. Deny it.</td></tr></tbody></table></div>
+      <p>Add these to your settings:</p>
+      <pre><code>{
+  &quot;permissions&quot;: {
+    &quot;deny&quot;: [
+      &quot;NotebookEdit&quot;,
+      &quot;DesignSync&quot;,
+      &quot;CronCreate&quot;,
+      &quot;CronDelete&quot;,
+      &quot;CronList&quot;,
+      &quot;EnterPlanMode&quot;,
+      &quot;ExitPlanMode&quot;,
+      &quot;PushNotification&quot;,
+      &quot;RemoteTrigger&quot;,
+      &quot;ReportFindings&quot;,
+      &quot;ScheduleWakeup&quot;
+    ]
+  },
+  &quot;disableClaudeAiConnectors&quot;: true,
+  &quot;disableWorkflows&quot;: true,
+  &quot;disableBundledSkills&quot;: true,
+  &quot;disableArtifact&quot;: true
+}</code></pre>
+      <p>This takes us down to around <strong>21.6k tokens</strong>.</p>
+      <h2>One more tool to consider</h2>
+      <p>There&#x27;s one more tool worth disabling: <code>AskUserQuestion</code>. It&#x27;s a very long tool definition (~130 lines), and some people love the UI while others find it intrusive.</p>
+      <pre><code>{
+  &quot;permissions&quot;: {
+    &quot;deny&quot;: [
+      &quot;NotebookEdit&quot;,
+      &quot;DesignSync&quot;,
+      &quot;CronCreate&quot;,
+      &quot;CronDelete&quot;,
+      &quot;CronList&quot;,
+      &quot;EnterPlanMode&quot;,
+      &quot;ExitPlanMode&quot;,
+      &quot;PushNotification&quot;,
+      &quot;RemoteTrigger&quot;,
+      &quot;ReportFindings&quot;,
+      &quot;ScheduleWakeup&quot;,
+      &quot;AskUserQuestion&quot;
+    ]
+  },
+  &quot;disableClaudeAiConnectors&quot;: true,
+  &quot;disableWorkflows&quot;: true,
+  &quot;disableBundledSkills&quot;: true,
+  &quot;disableArtifact&quot;: true
+}</code></pre>
+      <p>Removing it takes us down to <strong>under 20k tokens</strong> — around 19.9k. That&#x27;s a good stopping point.</p>
+      <h2>The attitude matters more than the specifics</h2>
+      <p>This demonstration is agent-specific, but the attitude is what matters.</p>
+      <p>You have to be aware of all the tokens you&#x27;re sending in your system prompt. You don&#x27;t need to read every single one, but you need to notice if something&#x27;s there that shouldn&#x27;t be — because it affects every subsequent request.</p>
+      <p>Performing this kind of hygiene on your own tools and setup is really important. Notice that everything we removed here was stuff you weren&#x27;t going to use anyway. It absolutely shouldn&#x27;t be in there, influencing behavior and eating up precious tokens.</p>
+      <h2>Your turn</h2>
+      <p>Go and look at your own harness. See what you can remove from the system prompt while still retaining good behavior. Find your own harness-specific optimizations, and when you do, share them in the <a href="https://aihero.dev/discord">Discord</a>.</p>
+      <p>Now you have a good base to start working from. Let&#x27;s get building.</p>
+    </section>
+
+    <section class="chapter" id="showing-context-in-the-status-line">
+      <h1 class="chapter-title">Showing Context in the Status Line</h1>
+
+      <p>Claude Code doesn&#x27;t show your <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> usage by default. You need to set this up yourself if you want to monitor it constantly while you&#x27;re coding.</p>
+      <p>Having that number right in your status line, visible at a glance, gives you the feedback you need to make good decisions about your <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>. We&#x27;ll use <a href="https://www.npmjs.com/package/ccstatusline"><code>ccstatusline</code></a>, a community tool that formats Claude Code&#x27;s session data into a clean status line.</p>
+      <h2>Steps To Complete</h2>
+      <h3>Configure ccstatusline</h3>
+      <ul class="checklist"><li>Create the config directory</li></ul>
+      <pre><code>mkdir -p ~/.config/ccstatusline</code></pre>
+      <ul class="checklist"><li>Create <code>~/.config/ccstatusline/settings.json</code> with this content:</li></ul>
+      <pre><code>{
+  &quot;version&quot;: 3,
+  &quot;lines&quot;: [
+    [
+      {
+        &quot;id&quot;: &quot;1&quot;,
+        &quot;type&quot;: &quot;context-length&quot;,
+        &quot;color&quot;: &quot;yellow&quot;,
+        &quot;bold&quot;: true,
+        &quot;rawValue&quot;: true
+      },
+      {
+        &quot;id&quot;: &quot;2&quot;,
+        &quot;type&quot;: &quot;custom-text&quot;,
+        &quot;customText&quot;: &quot;(&quot;,
+        &quot;color&quot;: &quot;brightBlack&quot;,
+        &quot;merge&quot;: &quot;no-padding&quot;
+      },
+      {
+        &quot;id&quot;: &quot;3&quot;,
+        &quot;type&quot;: &quot;context-percentage&quot;,
+        &quot;color&quot;: &quot;brightBlack&quot;,
+        &quot;rawValue&quot;: true,
+        &quot;merge&quot;: &quot;no-padding&quot;
+      },
+      {
+        &quot;id&quot;: &quot;4&quot;,
+        &quot;type&quot;: &quot;custom-text&quot;,
+        &quot;customText&quot;: &quot;)&quot;,
+        &quot;color&quot;: &quot;brightBlack&quot;,
+        &quot;merge&quot;: &quot;no-padding&quot;
+      }
+    ],
+    [],
+    []
+  ],
+  &quot;flexMode&quot;: &quot;full-minus-40&quot;,
+  &quot;compactThreshold&quot;: 60,
+  &quot;colorLevel&quot;: 2,
+  &quot;defaultSeparator&quot;: &quot; &quot;,
+  &quot;inheritSeparatorColors&quot;: false,
+  &quot;globalBold&quot;: false,
+  &quot;powerline&quot;: {
+    &quot;enabled&quot;: false,
+    &quot;separators&quot;: [&quot; &quot;],
+    &quot;separatorInvertBackground&quot;: [false],
+    &quot;startCaps&quot;: [],
+    &quot;endCaps&quot;: [],
+    &quot;autoAlign&quot;: false
+  }
+}</code></pre>
+      <p>This configures four widgets on one line: a bold yellow <a href="https://www.aihero.dev/ai-coding-dictionary/token">token</a> count (<code>context-length</code>), followed by a dimmed percentage in parentheses. The <code>&quot;merge&quot;: &quot;no-padding&quot;</code> on the parentheses and percentage widgets glues them together without extra spacing, while <code>&quot;defaultSeparator&quot;: &quot; &quot;</code> adds a space between the token count and the opening parenthesis. <code>&quot;rawValue&quot;: true</code> strips the labels so you get clean numbers.</p>
+      <h3>Update Claude Code Settings</h3>
+      <ul class="checklist"><li>Open <code>~/.claude/settings.json</code></li></ul>
+      <p>If this file doesn&#x27;t exist yet, create it.</p>
+      <ul class="checklist"><li>Add the status line configuration</li></ul>
+      <pre><code>{
+  &quot;statusLine&quot;: {
+    &quot;type&quot;: &quot;command&quot;,
+    &quot;command&quot;: &quot;npx ccstatusline@latest&quot;
+  }
+}</code></pre>
+      <p>Preserve any other settings that might already exist in this file. Claude Code pipes session data to this command automatically - <code>ccstatusline</code> reads it and outputs the formatted status line.</p>
+      <h3>Test Your Setup</h3>
+      <ul class="checklist"><li>Restart Claude Code completely</li></ul>
+      <p>Close the application fully and reopen it.</p>
+      <ul class="checklist"><li>Check your status line</li></ul>
+      <p>You should now see a bold yellow token count followed by a dimmed percentage (like <code>186.2k (17.3%)</code>) displayed in your Claude Code status line. These numbers update as your context window fills during your session.</p>
+    </section>
+
+    <section class="chapter" id="codebase-exploration">
+      <h1 class="chapter-title">Codebase Exploration</h1>
+
+      <p>Every time an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> starts a fresh <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> with your codebase, it has to explore to find the information it needs. <a href="https://www.aihero.dev/ai-coding-dictionary/stateless">Statelessness</a> is the hardest constraint to work around - the agent remembers nothing from previous sessions.</p>
+      <p>The quality of the agent&#x27;s exploration directly determines the quality of what happens next. If it fails to find the information it needs, it probably won&#x27;t do what you want.</p>
+      <p>So exploration matters. A lot. And making your codebase easy to explore is one of the most important things you can do.</p>
+      <h2>What The Agent Already Knows</h2>
+      <p>When you start a session, the agent gets some <a href="https://www.aihero.dev/ai-coding-dictionary/environment">environment</a> information automatically. Let&#x27;s look at what that includes:</p>
+      <ul class="body-list"><li>Platform (Linux, macOS, Windows)</li><li>Working directory (so it can guess something from the repo name)</li><li>Git repository status (branch, main branch, git user, recent commits)</li><li>Shell type (bash, zsh, etc)</li><li>Your assistant&#x27;s <a href="https://www.aihero.dev/ai-coding-dictionary/knowledge-cutoff">knowledge cutoff</a> date</li></ul>
+      <p>That&#x27;s actually quite helpful. But there&#x27;s a critical gap.</p>
+      <h2>What The Agent Doesn&#x27;t Know</h2>
+      <p>The agent gets <strong>no <a href="https://www.aihero.dev/ai-coding-dictionary/filesystem">filesystem</a> information at all</strong>. It doesn&#x27;t have an <code>ls</code> of the current directory. It doesn&#x27;t have a file tree. It has zero knowledge of what files actually exist in the directory.</p>
+      <p>So all the agent knows is:</p>
+      <ul class="body-list"><li>The directory name</li><li>The vague environment it&#x27;s operating in</li><li>Some recent commit names</li><li>Nothing about the actual filesystem</li></ul>
+      <p>This is exactly where you are right now as someone learning this repo. You probably don&#x27;t know much about the app we&#x27;re building yet. You&#x27;re in a similar place to your agent.</p>
+      <h2>Steps To Complete</h2>
+      <ul class="checklist"><li>Open a terminal and run the request-logger proxy</li></ul>
+      <pre><code>npm run request-logger</code></pre>
+      <p>It asks which coding agent you use, then listens on <code>http://localhost:8787</code> and prints the exact command to start that agent through it.</p>
+      <ul class="checklist"><li>Open a second terminal, then copy and paste the printed command to start an agent session through the proxy</li></ul>
+      <ul class="checklist"><li>Ask the agent about the project&#x27;s tech stack and purpose</li></ul>
+      <pre><code>Tell me what the tech stack of this project is and what its intended purpose is.</code></pre>
+      <p>Watch what happens as the agent explores:</p>
+      <ul class="body-list"><li>Does it spawn <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">subagents</a> to help with the exploration?</li><li>Does it try to read through all the files itself?</li><li>How does it navigate the codebase?</li><li>Does it explore the filesystem? Read files? Make good guesses?</li></ul>
+      <ul class="checklist"><li>Ask follow-up questions to get more detail</li></ul>
+      <p>Ask the agent to tell you more about:</p>
+      <ul class="body-list"><li>The main purpose of each folder</li><li>What the core business logic does</li><li>What technologies are being used and why</li></ul>
+      <p>Keep asking questions until you have a really detailed understanding of the codebase.</p>
+      <ul class="checklist"><li>(Optional) Check the request logs</li></ul>
+      <p>Open <code>request-logger/logs/</code> and look at the most recent <code>.md</code> file. Jump to the <code># Environment</code> section to see exactly what was passed to the agent. Notice what&#x27;s included and what&#x27;s missing.</p>
+    </section>
+
+    <section class="chapter" id="codebase-exploration-solution">
+      <h1 class="chapter-title">Codebase Exploration Solution</h1>
+
+      <p>Let&#x27;s start by running an initial exploration prompt to see what happens. A lot of stuff will happen very quickly, so let&#x27;s zoom out to get a better view.</p>
+      <p>What we&#x27;re looking for is the number of files, the searches, and the <a href="https://www.aihero.dev/ai-coding-dictionary/tool">tools</a> that the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> uses to explore the directory. To see this in more detail, press Ctrl+O, this shows a more verbose version of the output.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723865/ai-hero-images/xccofy1jlg0xgxbkrhuo.png" alt="Verbose output showing detailed tool usage" />
+      <p class="img-caption">Verbose output showing detailed tool usage</p>
+      <h3>Examining the verbose output and tool usage</h3>
+      <p>Looking at the top of the output, just after the initial prompt was added, we can see the sequence of tools the agent used:</p>
+      <p>The first thing it reads is the <strong>README</strong> file. It then finds the <code>package.json</code> by running a bash command:</p>
+      <pre><code>find . -name package.json -not -path &#x27;*/node_modules/*&#x27;</code></pre>
+      <p>This is a Linux command that searches for <code>package.json</code> files while excluding the <code>node_modules</code> directory.</p>
+      <p>Once found, it reads the <code>package.json</code> file. It then reads two more files at once: the request-logger <code>package.json</code> and the request-logger <code>README</code>. This gives it all the information it needs to produce a tech stack table.</p>
+      <p>If we search inside the logs for &quot;tool_result&quot;, we can see all the <a href="https://www.aihero.dev/ai-coding-dictionary/tool-result">tool results</a>. There are eight tags total, which means there are four tool results. The only files read were the main README, the <code>package.json</code>, and the files for the request-logger. This is really just a surface-level skim.</p>
+      <p>After this first exploration, the agent has only spent around <strong>26.1k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a></strong>, not that many at all.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723866/ai-hero-images/bjmhbqui446hb1juwamv.png" alt="Token count showing 26.1k tokens used" />
+      <p class="img-caption">Token count showing 26.1k tokens used</p>
+      <h2>Requesting deeper code analysis</h2>
+      <p>Now let&#x27;s ask it for a follow-up with a more detailed request:</p>
+      <pre><code>Give me a much more in-depth understanding about the different parts of the app, the different modules inside it, and go ahead and read a ton of source code to give me more information.</code></pre>
+      <p>By doing this, we&#x27;re asking the agent to put in more effort and do more legwork. It says it&#x27;s going to do a deep dive. It lists some directories, finds various areas, and starts reading files in parallel: schema, database, routing, services, and so on.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723867/ai-hero-images/cmn5cndy3p4wzzqlqnod.png" alt="Agent reading multiple files in parallel" />
+      <p class="img-caption">Agent reading multiple files in parallel</p>
+      <p>One interesting thing here is that the agent isn&#x27;t opening up any <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">sub-agents</a>. It&#x27;s reading all the files directly into the parent agent&#x27;s <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>.</p>
+      <p>This process takes a while. The agent is working through extremely long amounts of raw code files. The amount of information it now has access to is much richer than before.</p>
+      <h2>Understanding non-deterministic behavior</h2>
+      <p>Because <a href="https://www.aihero.dev/ai-coding-dictionary/model">models</a> are <a href="https://www.aihero.dev/ai-coding-dictionary/non-determinism">non-deterministic</a>, sometimes the agent will explore by putting code directly into its main <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>, but sometimes it will use sub-agents instead.</p>
+      <p>To show you what using sub-agents looks like, let&#x27;s go back to where we gave the initial prompt for a more in-depth understanding. We&#x27;ll add three words to the end of that request:</p>
+      <pre><code>Give me a much more in-depth understanding about the different parts of the app, the different modules inside it, and go ahead and read a ton of source code to give me more information. Use subagents.</code></pre>
+      <p>This explicit mention of sub-agents should prompt the agent to spawn sub-agents to do the exploration.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723868/ai-hero-images/ezinhfk9ps77a0uij4fa.png" alt="Prompt with &#x27;Use subagents&#x27; instruction" />
+      <p class="img-caption">Prompt with &#x27;Use subagents&#x27; instruction</p>
+      <h2>The divide-and-conquer approach</h2>
+      <p>The agent first gets a quick map of the structure, then dispatches sub-agents to deep-dive different areas in parallel. Remember, we&#x27;ve rewound to the point where it only had the <code>package.json</code> and README. All the previous deep-dive information is gone from its context window.</p>
+      <p>The agent decides to divide and conquer. It splits the work into four areas and dispatches a sub-agent to deep-read each in parallel:</p>
+      <ul class="body-list"><li>The data layer</li><li>The service layer</li><li>The routes/UI layer</li><li>The request-logger proxy</li></ul>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723869/ai-hero-images/ausummdxmd58fd4k2ynk.png" alt="Four sub-agents dispatched for different areas" />
+      <p class="img-caption">Four sub-agents dispatched for different areas</p>
+      <p>Looking at the bottom right, we can see all the tokens that these sub-agents are spending. This is a pretty expensive operation, we&#x27;re at around 200k tokens and rising, spread across these four sub-agents.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723870/ai-hero-images/rqp5rmvx0fenzmfftvyz.png" alt="Token counter showing 200k tokens across sub-agents" />
+      <p class="img-caption">Token counter showing 200k tokens across sub-agents</p>
+      <p>From these sub-agents, we&#x27;re going to get seriously rich detail. The way they work is they send back a summary of their findings to the parent agent.</p>
+      <p>Check out the routes/UI layer sub-agent alone, it uses 159k tokens just for that one area.</p>
+      <p>Once all four deep reads complete, we have extremely detailed information. The agent even spotted a deliberate architectural outlier, which is very clever.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723870/ai-hero-images/vl42n66qufiw6yqyqdhv.png" alt="Agent output identifying deliberate architectural outlier" />
+      <p class="img-caption">Agent output identifying deliberate architectural outlier</p>
+      <p>The routes and UI layer is very deeply researched, the service layer has comprehensive coverage, and the request-logger is thoroughly documented. For all of that work by the sub-agents, the parent agent&#x27;s context window only used around <strong>65.1k tokens</strong>, that&#x27;s remarkably efficient for analyzing the entire repository and chunking it down into a tiny summary.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723872/ai-hero-images/bzrhukn0t4liwpwafwld.png" alt="Parent agent context showing only 65.1k tokens" />
+      <p class="img-caption">Parent agent context showing only 65.1k tokens</p>
+      <h3>How sub-agents report back</h3>
+      <p>If we look inside the logs, we can find the summaries that come back from the sub-agents. They arrive as system notifications, automated background task events.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723872/ai-hero-images/tzbjccpjbwpu1emmlfqp.png" alt="System notification from sub-agent in logs" />
+      <p class="img-caption">System notification from sub-agent in logs</p>
+      <p>Here&#x27;s what one sub-agent&#x27;s report looks like. It comes through with an &quot;UI layer overview&quot; and gives a complete route map with all the different areas:</p>
+      <ul class="body-list"><li>Public (unauthenticated routes)</li><li>Auth (outside app layout)</li><li>Purchase and redeem flows</li><li>Instructor (authoring tools)</li><li>Admin</li><li>Team</li><li>API endpoints</li></ul>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723874/ai-hero-images/fjvu5ojsx2hqpfck7jnu.png" alt="Sub-agent report showing complete route map" />
+      <p class="img-caption">Sub-agent report showing complete route map</p>
+      <p>The report includes lots of pattern information and personas. It also contains a list of notable UI components and some developer experience features. Inside the report, there&#x27;s extra information about key file paths, which is super critical, so the parent agent can just read those file paths if it needs to.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723875/ai-hero-images/mkswu5kyxallyquo5h6b.png" alt="Key file paths section in sub-agent report" />
+      <p class="img-caption">Key file paths section in sub-agent report</p>
+      <p>This is what a sub-agent reports back: an extremely detailed summary to the parent agent that&#x27;s extremely dense in terms of token quality. You&#x27;re not having raw files passed in here. It&#x27;s a really well-crafted summary that the parent agent can then use to find relevant files if needed.</p>
+      <h3>Why this pattern works</h3>
+      <p>Most of the time on large repositories, this is how sub-agents work:</p>
+      <ol class="body-list"><li>The sub-agent reads a bunch of files</li><li>It synthesizes all that information</li><li>It reports back a summary, including key file paths and lots of detail, to the parent agent</li></ol>
+      <p>The parent agent (the orchestrator) stays lean, while the sub-agents spend their tokens doing deep exploration and summarizing their findings.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784723876/ai-hero-images/ozxbltlkeyefllfouu7e.png" alt="Diagram showing orchestrator and sub-agent relationship" />
+      <p class="img-caption">Diagram showing orchestrator and sub-agent relationship</p>
+      <p>The alternative is what we saw earlier, the agent just does its exploration itself, reading all the files directly into its own context.</p>
+      <h2>Choosing your exploration strategy</h2>
+      <p>Many prefer having sub-agents go off and do the exploration. This way, you keep a really tight context window in the orchestrator.</p>
+      <p>This is where paying attention to your starting context window pays off. If your starting context is really big, then you&#x27;re going to pay that cost every time you open a sub-agent. Keeping it small means it&#x27;s more economical and you get more time in the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>.</p>
+      <p>So it makes sense why exploration is so important and why using sub-agents for exploration is so effective, it lets you scale your understanding of large codebases while keeping token costs reasonable.</p>
+      <p>In the next lesson, we&#x27;re going to show you a technique for learning any repository.</p>
+      <p>Good work, I&#x27;ll see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="the-teach-skill">
+      <h1 class="chapter-title">The /teach Skill</h1>
+
+      <p>Starting a new job, joining a new project, or exploring unfamiliar code is a challenge everyone faces. You need to understand the architecture, the libraries, the patterns - but you don&#x27;t know where to start.</p>
+      <p>That&#x27;s where <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a> shine. With the <code>/teach</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a>, you can explore a codebase deeply and get a personalized explanation tailored to your experience level.</p>
+      <h2>Steps To Complete</h2>
+      <h3>Set Up A Fresh Workspace</h3>
+      <ul class="checklist"><li>Exit your current agent <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a></li></ul>
+      <ul class="checklist"><li>Create a new directory next to the course repo</li></ul>
+      <pre><code>mkdir ../ai-coding-learning</code></pre>
+      <ul class="checklist"><li>Open that directory in your code editor</li></ul>
+      <h3>Install The /teach Skill</h3>
+      <ul class="checklist"><li>Run the skills installer in your new directory</li></ul>
+      <pre><code>npx skills add mattpocock/skills</code></pre>
+      <p>An interactive menu will appear.</p>
+      <ul class="checklist"><li>Select only the <code>teach</code> skill using the spacebar, then press Return</li></ul>
+      <ul class="checklist"><li>Choose to install for your agent (Claude Code, or whichever agent you&#x27;re using)</li></ul>
+      <ul class="checklist"><li>Install to the <strong>current directory only</strong>, not globally</li></ul>
+      <ul class="checklist"><li>Select <strong>symlink</strong> as the installation method when prompted</li></ul>
+      <ul class="checklist"><li>Confirm the installation when asked</li></ul>
+      <p>You should now see a <code>.claude/skills/teach</code> folder in your file tree.</p>
+      <h3>Run The Exercise</h3>
+      <ul class="checklist"><li>Clear your terminal</li></ul>
+      <pre><code>clear</code></pre>
+      <ul class="checklist"><li>Start your agent</li></ul>
+      <pre><code>claude</code></pre>
+      <ul class="checklist"><li>Run the <code>/teach</code> command with this structure:</li></ul>
+      <pre><code>/teach Teach me about this repo: ../ai-coding-crash-course I&#x27;ve done a little bit of vibe coding before. I know the basics of TypeScript. I&#x27;ve never worked in React before, and I&#x27;m not very clear about client and server, and certainly not about the database.</code></pre>
+      <p>Replace the experience description with your own honest assessment of what you know and don&#x27;t know.</p>
+      <p>The skill will analyze the repository and create a learning plan tailored to your level.</p>
+    </section>
+
+    <section class="chapter" id="the-teach-skill-solution">
+      <h1 class="chapter-title">The /teach Skill Solution</h1>
+
+      <p>The <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> starts by looking through the directories and examining the actual codebase. It reads the readme and <code>package.json</code>, diving deeper than a surface-level scan.</p>
+      <p>No <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">sub-agent</a> gets spawned for this work — it&#x27;s all exploration happening in the main <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>. Once it has explored enough, the agent says it&#x27;s got a solid picture and is ready to set up the teaching workspace.</p>
+      <h2>Setting up the teaching workspace</h2>
+      <p>The <code>/teach</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> puts together several key files to ground your learning. Here&#x27;s what gets created:</p>
+      <ul class="body-list"><li><code>MISSION.md</code> — Your learning goal and success criteria</li><li><code>NOTES.md</code> — A learner profile describing what you know and what you don&#x27;t</li><li><code>RESOURCES.md</code> — <a href="https://www.aihero.dev/ai-coding-dictionary/primary-source">Primary sources</a> like official docs and community links</li><li><code>assets/lesson.css</code> and <code>assets/quiz.js</code> — Shared stylesheets and quiz components that every future lesson reuses</li><li><code>lessons/</code> — HTML lessons designed for your exact level</li><li><code>reference/glossary.html</code> — A reference doc you&#x27;ll return to</li><li><code>learning-records/</code> — <a href="https://www.aihero.dev/ai-coding-dictionary/stateful">Stateful</a> records of where you are in your learning journey</li></ul>
+      <p>The agent has found primary sources and written them into <code>RESOURCES.md</code>. These include React Router v7 docs about data loading and actions, along with other official documentation.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724046/ai-hero-images/po6rkhaqzm12vkuyisjy.png" alt="MISSION.md file showing the learning goal: understanding the AI Coding Crash Course codebase" />
+      <p class="img-caption">MISSION.md file showing the learning goal: understanding the AI Coding Crash Course codebase</p>
+      <h2>The first lesson: The Round Trip</h2>
+      <p>The agent creates a glossary and generates the very first lesson, then opens it for you to read.</p>
+      <pre><code>Lesson 01: The Round Trip
+What actually happens between typing a URL and seeing a page —
+traced through one real file in your repo.</code></pre>
+      <p>The lesson is formatted and designed exactly for where you need to be. It references the exact URLs in the application and describes them in the idiomatic language that the official docs use.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724046/ai-hero-images/fhfsajuywfkojmkcsfon.png" alt="The Round Trip lesson HTML page open in browser" />
+      <p class="img-caption">The Round Trip lesson HTML page open in browser</p>
+      <p>Here&#x27;s what the lesson walks you through:</p>
+      <div class="table-wrap"><table><thead><tr><th>Step</th><th>What happens</th><th>Where</th></tr></thead><tbody><tr><td>1</td><td>Router matches the URL against a literal list of patterns</td><td>Server</td></tr><tr><td>2</td><td>The loader function runs</td><td>Server</td></tr><tr><td>3</td><td>The component renders</td><td>Server</td></tr><tr><td>4</td><td>The browser paints the HTML</td><td>Client</td></tr><tr><td>5</td><td>Hydration happens</td><td>Client</td></tr></tbody></table></div>
+      <p>The line <code>route(&quot;courses&quot;, &quot;routes/courses.tsx&quot;)</code> in <code>app/routes.ts</code> tells you that the path <code>/courses</code> is handled by that file.</p>
+      <h2>The tricky bit: Same component, two machines</h2>
+      <p>There&#x27;s an important callout in the lesson. In steps 3 and 5, the same component function runs twice — once on the server, and once in the browser. The <code>loader</code>, by contrast, runs only on the server, every single time.</p>
+      <p>This asymmetry is the core concept you need to understand.</p>
+      <p>When the lesson shows you the real file, it strips away everything but what matters:</p>
+      <pre><code>// app/routes/courses.tsx
+
+export const loader = async (args: LoaderFunctionArgs) =&gt; {
+  // ...
+};
+
+export default function CourseCatalog() {
+  // ...
+}
+
+export const ErrorBoundary = () =&gt; {
+  // ...
+}
+
+export const meta = () =&gt; {
+  // ...
+}</code></pre>
+      <p>Those export names — <code>loader</code>, <code>default</code>, <code>ErrorBoundary</code>, <code>meta</code> — are a contract. React Router looks them up by exact name. Renaming <code>loader</code> to <code>fetchData</code> would break everything.</p>
+      <h2>Testing your understanding with quizzes</h2>
+      <p>The lesson includes interactive quizzes. Each question tests a single idea:</p>
+      <ol class="body-list"><li>Which file tells you that <code>/courses</code> is handled by <code>courses.tsx</code>?</li></ol>
+      <ul class="body-list"><li style="margin-left:1.25rem"><strong>The file <code>app/routes.ts</code> lists it</strong></li></ul>
+      <ol class="body-list"><li>How many times does the default-exported component run?</li></ol>
+      <ul class="body-list"><li style="margin-left:1.25rem"><strong>Twice: server first, then browser</strong></li></ul>
+      <ol class="body-list"><li>Where does a route&#x27;s loader function actually execute?</li></ol>
+      <ul class="body-list"><li style="margin-left:1.25rem"><strong>Only on the server, every time</strong></li></ul>
+      <ol class="body-list"><li>Renaming loader to <code>fetchData</code> in a route file would...</li></ol>
+      <ul class="body-list"><li style="margin-left:1.25rem"><strong>Break it: the name is a contract</strong></li></ul>
+      <ol class="body-list"><li>Searching courses filters the list by doing what?</li></ol>
+      <ul class="body-list"><li style="margin-left:1.25rem"><strong>Re-running the loader on the server</strong></li></ul>
+      <p>Notice that each answer is the same length. The formatting doesn&#x27;t give away clues about which one is right.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724047/ai-hero-images/oqwbpoh7xqi9euz3zoia.png" alt="Interactive quiz showing multiple choice questions about React Router" />
+      <p class="img-caption">Interactive quiz showing multiple choice questions about React Router</p>
+      <h2>Do this now: Prove it to yourself</h2>
+      <p>Reading is not learning. The lesson asks you to run the app and prove the boundary to yourself.</p>
+      <p>Add this to your loader:</p>
+      <pre><code>console.log(&quot;LOADER RAN&quot;);</code></pre>
+      <p>And this to your component:</p>
+      <pre><code>function CourseCatalog() {
+  console.log(&quot;COMPONENT RAN&quot;);
+  // ...
+}</code></pre>
+      <p>Now predict: where will each log appear? The terminal? The browser devtools? Both? Run it and see what surprises you.</p>
+      <h2>Stateful learning: You can clear context anytime</h2>
+      <p>The <code>/teach</code> skill is designed to be stateful. It saves learning records into the <code>learning-records/</code> directory — little markdown files that track exactly where you are in your journey.</p>
+      <p><code>MISSION.md</code> grounds the agent in your goal. These two files together mean you can almost <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> the context at any time and the agent will pick up exactly where you left off.</p>
+      <h2>The agent is your teacher</h2>
+      <p>Inside the teaching workspace, you can ask the agent follow-up questions:</p>
+      <ul class="body-list"><li>&quot;Why does the component run twice?&quot;</li><li>&quot;What breaks if I put a database call in the component?&quot;</li><li>&quot;What&#x27;s <code>LoaderArgs</code>?&quot;</li></ul>
+      <p>Any of it. Half of learning a codebase is asking the question early instead of guessing for a week.</p>
+      <h2>Getting the most from /teach</h2>
+      <p>Take a break from the main course and work through the teach skill until you understand deeply everything about the codebase. Become an absolute expert in navigating it.</p>
+      <p>This gives you a massive leg up when you then go to implement features, which happens very soon.</p>
+      <p>This is the technique recommended for learning any new repository:</p>
+      <ol class="body-list"><li>Create a new teaching workspace just for that repo</li><li>Tell the agent where you&#x27;re at</li><li>Tell it what you understand</li><li>Tell it what you don&#x27;t understand</li><li>Let it teach you</li></ol>
+      <p>The <code>/teach</code> skill works on all sorts of things. You can use it to learn how to solve a Rubik&#x27;s Cube, how to feed your kids better food, or how to review an AI-generated codebase with confidence.</p>
+      <p>This is a good example of how to write a good skill.</p>
+    </section>
+
+    <section class="chapter" id="build-a-feature">
+      <h1 class="chapter-title">Build a Feature</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">make-a-schema-change</span>
+          <span>Start the lesson: the repo before any rating feature exists</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">course-star-ratings</span>
+          <span>See my solution: the star rating system the agent built</span>
+        </div>
+    </div>
+      <p>You now understand the codebase and how exploration works. It&#x27;s time to actually build something.</p>
+      <p>You&#x27;re going to create a course review system where students can leave star ratings on courses. This is a deliberately meaty feature - it touches the database schema, migrations, service layer, routes, and UI components. But it&#x27;s well scoped and doesn&#x27;t demand complex UI work.</p>
+      <p>Before you start building, this exercise is a baseline for the rest of the course. You&#x27;ll see what happens when you prompt an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> directly. Later lessons will teach you techniques to improve on this approach. For now, pay close attention to <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> usage as the agent works, and observe how your setup explores the codebase.</p>
+      <h2>Your Task</h2>
+      <p>Build a course review system with these requirements:</p>
+      <ul class="body-list"><li>Students can leave a <strong>1-5 star rating</strong> on courses (no written reviews yet)</li><li>Ratings appear as a <strong>global average</strong> visible to all users</li><li>The average rating displays on both the course list page and the course detail page</li><li>Students should see a way to select a star rating on the course page</li></ul>
+      <p>Think about what the user will see, then work backwards from there.</p>
+      <h2>Steps To Complete</h2>
+      <h3>Set Up Your Prompt</h3>
+      <ul class="checklist"><li>Open your agent in the repository</li></ul>
+      <p>The repo is already set up and ready. You&#x27;ll be prompting the agent to build the feature.</p>
+      <h3>Think About the Feature</h3>
+      <p>Before you write your prompt, consider:</p>
+      <ul class="body-list"><li>Where should the star-rating widget appear?</li><li>How should the average rating be calculated and stored?</li><li>Which database tables and API routes will need to change?</li><li>Should there be any restrictions on who can rate (for example, should instructors be able to rate their own courses)?</li></ul>
+      <p>Don&#x27;t over-engineer this, just think through the user flow.</p>
+      <h3>Write Your Prompt</h3>
+      <ul class="checklist"><li>Write a clear, concise prompt asking the agent to build the course review system</li></ul>
+      <p>Keep it focused. Mention:</p>
+      <ul class="body-list"><li>That students can leave a star rating (1-5 stars)</li><li>That ratings should be visible as an average on the course list and course page</li><li>That this is star-rating only (no written reviews)</li></ul>
+      <h3>Run the Build</h3>
+      <ul class="checklist"><li>Send your prompt to the agent and let it build</li></ul>
+      <p>As the agent works, observe:</p>
+      <ul class="body-list"><li><strong>Context usage</strong>: Watch the context counter tick upward. What kinds of changes drain the most context?</li><li><strong>Exploration</strong>: Does the agent spawn a <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">subagent</a> to explore, or does it explore in its main window?</li><li><strong>File changes</strong>: How many files does it touch? Is it adding new files or modifying existing ones?</li></ul>
+      <h3>Verify the Feature Works</h3>
+      <ul class="checklist"><li>Run the dev server with <code>npm run dev</code></li></ul>
+      <p>Once the build completes, test the feature:</p>
+      <ul class="body-list"><li>Log in as a student (use the dev UI to switch users if available)</li><li>Navigate to a course page</li><li>Find the star-rating widget</li><li>Leave a rating</li><li>Check that the average rating displays on the course list and course detail page</li><li>Verify the rating persists when you refresh the page</li></ul>
+      <h3>Observe the Baseline</h3>
+      <ul class="checklist"><li>Take notes on what happened</li></ul>
+      <p>This is your baseline. In later lessons, you&#x27;ll learn techniques to make this process smoother and more efficient. For now, document:</p>
+      <ul class="body-list"><li>How many files were modified or created?</li><li>What was the quality of the implementation?</li><li>Did the agent make any assumptions you didn&#x27;t expect?</li><li>What would you improve about this approach?</li></ul>
+    </section>
+
+    <section class="chapter" id="build-a-feature-solution">
+      <h1 class="chapter-title">Build a Feature Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">make-a-schema-change</span>
+          <span>Start the lesson: the repo before any rating feature exists</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">course-star-ratings</span>
+          <span>See my solution: the star rating feature, with the bundling bug fixed</span>
+        </div>
+    </div>
+      <p>The foundation for this <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> is a clear feature request: a course review system where students can leave star ratings (no written reviews, just ratings). These ratings should be visible everywhere courses appear, with average ratings shown on both the course list page and individual course pages.</p>
+      <h2>Starting the Build</h2>
+      <p>With a solid prompt in hand, the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> begins exploration. It starts by reading the codebase structure to understand how to implement this feature effectively. Within the first few interactions, it&#x27;s already consumed about 20k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a>, exploring config files, testing files, and the overall structure.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724339/ai-hero-images/offqibxtnjm9ktobkjdx.png" alt="Agent starting to explore the codebase structure" />
+      <p class="img-caption">Agent starting to explore the codebase structure</p>
+      <h2>Implementation Begins</h2>
+      <p>The agent jumps straight into implementation with confidence, no clarifying questions asked. Here&#x27;s the order it tackles the feature:</p>
+      <ol class="body-list"><li><strong>Schema</strong> - Creates a <code>course_ratings</code> table in SQLite with fields for <code>userId</code>, <code>courseId</code>, and <code>rating</code> (1-5 whole numbers). It adds a migration script to apply the schema change.</li></ol>
+      <ol class="body-list"><li><strong>Service layer</strong> - Builds <code>courseRatingService</code> with functions like <code>rateCourse</code> (insert-or-update), <code>findRating</code>, and <code>getCourseRatingSummary</code> for calculating the average rating.</li></ol>
+      <ol class="body-list"><li><strong>Test coverage</strong> - Writes 17 tests for the service to verify behavior.</li></ol>
+      <ol class="body-list"><li><strong>React components</strong> - Creates <code>StarRating</code> for displaying average ratings and <code>StarRatingInput</code> for interactive rating submission.</li></ol>
+      <ol class="body-list"><li><strong>Integration</strong> - Wires the rating widget into the course list page and course detail page.</li></ol>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724340/ai-hero-images/vpatmro2t99njzlcu5rn.png" alt="The generated schema showing the course_ratings table structure" />
+      <p class="img-caption">The generated schema showing the course_ratings table structure</p>
+      <h2>Verification and Testing</h2>
+      <p>Rather than just shipping code, the agent goes the extra mile:</p>
+      <ul class="body-list"><li>Runs the full test suite, 295 tests passing</li><li>Uses TypeScript&#x27;s <code>typecheck</code> to verify all types are correct</li><li>Improves the seed script so test data includes ratings</li><li>Starts a dev server and performs smoke tests using <code>curl</code></li></ul>
+      <p>To verify the implementation actually works, it makes HTTP requests to the running dev server and greps the response for &quot;Rated&quot; text to confirm ratings appear on the pages.</p>
+      <pre><code>curl -s http://localhost:5173/courses | grep -o &#x27;Rated [^&quot;]*&#x27; | head -5</code></pre>
+      <p>This kind of <a href="https://www.aihero.dev/ai-coding-dictionary/automated-check">automated verification</a> shows the agent is thinking about whether its work actually solves the problem, not just whether it compiles.</p>
+      <h2>The Build Summary</h2>
+      <p>After all this work, the agent provides a summary of what was built:</p>
+      <ul class="body-list"><li>Schema with a <code>course_ratings</code> table and unique index on <code>(user_id, course_id)</code> so users can only rate a course once</li><li>Service with validation, upsert logic, and batch lookup functions</li><li>Components for both displaying and submitting ratings</li><li>Integration into course list and course detail pages</li><li>Updated seed data with ratings for 6 courses</li><li>Full end-to-end verification</li></ul>
+      <p>The entire feature consumed about 75k tokens, well within the &quot;<a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>&quot; for agent work.</p>
+      <h2>Viewing the Results</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724341/ai-hero-images/hhdvz51fog3l8baszycu.png" alt="The course list page now shows star ratings under each course" />
+      <p class="img-caption">The course list page now shows star ratings under each course</p>
+      <p>Loading the application in the browser shows the ratings working as expected. Each course displays its average rating prominently.</p>
+      <h2>The Critical Bug</h2>
+      <p>But there&#x27;s a problem. When testing interactively, the dev UI stops responding, the user switcher no longer works. Clicking to change a rating causes the entire page to refresh instead of updating instantly. Something is seriously wrong.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724342/ai-hero-images/tjvdpvmbmvrxc4rdp5nq.png" alt="Browser console showing the promisify error" />
+      <p class="img-caption">Browser console showing the promisify error</p>
+      <h2>Diagnosing the Issue</h2>
+      <p>Opening the browser developer console reveals the smoking gun: an uncaught <code>TypeError: promisify is not a function</code>. This is a classic React Router / Vite bundling issue.</p>
+      <pre><code>Uncaught TypeError: promisify is not a function
+    at node_modules/better-sqlite3/lib/methods/backup.js</code></pre>
+      <p>The error shows that <code>better-sqlite3</code> (the database driver) somehow got bundled into the browser JavaScript. The browser environment doesn&#x27;t have Node.js utilities like <code>util.promisify</code>, so the code fails.</p>
+      <h2>Posting the Bug Back</h2>
+      <p>I copy the console error and paste it back into the agent with a message: &quot;This is happening in the browser console, and it&#x27;s making things go weird.&quot;</p>
+      <h2>The Agent&#x27;s Diagnosis</h2>
+      <p>The agent quickly identifies the root cause:</p>
+      <blockquote><p>Good catch, that&#x27;s my bug. <code>star-rating.tsx</code> (a client component) imports <code>MAX_RATING</code> from <code>courseRatingService</code>, which imports the database module. That drags the whole database driver into the browser bundle.</p></blockquote>
+      <p>The problem is architectural: client-side components shouldn&#x27;t import from modules that depend on server-only code. While React Router normally strips out <code>loader</code> and <code>action</code> functions from the client build, it can&#x27;t protect against a component directly importing from a service that uses the database.</p>
+      <h2>The Fix</h2>
+      <p>The solution is clean and minimal. Move the rating constants to a module with zero server dependencies:</p>
+      <pre><code>// app/lib/ratings.ts
+// Rating bounds live here rather than in courseRatingService so that client
+// components can import them without pulling the database driver into the
+// browser bundle.
+
+export const MIN_RATING = 1;
+export const MAX_RATING = 5;</code></pre>
+      <p>Now <code>star-rating.tsx</code> imports from <code>app/lib/ratings.ts</code> instead of from the service. The component gets what it needs without triggering a massive dependency chain.</p>
+      <h2>Verification After the Fix</h2>
+      <p>After updating the code, the agent verifies the fix by:</p>
+      <ul class="body-list"><li>Checking the Vite dev server&#x27;s module transform output</li><li>Grepping the production bundle for <code>better-sqlite3</code> (finds zero instances)</li><li>Testing the application again to confirm interactive features work</li></ul>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724343/ai-hero-images/ggnsayu4mauz2wt74895.png" alt="The course page now updates ratings instantly without full page refresh" />
+      <p class="img-caption">The course page now updates ratings instantly without full page refresh</p>
+      <p>The dev UI responds properly, the user switcher works, and clicking a star to rate a course updates the average instantly instead of triggering a full page reload.</p>
+      <h2>Summary: What Went Right and Wrong</h2>
+      <div class="table-wrap"><table><thead><tr><th>Aspect</th><th>Result</th></tr></thead><tbody><tr><td>Exploration</td><td>Thorough, no <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">subagent</a> needed</td></tr><tr><td>Implementation</td><td>Complete end-to-end feature</td></tr><tr><td>Testing</td><td>Comprehensive: unit, type, integration, smoke tests</td></tr><tr><td>Token usage</td><td>~75k for build, ~90k total (smart zone)</td></tr><tr><td>Production bug</td><td>Shipped a critical bundling issue</td></tr><tr><td>Bug fix</td><td>Identified and resolved quickly once feedback was provided</td></tr></tbody></table></div>
+      <p>The agent demonstrated solid engineering practices: exploration, test-driven development, verification, and the ability to learn from feedback. However, it did ship a bug that broke interactive features, suggesting gaps in how it reasons about client vs. server boundaries in modern frameworks.</p>
+      <p>Overall, I would say not a great showing. However, I think there&#x27;s definitely some improvements to be made, and we&#x27;ll tackle those next.</p>
+    </section>
+
+    <section class="chapter" id="why-plan-mode-sucks">
+      <h1 class="chapter-title">Why Plan Mode Sucks</h1>
+
+      <p>In our previous lesson, we saw how an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> behaves under normal conditions. The results were not great. What really troubled me was the pattern: the agent prompted, explored the codebase, then immediately began implementing.</p>
+      <p>There was no verification with us about whether it was building the right thing. There was no attempt at alignment between the AI and us.</p>
+      <p>In that run, we were actually lucky. The agent built the thing we wanted pretty well. There were some issues and a critical bug, but it worked. However, this rush to create an asset is really dangerous in AI and something I always try to slow down.</p>
+      <h2>Plan mode: a buffer between exploration and implementation</h2>
+      <p>Most agents ship with something called <a href="https://www.aihero.dev/ai-coding-dictionary/agent-mode"><strong>plan mode</strong></a>. The intention of plan mode is to have a planning <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> before any work is done. This planning session creates a plan document that you read, review, and then decide whether to continue (maybe with modifications). Only when you&#x27;re happy with the plan do you proceed.</p>
+      <p>Let me show you how this works in practice.</p>
+      <pre><code>npm run reset</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724469/ai-hero-images/vnwqiydtjqeik72mz6yl.png" alt="Terminal output showing npm run reset" />
+      <p class="img-caption">Terminal output showing npm run reset</p>
+      <p>This resets the codebase to the main branch, clearing out the existing course rating implementation from the previous lesson.</p>
+      <p>Next, I&#x27;ll open up the agent and enable plan mode by cycling through the <a href="https://www.aihero.dev/ai-coding-dictionary/permission-mode">permission modes</a> using <code>shift+tab</code> until the input footer reads &quot;plan mode on&quot;.</p>
+      <p>Now I&#x27;ll paste in the original prompt:</p>
+      <pre><code>I would like to create a course review system where students can review courses by leaving a star rating. We don&#x27;t want to add written reviews, just star rating. These reviews will then be visible everywhere that courses are visible. We want to show the average rating on the courses in the list page and on the course page itself.</code></pre>
+      <p>After submitting, the agent should explore the codebase to understand the structure, then come back with a plan. This plan mode acts like a little buffer between exploration and implementation. A moment where we can align before continuing.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724470/ai-hero-images/obq7zhdtilsfmhiojwt5.png" alt="Agent exploring the codebase during plan mode" />
+      <p class="img-caption">Agent exploring the codebase during plan mode</p>
+      <h2>The plan it generates</h2>
+      <p>Now the agent has finished exploration and is writing the plan. This is roughly how most agents handle plan mode. The behavior is similar across different tools.</p>
+      <p>I can view the plan by typing <code>/plan</code>:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784724471/ai-hero-images/s91ltu5z2habcofjeeyt.png" alt="Terminal showing the /plan command output" />
+      <p class="img-caption">Terminal showing the /plan command output</p>
+      <p>This gives me a quite detailed output of everything the agent is going to do, along with some key decisions:</p>
+      <ul class="body-list"><li><strong>One user per rating per course</strong> - makes sense</li><li><strong>Averages are computed on read</strong> - looks fine</li><li><strong>Empty state:</strong> courses with zero ratings show &quot;No ratings yet&quot; rather than zero stars - makes sense</li><li><strong>Who can rate:</strong> enrolled users only - makes sense</li></ul>
+      <h2>The critical issue: plan mode is still rushing</h2>
+      <p>Here&#x27;s the problem: instead of rushing to create an implementation, the agent rushed to create a plan which reads exactly like the implementation would.</p>
+      <p>It&#x27;s given me the exact implementation it&#x27;s going to do:</p>
+      <ul class="body-list"><li>Database table structure</li><li>Service names and functions</li><li>Component names</li><li>Route modifications</li><li>Testing strategy</li></ul>
+      <p>It&#x27;s still rushing to create an asset. The plan is the asset now, not the code.</p>
+      <h2>The root cause: sycophantic trait of agents</h2>
+      <p>This feeling of premature completion, of rushing to get to the end, is a <a href="https://www.aihero.dev/ai-coding-dictionary/sycophancy">sycophantic</a> trait of agents. When you tell it you want to produce something, it will go produce that thing.</p>
+      <p>It won&#x27;t necessarily stop to make sure it&#x27;s done the legwork to ensure you&#x27;re aligned on how it should look.</p>
+      <p>This is really bad because it leads to a failure mode that happens constantly: the agent builds the wrong thing.</p>
+      <p>On a relatively simple feature like course ratings, it doesn&#x27;t matter too much. But on a more complicated feature, it really matters.</p>
+      <h2>What this means in practice</h2>
+      <p>Imagine if a human developer behaved this way. They just said, &quot;Yes, I know how to build that,&quot; and they went ahead and did it. There would be no alignment whatsoever. There would be no sense of a shared understanding being developed.</p>
+      <p>In the book <a href="https://www.amazon.co.uk/Design-Essays-Computer-Scientist/dp/0201362988">&quot;The Design of Design&quot;</a> by Frederick P. Brooks Jr. (the author of &quot;The Mythical Man-Month&quot;), there&#x27;s a concept called the <a href="https://www.aihero.dev/ai-coding-dictionary/design-concept"><strong>design concept</strong></a>.</p>
+      <p>A design concept is not an asset. It&#x27;s the concept floating around in the room when humans are designing something. Everyone has a slightly different idea of it, but as conversations develop and you work towards understanding what you&#x27;re building, everything starts to sharpen.</p>
+      <p>In both plan mode and the version we saw before, there&#x27;s no design concept here. There&#x27;s no moment to check in with each other to make sure we&#x27;re actually aligned on what we&#x27;re building.</p>
+      <p>We got an okay result the first time we ran it, but I guarantee on more complex features, this would quickly go wrong.</p>
+      <h2>A different approach</h2>
+      <p>The approach I&#x27;ve designed tries to sidestep this issue. It takes away the sycophantic asset rush. What you end up with, I hope, is a feeling of greater alignment with the agent - like you&#x27;re both on the same page.</p>
+      <p>I&#x27;m going to explain that in the next lesson.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="plan-mode-rushes-to-an-asset">
+        <p class="quiz-q-text">You run a feature request in plan mode. The agent explores, then hands back a plan naming the database table, the service functions, the components and the testing strategy. What is wrong with that?</p>
+        <ul class="quiz-choices">
+          <li class="correct">It rushed to an asset again - the plan is the implementation</li>
+          <li>It is too vague to review, so you cannot judge the approach</li>
+          <li>It skipped exploring the codebase, so the plan is guesswork</li>
+          <li>It cannot be changed, so you have to accept the plan as it is</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The agent did explore first, and the plan is anything but vague - it is extremely specific, and you are free to modify it before continuing. That specificity is the problem: the decisions are already made and written down before any shared understanding was built with you.
+        </div>
+      </div>
+      <div class="quiz-question" id="sycophancy-drives-premature-completion">
+        <p class="quiz-q-text">You name a thing you want, and the agent goes and produces it without ever stopping to check that you agree on what it should look like. Which agent trait is this?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Sycophancy - producing whatever you asked for</li>
+          <li>Hallucination - inventing facts with no source</li>
+          <li>Non-determinism - behaving differently each run</li>
+          <li>Degradation - losing focus as a session grows</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Nothing here is invented, so it is not hallucination. The behaviour is consistent rather than varying run to run, so it is not non-determinism, and it shows up immediately rather than after a long session, so it is not focus fading. It is the agent agreeing and delivering instead of aligning.
+        </div>
+      </div>
+      <div class="quiz-question" id="design-concept-is-not-an-asset">
+        <p class="quiz-q-text">You and a colleague talk a feature through until you both picture it the same way, and nothing is written down. What do you have?</p>
+        <ul class="quiz-choices">
+          <li class="correct">A design concept - shared understanding, not an artifact</li>
+          <li>A specification the implementation can be checked against</li>
+          <li>A plan document, just held in an informal spoken form</li>
+          <li>Nothing usable until one of you writes the decisions down</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          A spec and a plan are both assets - the thing here is deliberately not one. Nor is it worthless for being unwritten: the sharpening of that shared picture through conversation is exactly the step plan mode skips when it jumps straight to a document.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="the-grill-execute-clear-loop">
+      <h1 class="chapter-title">The Grill-Execute-Clear Loop</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">grill-me-skill</span>
+          <span>Start the lesson: the <code>/grill-me</code> skill added to <code>.agents/skills/</code></span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">lesson-comments</span>
+          <span>See my solution: lesson comments built from the grilled spec</span>
+        </div>
+    </div>
+      <p>Before you start building features, you need to understand what you&#x27;re building. Most developers skip this step and rush straight into coding, which leads to wasted time and solutions that don&#x27;t quite fit the problem.</p>
+      <p>The <code>/grill-me</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> forces you to pause. It interviews you relentlessly until you reach a shared understanding of what you&#x27;re trying to build. Only then do you implement.</p>
+      <p>This is the grill-execute-clear loop. You <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grill</a> until you understand. You execute the solution. You <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> your mind and move to the next feature.</p>
+      <h2>The Grilling Skill</h2>
+      <p>The grilling skill works by building a design tree. Every decision branches into the decisions that hang off it.</p>
+      <p>It asks questions in rounds. The frontier is every decision whose prerequisites are already settled. The skill asks the whole frontier at once, then waits for your answers.</p>
+      <p>As you answer, the frontier expands. New questions unlock. Previously blocked decisions become answerable.</p>
+      <p>The <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> ends when the frontier is empty: every branch visited, nothing left silently assumed. Only then should you implement.</p>
+      <h2>Your Task</h2>
+      <p>Build lesson comments for the course platform. Students and instructors should be able to comment on individual lesson pages.</p>
+      <p>Imagine browsing to a lesson like &quot;Connecting to a Database&quot; or &quot;CRUD Operations&quot;. On that page, students should be able to ask questions, share insights, and discuss the lesson content with other students and instructors.</p>
+      <p>This is deliberately open-ended, just like the previous exercise with course star ratings. But this time, instead of rushing to implement, you&#x27;re going to use <code>/grill-me</code> to explore the feature space first.</p>
+      <p>The skill will ask you questions like:</p>
+      <ul class="body-list"><li>Who can comment? Only enrolled students? Instructors too?</li><li>Can users edit or delete their own comments?</li><li>Should comments be threaded, or flat?</li><li>Do comments need moderation?</li><li>Should users get notifications when someone replies?</li></ul>
+      <p>You might not have thought about all of these. That&#x27;s the point. The grilling process surfaces the decisions you need to make before you write any code.</p>
+      <h2>Steps To Complete</h2>
+      <h3>Get the Skill</h3>
+      <ul class="checklist"><li>Run <code>npm run reset</code> to pull in the <code>/grill-me</code> skill</li></ul>
+      <pre><code>npm run reset</code></pre>
+      <p>This brings the repository up to the current lesson&#x27;s commit, which includes the grilling skill in your <code>.agents/skills/</code> directory.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726659/ai-hero-images/grl7ta1sfdt5yxdykxuw.png" alt="Editor showing the grilling skill files after npm run reset" />
+      <p class="img-caption">Editor showing the grilling skill files after npm run reset</p>
+      <h3>Invoke the Skill</h3>
+      <ul class="checklist"><li>Clear your terminal and run your <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a></li></ul>
+      <p>In your agent <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a>, you&#x27;ll invoke the skill differently depending on your setup. In agent code, it&#x27;s typically <code>/</code> followed by the skill name.</p>
+      <ul class="checklist"><li>Type <code>/</code> to open the skill picker, then select <code>grill-me</code></li></ul>
+      <p>This invokes the grilling skill and puts you into interview mode.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726660/ai-hero-images/qollr9ryuqvfb8mrdidz.png" alt="Terminal showing the skill picker with grill-me selected" />
+      <p class="img-caption">Terminal showing the skill picker with grill-me selected</p>
+      <h3>Start the Discussion</h3>
+      <ul class="checklist"><li>Write a loose, non-comprehensive prompt about lesson comments</li></ul>
+      <p>You don&#x27;t need to be thorough here. The agent will ask clarifying questions.</p>
+      <pre><code>/grill-me
+I want to add comments to lessons so students can ask questions and discuss.</code></pre>
+      <p>This kicks off a discussion. The agent will start building the design tree and asking about the decisions that hang off this feature.</p>
+      <h3>Work Through the Grilling</h3>
+      <ul class="checklist"><li>Answer each round of questions as the agent asks them</li></ul>
+      <p>The agent will ask multiple questions per round. Answer them all before the next round begins. Your answers reshape the design tree and unlock new questions.</p>
+      <ul class="checklist"><li>Keep going until the frontier is empty</li></ul>
+      <p>When the agent says the session is done and you&#x27;ve reached a shared understanding, you&#x27;re ready to implement.</p>
+      <p>This might take many rounds. That&#x27;s the point. You&#x27;re thinking through the problem before you code it.</p>
+      <h3>Implement the Feature</h3>
+      <ul class="checklist"><li>Once you have a shared understanding, implement lesson comments</li></ul>
+      <p>Now that you know what you&#x27;re building, write the code.</p>
+      <ul class="checklist"><li>Test your implementation in the browser</li></ul>
+      <p>Students and instructors should be able to comment on lesson pages. The comments should persist and be visible to other users.</p>
+      <h3>Verify Your Work</h3>
+      <ul class="checklist"><li>Run the app and navigate to a lesson page</li></ul>
+      <p>Pick a course you&#x27;re enrolled in. Find a lesson like &quot;Connecting to a Database&quot; or &quot;CRUD Operations&quot;.</p>
+      <ul class="checklist"><li>Add a comment as a student</li></ul>
+      <p>Your comment should appear on the page.</p>
+      <ul class="checklist"><li>Switch users and verify the comment is visible</li></ul>
+      <p>The comment you added should be visible when you switch to a different user and return to the same lesson.</p>
+    </section>
+
+    <section class="chapter" id="the-grill-execute-clear-loop-solution">
+      <h1 class="chapter-title">The Grill-Execute-Clear Loop Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">grill-me-skill</span>
+          <span>Start the lesson: the <code>/grill-me</code> skill added to <code>.agents/skills/</code></span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">lesson-comments</span>
+          <span>See my solution: the full lesson comments feature</span>
+        </div>
+    </div>
+      <p>Starting with a loose prompt, you can use the <code>/grill-me</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> to align on a feature before you write a single line of code.</p>
+      <h2>The Initial Prompt</h2>
+      <p>The process starts simple. Tell the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> what you want to build:</p>
+      <pre><code>/grill-me I would like to build a lesson comments feature.
+I think students should be able to comment on lessons they
+have access to. Instructors should also be able to comment
+on them as well.</code></pre>
+      <p>The agent immediately launches a background task to map your codebase. It does not wait for that exploration to finish - it starts asking questions right away. This is the non-blocking design pattern in action.</p>
+      <h2>Round 1: The Strategic Questions</h2>
+      <p>Questions arrive in rapid succession. These are not implementation details. They are design decisions.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726931/ai-hero-images/bu6pbikyisxkvjlplbu2.png" alt="First batch of grilling questions displayed" />
+      <p class="img-caption">First batch of grilling questions displayed</p>
+      <p>The agent asks about purpose (&quot;What is this feature actually for?&quot;), not just mechanism. It explores edge cases (&quot;What happens when nobody comments?&quot;). It challenges assumptions (&quot;Why gate commenting to students with access at all?&quot;).</p>
+      <p>Each question includes a recommendation. You do not have to follow it - your job is to think through it and decide.</p>
+      <h2>How to Answer</h2>
+      <p>You do not answer each question separately. You dictate one long paragraph, covering all the answers.</p>
+      <p>Here&#x27;s the answer that I gave to the questions I received:</p>
+      <pre><code>I would say this feature is for Q&amp;A and support, with a bit of community and discussion.
+I&#x27;d say that having a comment section that&#x27;s healthy is really useful for students.
+I think I don&#x27;t mind a comments box with zero comments.
+We probably want to design an empty state that looks nice and makes students not turned off from commenting, that encourages them to comment.
+I am not actually the teacher in this situation.
+This is for other teachers.
+I think the expectation of a response should be there.
+I think I would prefer to build it.
+It&#x27;s just weird to discuss a lesson that you can&#x27;t see, and it&#x27;s part of the paid-only perks.
+To be honest, all three of those seem fine.
+I think one table, one comments feature, the instructor gets a badge.
+Yep, your recommendation makes sense.</code></pre>
+      <p>The agent absorbs your answers and prepares the next round.</p>
+      <h2>Round 2: The Implementation Layer</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726932/ai-hero-images/ct3hyjqe8nklz2pflxk3.png" alt="Second round of questions about threading model and comment behavior" />
+      <p class="img-caption">Second round of questions about threading model and comment behavior</p>
+      <p>Now the questions dig into structure. Threading model. Edit permissions. Sorting. Notification strategy.</p>
+      <p>Here&#x27;s the answer that I gave to the questions I received:</p>
+      <pre><code>For the threading model, I think we just want a flat list, first of all.
+I don&#x27;t want to have an explicit resolution state.
+I don&#x27;t think we need that in v1.
+The instructor should have a dedicated queue page on their dashboard that lists every unanswered question.
+I guess, since we&#x27;ve decided that we&#x27;re not having an explicit resolution state, it should be that every thread where there&#x27;s a recent comment that they&#x27;ve not seen or not replied to.</code></pre>
+      <h2>When the Agent Pushes Back</h2>
+      <p>During Round 3, the agent catches a contradiction in your answers:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726933/ai-hero-images/enpp42cqab5fxatodj8h.png" alt="Agent highlighting contradiction between flat list and queue requirements" />
+      <p class="img-caption">Agent highlighting contradiction between flat list and queue requirements</p>
+      <p>You chose a flat list. You also chose no explicit resolution state. But you asked for a queue of unanswered questions.</p>
+      <p>With a flat list, every comment is top-level. Nothing points at anything else. How do you mark something as answered?</p>
+      <p>The agent forces a decision. It offers three options:</p>
+      <ol class="body-list"><li>Reinstate one-level replies (parent-child relationships)</li><li>Keep flat, define &quot;unanswered&quot; at lesson level</li><li>Keep flat, add explicit seen-state</li></ol>
+      <p>You choose option 1. One-level replies make sense for an instructor-student dynamic.</p>
+      <h2>The Real Bug Discovery</h2>
+      <p>While you are answering questions, background exploration finishes. The agent uncovers a critical security issue:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726935/ai-hero-images/raejvrzkmsz6tcsit0qp.png" alt="Agent reporting XSS vulnerability in markdown rendering" />
+      <p class="img-caption">Agent reporting XSS vulnerability in markdown rendering</p>
+      <p>The <code>renderMarkdown</code> function has no sanitization. Raw HTML passes straight through. A student could inject a script tag into a comment, and it would execute in the instructor&#x27;s session.</p>
+      <p>The recommendation: create a separate <code>renderComment()</code> function with a restricted renderer. Only student comments need sanitization. Instructor comments can render full markdown.</p>
+      <p>You agree. This becomes part of the <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a>.</p>
+      <h2>The Spec</h2>
+      <p>By Round 4, the agent has enough information. It produces a written specification:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726937/ai-hero-images/aj390dgqynlla7hzmssa.png" alt="Agent producing complete written specification" />
+      <p class="img-caption">Agent producing complete written specification</p>
+      <p>You do not need to read it. Your answers throughout the <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> have already encoded all the decisions. The spec is just a confirmation - proof that you and the agent share the same understanding.</p>
+      <p>However, if the <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grilling</a> session took a weird twisty turn, you might want to skim it. In this case, everything feels aligned.</p>
+      <h2>One Last Push</h2>
+      <p>The agent makes one final objection about queue ordering:</p>
+      <blockquote><p>Queue ordering - your reasoning argues against your choice. You want newest-first _so mis-flagged items float away._ But the queue only contains items with no staff reply. Nothing floats _away_; it floats _down_.</p></blockquote>
+      <p>You do not need to respond. You just say:</p>
+      <pre><code>Okay, let&#x27;s start building.</code></pre>
+      <p>The agent resolves it itself and moves into execution mode.</p>
+      <h2>The Build Happens</h2>
+      <p>No <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clearing</a> of context. No starting fresh. You keep all the grilled <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> in the session and jump straight into implementation.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726938/ai-hero-images/eygkseakympj4ikiyvqc.png" alt="Agent building the feature while context remains in session" />
+      <p class="img-caption">Agent building the feature while context remains in session</p>
+      <p>The agent churns for 14 minutes and 28 seconds. By the end, you have 362 tests passing, a clean typecheck, and a working feature in VS Code.</p>
+      <p>All of this happens while staying well under the context limit - the build ends at around 155k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a>, leaving room to spare.</p>
+      <h2>Quality Assurance in the Browser</h2>
+      <p>You open the feature in the browser. A student (Olivia Martinez) posts a comment:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726939/ai-hero-images/kmsy3kwhhv84aiffvxcr.png" alt="Student posting comment on lesson" />
+      <p class="img-caption">Student posting comment on lesson</p>
+      <p>You switch to the instructor (Marcus Johnson) and reply:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726940/ai-hero-images/jnrmswl67n6adshvoiuh.png" alt="Instructor replying to student comment" />
+      <p class="img-caption">Instructor replying to student comment</p>
+      <p>You can edit your own comments. The UI shows &quot;(edited)&quot; when you do:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726941/ai-hero-images/xcnemhz1dcco7agfxnnz.png" alt="Comment showing edited state" />
+      <p class="img-caption">Comment showing edited state</p>
+      <p>You can delete comments. The system leaves a tombstone:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726941/ai-hero-images/ar2m61616prgmtp6xhx3.png" alt="Deleted comment showing tombstone with reply still visible" />
+      <p class="img-caption">Deleted comment showing tombstone with reply still visible</p>
+      <p>The instructor has a dedicated Questions queue:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784726942/ai-hero-images/ywfj7pcyplwaupddqzng.png" alt="Instructor questions queue page showing unanswered questions" />
+      <p class="img-caption">Instructor questions queue page showing unanswered questions</p>
+      <p>Every unanswered question appears here. Olivia&#x27;s &quot;how are you?&quot; is at the top. There is another question from Liam Thompson below it.</p>
+      <p>The instructor can reply inline, without leaving the queue page.</p>
+      <h2>What Gets Built</h2>
+      <p>The full feature ships:</p>
+      <ul class="body-list"><li>A <code>comments</code> table in the database</li><li>A <code>getAccess</code> helper in <code>access.server.ts</code> (the shared guard from your code-quality question)</li><li>A sanitized <code>renderComment()</code> function in <code>comment-markdown.server.ts</code> with 19 tests</li><li>A <code>commentService</code> with 48 tests covering all the business logic</li><li>A comment thread UI component with an empty state</li><li>An instructor questions queue page at <code>/instructor/questions</code></li><li>Seed data: 15 comments across 9 threads, 4 of which are unanswered</li></ul>
+      <p>Everything is tested. Everything is typed. The working tree is dirty and ready for review.</p>
+      <h2>Why This Works Better Than Direct Implementation</h2>
+      <p>Without grilling, you might have built:</p>
+      <ul class="body-list"><li>No empty state (what does zero comments look like?)</li><li>No instructor queue (instructors have to hunt through lessons)</li><li>No XSS sanitization (a real security hole)</li><li>A flat list with a seen-state (more complex than replies)</li><li>Full HTML rendering for students (dangerous)</li></ul>
+      <p>Grilling made you think through all of that _before_ writing code. The implementation became trivial because the hard decisions were already made.</p>
+      <p>This is the power of alignment. The agent is not trying to be clever. It is trying to understand what you actually want, and it uses pressure (contradictions, edge cases, security issues) to force that understanding into the light.</p>
+      <p>Then it builds exactly what you agreed on.</p>
+      <h2>The Loop</h2>
+      <p>This is one cycle of the grill-execute-clear loop:</p>
+      <ol class="body-list"><li><strong>Grill</strong>: Ask clarifying questions until you and the agent share a mental model</li><li><strong>Execute</strong>: Build the feature with confidence, context still warm</li><li><strong>Clear</strong>: Once the feature is done and committed, clear the context before the next task</li></ol>
+      <p>The next time you work on something, you start fresh. The session history is gone. But the grilling session before it left you with exactly what you needed.</p>
+    </section>
+
+    <section class="chapter" id="compaction">
+      <h1 class="chapter-title">Compaction</h1>
+
+      <p>When building features with an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>, you eventually reach the end of the &quot;<a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>&quot; - the part of the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> where your <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> works best. What happens next?</p>
+      <p>If you continue in that same <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>, results <a href="https://www.aihero.dev/ai-coding-dictionary/attention-degradation">degrade</a> slowly. The agent sends all previous <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> with every request. Those tokens are cheaper because they&#x27;ve been <a href="https://www.aihero.dev/ai-coding-dictionary/cache-tokens">cached</a>, but you&#x27;re still operating in a higher latency, less capable environment.</p>
+      <p>More importantly: how many of those tokens are actually useful? A lot of them are just noise from the work itself - file reads, file writes, files in different states as you move through the project.</p>
+      <h2>The Naive Solution: Starting Fresh</h2>
+      <p>One option is to totally <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> the <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> and start a new session. But this comes with a hidden cost.</p>
+      <p>When you clear the context, the agent loses crucial understanding from the initial conversation. It has to re-explore and re-establish everything it knew before. You might prompt it like this:</p>
+      <pre><code>we are going to do QA on the stuff that&#x27;s literally just been worked on.
+Can you go and explore it so you understand the reasons behind its existence?</code></pre>
+      <p>The agent will do that exploration, but it&#x27;s also lost some of the crucial reasoning from your initial conversation.</p>
+      <p>It can re-explore the code and re-read what you built, but that re-exploration is lossy - you&#x27;ve lost a lot of the actual _why_ behind what you constructed.</p>
+      <h2>Introducing Compaction</h2>
+      <p>This is where <a href="https://www.aihero.dev/ai-coding-dictionary/compaction"><strong>compaction</strong></a> comes in. Instead of clearing the context entirely, compaction takes the context from your current session, squeezes it down, and seeds a fresh session with it.</p>
+      <p>Think of it like a <a href="https://www.aihero.dev/ai-coding-dictionary/handoff">hand-off</a> between sessions that you control - similar to using a <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">sub-agent</a>, but in reverse. The session history is summarized, then it seeds a fresh session you can continue working from.</p>
+      <div class="table-wrap"><table><thead><tr><th>Approach</th><th>Tokens</th><th>Quality</th><th>Downsides</th></tr></thead><tbody><tr><td>Continue current session</td><td>156k+</td><td>Full context, lots of noise</td><td>High latency, dumb zone results</td></tr><tr><td>Clear and start fresh</td><td>~5k</td><td>Clean slate</td><td>Must re-explore everything, lossy understanding</td></tr><tr><td>Compaction</td><td>~28k</td><td>Summarized context</td><td>Lossy compression, <a href="https://www.aihero.dev/ai-coding-dictionary/secondary-source">secondary source</a></td></tr></tbody></table></div>
+      <p>Compaction saves re-exploration. Without it, you&#x27;d spend a ton of tokens just re-discovering context you&#x27;d already established.</p>
+      <h2>How Compaction Works in Practice</h2>
+      <p>In your agent, you run the <code>/compact</code> command with a summarization instruction:</p>
+      <pre><code>/compact Yeah, we&#x27;re going to do some QA in this area.</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727213/ai-hero-images/ohchylfupfecbxkjykji.png" alt="Running the /compact command with summarization instruction" />
+      <p class="img-caption">Running the /compact command with summarization instruction</p>
+      <p>This instruction matters. The thing doing the summarization is a language model, so it needs context to highlight relevant information. Your instruction doesn&#x27;t need to be detailed - one sentence is often enough.</p>
+      <p>When you launch the compaction, the agent shows a UI where it&#x27;s compacting the conversation.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727214/ai-hero-images/u1ode6xn0r2sg4nl1jvj.png" alt="Compaction UI showing progress" />
+      <p class="img-caption">Compaction UI showing progress</p>
+      <p>Here&#x27;s a useful tip: you can queue messages inside the compaction UI. Once compaction finishes, your queued message runs automatically - no need to sit around waiting.</p>
+      <h3>What Gets Preserved</h3>
+      <p>When compaction finishes, it outputs a summary with several key elements:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727215/ai-hero-images/y8tuacsohb14aaw8o2tk.png" alt="Compaction finished readout with file references" />
+      <p class="img-caption">Compaction finished readout with file references</p>
+      <ul class="body-list"><li><strong>Primary request and intent</strong> - what you originally asked for</li><li><strong>Full agreed <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a></strong> - all the decisions you confirmed</li><li><strong>Key technical concepts</strong> - important domain knowledge</li><li><strong>File references</strong> - pointers to critical files, plus some files retained verbatim</li><li><strong>Errors and fixes</strong> - what went wrong and how you solved it</li><li><strong>Problem solving</strong> - your approach and reasoning</li><li><strong>All user messages</strong> - everything you said</li><li><strong>Pending tasks</strong> - work still to do</li></ul>
+      <p>Here&#x27;s what the token compression looks like:</p>
+      <p>From the original session with ~156,000 tokens, the compaction summary reduced it to around 28,300 tokens. That 150k becomes 30k - giving you plenty of room back in the smart zone.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727216/ai-hero-images/hvti9dpz5twk9hsrrnbk.png" alt="Running /context showing 28.3k tokens after compaction" />
+      <p class="img-caption">Running /context showing 28.3k tokens after compaction</p>
+      <pre><code>Model: claude-opus-4
+Tokens: 28.3k / 1m (3%)
+
+| Category                | Tokens | Percentage |
+|-------------------------|--------|------------|
+| System prompt           | 2.9k   | 0.3%       |
+| System tools            | 4.5k   | 0.5%       |
+| Messages                | 20.7k  | 2.1%       |
+| Free space              | 971.7k | 97.2%      |</code></pre>
+      <p>For example, a line from the summary might read:</p>
+      <pre><code>- app/lib/comments.ts (new): MIN_COMMENT_LENGTH = 1,
+  MAX_COMMENT_LENGTH = 5000 (client-safe, mirrors ratings.ts)</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727217/ai-hero-images/py1iywplpcn5m2emfbml.png" alt="Dense compression of file changes in the summary" />
+      <p class="img-caption">Dense compression of file changes in the summary</p>
+      <p>This is extremely dense compression of everything you did in that previous session.</p>
+      <h2>The Trade-off: Information Loss</h2>
+      <p>Compaction isn&#x27;t without downsides. Think of it using historical terms:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727218/ai-hero-images/dlqjbiops0x6s2bicyoz.png" alt="The compaction summary as a &#x27;historian&#x27; looking over the session" />
+      <p class="img-caption">The compaction summary as a &#x27;historian&#x27; looking over the session</p>
+      <ul class="body-list"><li>The <a href="https://www.aihero.dev/ai-coding-dictionary/primary-source"><strong>primary source</strong></a> is your initial session - the record from people there at the time</li><li>The <strong>secondary source</strong> is the summary - a historical summary, which is lossy compression of the primary source</li></ul>
+      <p>Compaction is the first hand-off mechanism you&#x27;ve seen that preserves context between sessions. But all hand-off mechanisms suffer from the same issue: whenever you create a secondary source, you lose information.</p>
+      <p>However, you&#x27;re gaining efficiency. Here&#x27;s the trade-off:</p>
+      <div class="table-wrap"><table><thead><tr><th>Approach</th><th>Information</th><th>Noise</th><th>Maneuverability</th></tr></thead><tbody><tr><td>Primary source (continue)</td><td>Full</td><td>Lots</td><td>Limited</td></tr><tr><td>Secondary source (compaction)</td><td>Lossy</td><td>Less</td><td>More room</td></tr></tbody></table></div>
+      <p>If you continue with the primary source, you have all the information but probably along with a lot of noise. If you use the secondary source, you have more room to maneuver and less space being used up, but you might lose some of the nuances from the primary source.</p>
+      <h2>When Compaction Shines</h2>
+      <p>However, in the exact situation where you want to do QA on a finished piece of work, compaction is a cast-iron great place to use it. You&#x27;re not re-implementing. You&#x27;re not making architectural decisions. You&#x27;re validating something that&#x27;s already complete.</p>
+      <p>This is an introduction to compaction. You&#x27;ll see how it compares to clearing and other mechanisms in upcoming lessons.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="compaction-summary-is-a-secondary-source">
+        <p class="quiz-q-text">You compact a 156k-token session down to 28k and carry on working. What is now true of the detail from before the compaction?</p>
+        <ul class="quiz-choices">
+          <li class="correct">It is a summary now, so nuance from the original is gone</li>
+          <li>It is held in full and pulled back in whenever it is needed</li>
+          <li>It is unchanged, and simply billed at the cheaper cached rate</li>
+          <li>It is saved to a file on disk that you can open and search</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Compaction squeezes the session rather than storing it, so nothing is retrievable in full afterwards. Old tokens being cheap because they are cached describes staying in the same session, which is the option you just left. And compaction writes no file - it seeds a fresh session in memory.
+        </div>
+      </div>
+      <div class="quiz-question" id="compact-instruction-steers-the-summary">
+        <p class="quiz-q-text">You are about to compact so the next session can QA a finished feature. What do you actually type?</p>
+        <ul class="quiz-choices">
+          <li class="correct">/compact plus a sentence saying you are moving on to QA</li>
+          <li>/compact on its own, then explain the goal afterwards</li>
+          <li>/compact plus the whole agreed spec pasted in for safety</li>
+          <li>/clear, then ask the agent to go and re-read the code</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The thing writing the summary is a language model, so a bare /compact leaves it guessing which parts matter - and by the time you explain, the squeeze has happened. Pasting the full spec is wasted effort, since one sentence is enough. Clearing throws away the reasoning and forces lossy re-exploration.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="handing-off">
+      <h1 class="chapter-title">Handing Off</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">handoff-skill</span>
+          <span>Start the lesson: the <code>/handoff</code> skill added to <code>.agents/skills/</code></span>
+        </div>
+    </div>
+      <p>In the previous exercise, I showed you how <a href="https://www.aihero.dev/ai-coding-dictionary/compaction">compaction</a> works: you take one <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>&#x27;s <a href="https://www.aihero.dev/ai-coding-dictionary/primary-source">primary source</a>, summarize it into a <a href="https://www.aihero.dev/ai-coding-dictionary/secondary-source">secondary source</a>, and seed a new session with it.</p>
+      <p>Compaction, though, has some constraints. It can only compact within the same directory, and it can only compact within the same <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>.</p>
+      <p>For instance, if we did some implementation with Claude and wanted to <a href="https://www.aihero.dev/ai-coding-dictionary/handoff">hand off</a> to another AI agent like Codex to review it, how would we do that with compaction? We can&#x27;t.</p>
+      <h2>The /handoff skill</h2>
+      <p>There is one way to do it though, and I encounter this situation so often that I made a <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> for it.</p>
+      <p>The theory is straightforward: instead of compacting inside the agent (in memory), you create a <code>handoff.md</code> file, a markdown file. That markdown file is totally portable. You can do anything you like with it.</p>
+      <ul class="body-list"><li>Feed it into Codex</li><li>Pass it to an agent in another directory</li><li>Send it to a colleague</li><li>Use it to hand off a side task you discovered mid-feature</li></ul>
+      <p>One really great situation is when you&#x27;re working on a feature, you notice a random bug that&#x27;s unrelated to what you&#x27;re building, and you want to fix it later in a separate session. You can just create a <a href="https://www.aihero.dev/ai-coding-dictionary/handoff-artifact">handoff artifact</a> and come back to it.</p>
+      <h3>Looking at the skill</h3>
+      <p>First, run <code>npm run reset</code> and choose the handoff skill lesson from the list.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727431/ai-hero-images/dbqwmk3vzmn4zkyw4wb5.png" alt="The /handoff skill file showing the skill definition" />
+      <p class="img-caption">The /handoff skill file showing the skill definition</p>
+      <p>If we look inside the skill directory, we have a <code>/handoff</code> skill. Like most of my skills, it&#x27;s pretty short.</p>
+      <pre><code>Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user&#x27;s OS - not the current workspace.</code></pre>
+      <p>One useful feature here is that it saves to the temporary directory of the user&#x27;s OS. This means these handoff documents are designed to be ephemeral. They&#x27;re not going to be saved locally in your project, and they won&#x27;t be stored in any memory. They will be deleted when your computer resets, or whenever the OS decides to clear the temporary directory.</p>
+      <p>(OS stands for operating system: Windows, Mac, Linux, whatever.)</p>
+      <h2>Using handoff in practice</h2>
+      <p>Let me show you how this works. I&#x27;m going to resume a previous session and work with the star rating review system.</p>
+      <p>We&#x27;re at around 89k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a>, which might be a good moment to hand off. To use the <code>/handoff</code> skill, I&#x27;m going to run the command and pass it a reason:</p>
+      <pre><code>/handoff pass to Codex to review</code></pre>
+      <p>Just like with compact, we give the <code>/handoff</code> skill a reason for the handoff. This tells it the purpose of the next session.</p>
+      <p>It comes back and <a href="https://www.aihero.dev/ai-coding-dictionary/permission-request">requests permission</a> to write to the temporary directory. Perfect.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727432/ai-hero-images/prk8tezzgfbgbcsyxbza.png" alt="Agent requesting permission to write to the temporary directory" />
+      <p class="img-caption">Agent requesting permission to write to the temporary directory</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727433/ai-hero-images/ssowi3pzda1bcvivq3xe.png" alt="VS Code showing the generated handoff document" />
+      <p class="img-caption">VS Code showing the generated handoff document</p>
+      <p>Now we can see the handoff file. It&#x27;s a really nice, detailed secondary source of all the things we might need to review. It looks fairly similar to the compacted documents we saw before: nice and detailed, with lots of file references and everything else.</p>
+      <p>The handoff document includes:</p>
+      <ul class="body-list"><li>What the feature is</li><li>Files to review (with git status / git diff instructions)</li><li>Key decisions or bugs fixed mid-session</li><li>Known pre-existing issues (not part of this change)</li><li>Verification already done</li><li>Project conventions the diff should conform to</li><li>Review angles worth probing</li><li>Suggested skills for the next session</li></ul>
+      <p>The way I would seed this into a new session is to open it in a separate window. I&#x27;ve just run <code>/clear</code>, so I&#x27;ve got a totally empty session. Now I can use the <code>@</code> symbol to reference the file:</p>
+      <pre><code>@/tmp/handoff-course-star-ratings-review.md</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784727434/ai-hero-images/q5xyjuestj3paiiecrh6.png" alt="A fresh agent session reading in the handoff document" />
+      <p class="img-caption">A fresh agent session reading in the handoff document</p>
+      <p>Once this gets seeded, it gets immediately read into the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> and it&#x27;s ready for review.</p>
+      <p>I&#x27;ll just cancel out of that because I don&#x27;t actually want it to do the review right now.</p>
+      <h2>/handoff vs. Compact</h2>
+      <p>That&#x27;s how the <code>/handoff</code> skill works. It&#x27;s really nice for:</p>
+      <ul class="body-list"><li>Passing work to separate agents</li><li>Saving a document you can send to a colleague</li><li>Handing off to another agent in a different repo to fix a bug you encountered</li></ul>
+      <p>It&#x27;s just like compaction, except a little bit more flexible and a little bit more involved.</p>
+      <p>I wouldn&#x27;t say that handoff is a total replacement for compaction. Here&#x27;s when to use each:</p>
+      <div class="table-wrap"><table><thead><tr><th>When</th><th>Use</th></tr></thead><tbody><tr><td>Staying in the same directory</td><td>Compaction</td></tr><tr><td>Retaining context of the previous conversation</td><td>Compaction</td></tr><tr><td>Don&#x27;t care about retaining previous conversation</td><td>Compaction (especially because you can queue up messages after it)</td></tr><tr><td>Passing to a different agent</td><td><code>/handoff</code></td></tr><tr><td>Handing off to another repo</td><td><code>/handoff</code></td></tr><tr><td>Sending to a colleague</td><td><code>/handoff</code></td></tr></tbody></table></div>
+      <p>Compaction is still really good. <code>/handoff</code> is nice too, but the linking to the next conversation is a little bit more involved, and it&#x27;s only really useful if you&#x27;re getting something out of it.</p>
+      <p>We&#x27;re going to do a full comparison in the next lesson. Nice work, and I&#x27;ll see you there.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="handoff-crosses-agent-boundaries">
+        <p class="quiz-q-text">You have just implemented a feature with Claude, and you want Codex to review it. How do you carry the context across?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Write a handoff document, then reference it from Codex</li>
+          <li>Compact the session, then reopen that session in Codex</li>
+          <li>Clear, and let Codex explore the repository on its own</li>
+          <li>Save a summary into the project as a notes.md file to read</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Compaction only works inside the same agent and the same directory, so it cannot reach Codex at all. Letting Codex explore alone hands it the code but none of the decisions or bugs already found. A summary committed into the project would linger there - the handoff is written outside the workspace on purpose.
+        </div>
+      </div>
+      <div class="quiz-question" id="handoff-artifact-is-ephemeral">
+        <p class="quiz-q-text">The handoff skill asks permission to write its document. Where does that file go, and how long does it survive?</p>
+        <ul class="quiz-choices">
+          <li class="correct">The OS temporary directory - it gets cleared in time</li>
+          <li>The project root - it is committed alongside your work</li>
+          <li>The agent memory - it loads into every later session</li>
+          <li>A folder in your home directory - it is kept forever</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          These documents are meant to be disposable, so nothing is added to the project and nothing is written into memory for later sessions to pick up. Nor is any permanent copy kept anywhere - the file dies when your machine resets or the OS clears its temporary directory.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="clear-compact-handoff-or-subagent">
+      <h1 class="chapter-title">Clear, Compact, Handoff, Or Subagent</h1>
+
+      <p>In the coding <a href="https://www.aihero.dev/ai-coding-dictionary/session">sessions</a> we&#x27;ve done so far with <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a>, you might have noticed that they break down into pretty discrete chunks. We&#x27;ve had a <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grilling</a> phase, then an implementation phase, and then a QA phase at the end. We <a href="https://www.aihero.dev/ai-coding-dictionary/compaction">compacted</a> before we started QA-ing.</p>
+      <p>These phases are loosely defined. They&#x27;re really just chunks of work within a coding session. Each phase is composed of two parts: the actual phase itself (the running of the grilling, implementation, or QA), and the boundaries between them.</p>
+      <p>The boundaries are really important. They represent a decision point where you&#x27;re deciding what to do with the session at each phase boundary.</p>
+      <h2>Understanding Phase Boundaries</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731108/ai-hero-images/kwbydppusjcror9prsom.png" alt="Decision tree for phase boundaries showing the five options" />
+      <p class="img-caption">Decision tree for phase boundaries showing the five options</p>
+      <p>By the time we finished grilling, we were only at about 30k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a>. It made sense to continue directly on with the implementation. That meant the implementation could rely on the <a href="https://www.aihero.dev/ai-coding-dictionary/primary-source">primary source</a> of the grilling without any kind of <a href="https://www.aihero.dev/ai-coding-dictionary/secondary-source">secondary source</a> lossiness there.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731109/ai-hero-images/qy0xptnwp2laxqq0lmed.png" alt="Showing the choices we assigned to each phase boundary" />
+      <p class="img-caption">Showing the choices we assigned to each phase boundary</p>
+      <p>But by the time we finished implementation and we wanted to QA it, we decided to compact it. We&#x27;d used up our <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a> really, and we wanted to get rid of all the cruft and just use the good stuff for the QA.</p>
+      <p>The way to come to those decisions isn&#x27;t particularly obvious. You actually have <strong>five choices</strong> for things you can do at these phase boundaries.</p>
+      <h2>Your Five Options</h2>
+      <div class="table-wrap"><table><thead><tr><th>Option</th><th>What It Does</th></tr></thead><tbody><tr><td><strong>Continue</strong></td><td>Stay in the current session, no context switch needed</td></tr><tr><td><a href="https://www.aihero.dev/ai-coding-dictionary/clearing"><strong>Clear</strong></a></td><td>Totally clear your <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> and start fresh</td></tr><tr><td><strong>Compact</strong></td><td>Compress your context and seed a new session with it</td></tr><tr><td><a href="https://www.aihero.dev/ai-coding-dictionary/handoff"><strong>Handoff</strong></a></td><td>Create a markdown file summarizing the session to pass anywhere</td></tr><tr><td><a href="https://www.aihero.dev/ai-coding-dictionary/subagent"><strong>Subagent</strong></a></td><td>Spawn a subagent to handle the task and report back</td></tr></tbody></table></div>
+      <p>Wielding these five options is not trivial. I&#x27;ve created a decision tree to help you navigate them. It might look pretty scary at first glance, but we&#x27;re going to walk through it step by step.</p>
+      <h2>The Decision Tree: Start At The Top</h2>
+      <p>When you&#x27;ve reached the end of a phase and you&#x27;re not quite sure what to do, you start here.</p>
+      <h3>Question 1: Can You Continue?</h3>
+      <p><strong>Does it make sense to continue in the current session?</strong></p>
+      <p>This is a fairly rich decision in itself. Between grilling and implementation, it obviously makes sense to continue because we&#x27;ve got that rich primary source that we need. We don&#x27;t want to discard it for when we get to the implementation.</p>
+      <p>You may also want to continue if you just have enough smart zone budget left. If you&#x27;re at 80k tokens maybe and you know the task is pretty small and is going to fit inside the smart zone, then yes, you can just continue.</p>
+      <p>If you decide that you <strong>do need to do something</strong>, then we need to go down this little decision tree.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731109/ai-hero-images/m3c3gxq6wsrzjeieppxm.png" alt="Decision tree showing the first question: Can you continue?" />
+      <p class="img-caption">Decision tree showing the first question: Can you continue?</p>
+      <h3>Question 2: Is Your Context Irrelevant To The Next Task?</h3>
+      <p>If you need to do something, ask yourself: <strong>is all the information in this session totally disposable?</strong></p>
+      <p>In other words, all the explorations, the decisions that were made in that session - is it totally irrelevant to what comes next?</p>
+      <p><strong>If yes, clear your context window.</strong> Clearing is the most efficient path if you can take it because it takes zero time. You&#x27;re just deleting information. Then you have the most smart zone available to you. You&#x27;re going back to a blank slate.</p>
+      <p>However, if you clear the context with relevant information inside, you&#x27;re losing information that might have been useful later. Imagine if I cleared rather than compacted when I went to QA. This means that the QA would know absolutely nothing about the implementation, which maybe is okay - it could figure it out from the git commits. But it would also lose all the information from the grilling as well.</p>
+      <p>It would lose the reasoning behind the decisions that I had made. Both phases were important for the QA that then followed. So clearing just wasn&#x27;t an option.</p>
+      <p><strong>If no, your context is relevant.</strong> Move to the next question.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731110/ai-hero-images/npaie53oxvv1krfqq5sn.png" alt="Decision tree showing the second question: Is your context irrelevant?" />
+      <p class="img-caption">Decision tree showing the second question: Is your context irrelevant?</p>
+      <h3>Question 3: Do You Need To Hand Off?</h3>
+      <p>This is specifically about the handoff <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a>. The handoff skill is relatively narrow compared to the other options.</p>
+      <p>You&#x27;ll only need to do the handoff when you need to:</p>
+      <ul class="body-list"><li>Pass work to another agent</li><li>Pass work to another directory or another colleague</li><li>Fork off a side task you discovered mid-phase without derailing the current session</li></ul>
+      <p>For instance, you might find something during grilling that also needs to be tackled. You can just hand off to another session while you&#x27;re doing that.</p>
+      <p><strong>If yes, use handoff</strong> (<code>/handoff</code>). <strong>If no, move to the next question.</strong></p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731111/ai-hero-images/ostylc7q6awkalssbffl.png" alt="Decision tree showing the third question: Do you need to hand off?" />
+      <p class="img-caption">Decision tree showing the third question: Do you need to hand off?</p>
+      <h3>Question 4: Can The Task Be Done AFK?</h3>
+      <p><strong><a href="https://www.aihero.dev/ai-coding-dictionary/afk">AFK</a> means away from keyboard.</strong> You&#x27;re not touching the keyboard. You&#x27;re just watching the agent go and you cannot intervene.</p>
+      <p>This means the task is well-scoped. The agent can do it without needing your intervention at all.</p>
+      <p>Let&#x27;s imagine we wanted to do an <a href="https://www.aihero.dev/ai-coding-dictionary/automated-review">automated review</a> on the implementation before <a href="https://www.aihero.dev/ai-coding-dictionary/human-review">human review</a> got there. Automated review is where you send the agent into the codebase and you get it to look at the changes and check if it&#x27;s broken anything or done anything weird.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731111/ai-hero-images/o6r9c6lxdswtqhwjkp0s.png" alt="Diagram showing automated review as an example of AFK task" />
+      <p class="img-caption">Diagram showing automated review as an example of AFK task</p>
+      <p>We could have compacted at this point (we&#x27;re at 150k tokens from the implementation), then run the review in the main session. But since the human isn&#x27;t needed for automated review, we might as well run it in a subagent. That means we just get it to run in its own context window. We don&#x27;t affect the main session.</p>
+      <p>This is a really common pattern for automated review, and it&#x27;s one that we&#x27;ll touch on in this course.</p>
+      <p><strong>If yes, spawn a subagent.</strong> <strong>If no, move to the final option.</strong></p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731112/ai-hero-images/hk9fqg0idlqdfykyvcmi.png" alt="Decision tree showing the fourth question: Can the task be done AFK?" />
+      <p class="img-caption">Decision tree showing the fourth question: Can the task be done AFK?</p>
+      <h2>The Default: Compact</h2>
+      <p>This is the bottom of the decision tree. When your context is relevant, when you want to do something with the context, and you can&#x27;t continue, when you don&#x27;t need to use a handoff, and when the task needs to be done with you there - then compact is the solution.</p>
+      <p>Compact compresses your context window and seeds a new session with the good stuff. You keep what matters and discard what doesn&#x27;t.</p>
+      <h2>These Are Subjective Decisions</h2>
+      <p>These questions are not objective. There&#x27;s a little bit of subjectivity, a little bit of taste in there too. You will find your own answers to these questions as you continue your work and continue working with agents.</p>
+      <p>But I hope this concept of phases, of what you do at phase boundaries, really sinks in. This is one of the fuzziest decisions, the most interesting decisions you&#x27;re going to make when you&#x27;re AI coding. It&#x27;s one that demands a lot of discussion and a lot of wisdom.</p>
+      <p><a href="https://aihero.dev/discord">Join the Discord</a> and talk about these situations. Use this shared language when you discuss different scenarios. The Discord is a great place to go if you have a question about what to do at a certain phase boundary.</p>
+      <p>I&#x27;ve also added some quizzes below which will test you on different scenarios.</p>
+      <p>Nice work. I&#x27;ll see you in the next one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="phase-boundary-continue-on-remaining-budget">
+        <p class="quiz-q-text">You have just finished grilling. You are at 30k tokens and implementation is next. What do you do at this boundary?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Continue - the grilling is the primary source you need</li>
+          <li>Compact - lock the agreed spec into a summary first</li>
+          <li>Clear - the implementation can start from a blank slate</li>
+          <li>Handoff - write the spec out before you implement it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Compacting or handing off would swap a rich primary source for a lossy secondary one, and you have smart zone budget to spare, so you would be paying that loss for nothing. Clearing is worse still: the implementation would lose the reasoning behind every decision you just made.
+        </div>
+      </div>
+      <div class="quiz-question" id="phase-boundary-clear-when-context-disposable">
+        <p class="quiz-q-text">A phase ends. Everything explored and decided in it is genuinely irrelevant to the task you are about to start. What do you do?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Clear - it takes no time and gives back the most room</li>
+          <li>Compact - keep a short summary of it, just in case</li>
+          <li>Handoff - write the session out to a markdown file</li>
+          <li>Subagent - run the next task in its own context window</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Compacting and handing off both spend time producing a secondary source of information you have already decided you do not need, and both leave that summary occupying your window. A subagent isolates the new task but leaves the old session sitting underneath it. Deleting costs nothing and frees the most smart zone.
+        </div>
+      </div>
+      <div class="quiz-question" id="afk-task-goes-to-a-subagent">
+        <p class="quiz-q-text">You are at 150k tokens after an implementation, and the next job is an automated review that needs nothing from you while it runs. What do you do?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Spawn a subagent so the review gets its own window</li>
+          <li>Compact, then run the review in your main session</li>
+          <li>Clear, then run the review from an empty session</li>
+          <li>Continue, since the review only has to read code</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Compacting would work, but it spends a summarisation step on a task you never touch, and the result lands back in your window. Clearing throws the implementation context away. Continuing at 150k runs the review well past the smart zone, which is what you are trying to escape.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="auto-compaction">
+      <h1 class="chapter-title">Auto-Compaction</h1>
+
+      <p>You might be wondering: what happens if you try to push past the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> limit? Opus 4.8, which is what we&#x27;re using, has 1 million <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> of context. What happens if you go for 1 million and 1?</p>
+      <p>If you send a <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request">request</a> to Anthropic that has 1,000,001 tokens in it, you will get an error. The <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> simply cannot process that many tokens.</p>
+      <p>Your <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> has built-in protections against hitting this hard limit. When you get to a certain point, it will <a href="https://www.aihero.dev/ai-coding-dictionary/autocompact">automatically compact</a> your <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>.</p>
+      <h2>Finding Auto-Compact in Your Agent</h2>
+      <p>You can see this setting in your agent by typing the <code>/config</code> command and then searching for <code>auto-compact</code>. The matching settings appear at the top.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731270/ai-hero-images/pa2wue1yhap7ovlnbo1o.png" alt="The /config panel showing Auto-compact set to true" />
+      <p class="img-caption">The /config panel showing Auto-compact set to true</p>
+      <p>The relevant configuration shows:</p>
+      <pre><code>Auto-compact: true</code></pre>
+      <p>with a description: &quot;Automatically compact conversation when context fills&quot;</p>
+      <p>Auto-compaction exists in every single agent <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a>, because every harness has this problem. Every harness has a window in which, if you hit it, the system will pause your session and automatically compact what&#x27;s in there.</p>
+      <p>You used to be able to see this by typing <code>/context</code> to view the autocompact buffer inside the context breakdown. But it appears that teams have made it slightly more obscure.</p>
+      <h2>Customizing the Auto-Compact Window</h2>
+      <p>One interesting thing you can do is customize the auto-compact window itself. Inside your <code>~/.claude/settings.json</code> file, you can adjust when auto-compaction fires:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731271/ai-hero-images/mto9trx4ba4a2ujvszyn.png" alt="The settings.json file showing the autoCompactWindow setting" />
+      <p class="img-caption">The settings.json file showing the autoCompactWindow setting</p>
+      <pre><code>{
+  &quot;autoCompactWindow&quot;: 250000
+}</code></pre>
+      <p>If you want it to automatically compact after 250,000 tokens, you can totally do that. The setting accepts values from 100,000 to 1,000,000 tokens.</p>
+      <h2>The Promise: Context Management Goes Away</h2>
+      <p>The promise of auto-compaction is really quite nice. Imagine a world where you didn&#x27;t have to think about phase boundaries at all, didn&#x27;t have to think about the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>, didn&#x27;t have to think about <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> at all.</p>
+      <p>This decision tree would simply not be needed:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731272/ai-hero-images/ipudznemkdjkzyecigin.png" alt="The decision tree diagram showing all five options" />
+      <p class="img-caption">The decision tree diagram showing all five options</p>
+      <ul class="body-list"><li>Continue the session</li><li><a href="https://www.aihero.dev/ai-coding-dictionary/clearing">Clear</a> the session</li><li><a href="https://www.aihero.dev/ai-coding-dictionary/handoff">Hand it off</a></li><li>Spawn a <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">subagent</a></li><li><a href="https://www.aihero.dev/ai-coding-dictionary/compaction">Compact</a></li></ul>
+      <p>You would just auto-compact at the right moments. In fact, you will see a lot of people online saying that auto-compaction just handles all of their problems for them.</p>
+      <h2>Why Auto-Compaction Is Actually Really Difficult</h2>
+      <p>However, it turns out that auto-compaction is an incredibly difficult problem to solve. And it&#x27;s really, really painful to get wrong.</p>
+      <h3>Compacting in the Middle of a Phase Is Dangerous</h3>
+      <p>Think back to a typical session with a <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grilling</a> phase and an implementation phase, separated by a phase boundary.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784731273/ai-hero-images/fkutnevmvdbrbrmq5e5v.png" alt="Diagram showing grilling phase, implementation phase, and phase boundary" />
+      <p class="img-caption">Diagram showing grilling phase, implementation phase, and phase boundary</p>
+      <p>If someone forced you to put in a compact somewhere in this session, you would probably say that the safest place to do it would be at the phase boundary, between grilling and implementation.</p>
+      <p>But what would happen if you compacted in the middle of a grilling session? You&#x27;d be working with only a summary of what had been done before. What I&#x27;ve found when this has occasionally happened is that the agent really does lose its way quite often and just forgets stuff you were talking about just before.</p>
+      <p>The same is true in implementation, and it&#x27;s often worse:</p>
+      <ul class="body-list"><li>The agent will often lose its way completely</li><li>The second half of the implementation phase will use a totally different coding style from the first part</li><li>It will lose its train of thought and forget features it was supposed to implement</li></ul>
+      <h3>You Lose Control of the Handoff</h3>
+      <p>There&#x27;s another problem: when you automatically compact, there&#x27;s no opportunity for you to say what you should compact and what the intention of the next session is going to be.</p>
+      <p>The little summarization notes that you pass to the <a href="https://www.aihero.dev/ai-coding-dictionary/handoff-artifact">handoff document</a> or you pass to <code>/compact</code> are really key for getting it to compact the correct things. Auto-compaction gives you no equivalent hook.</p>
+      <h2>The Better Approach: Human Control</h2>
+      <p>So will mid-phase compacting always be bad? Probably not, although it feels like it&#x27;s going to be a hard problem no matter what the model is. It&#x27;s a very tricky, difficult problem to solve.</p>
+      <p>My attitude in general is to increase the skill of the human instead of increasing the demand on the harness and the model. I tend to prefer the human having control of this decision tree, rather than just passing it off to the agent.</p>
+      <p>It&#x27;s a one-time learning curve that the human has to go through, and it will just get you better and better results the better you get at it. More of your sessions are going to be in the smart zone and you&#x27;re going to have better control.</p>
+      <h2>The Real Rule</h2>
+      <p>In my opinion, if you&#x27;re hitting the auto-compact buffer, if you&#x27;re automatically compacting, then something is probably going wrong.</p>
+      <p>Instead, you should be in control. You should be the one deciding whether you continue the session, clear the session, hand it off, spawn a subagent, or compact.</p>
+      <p>When you own that decision, you get better code.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="autocompact-firing-is-a-smell">
+        <p class="quiz-q-text">Halfway through implementing a feature, your session pauses and compacts itself. What should you take from that?</p>
+        <ul class="quiz-choices">
+          <li class="correct">You left the boundary decision too late - own it yourself</li>
+          <li>The harness dealt with it, so there is nothing to change</li>
+          <li>Your context window is too small for work of this size</li>
+          <li>The model is not capable enough for a feature this large</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The harness did rescue you, but it compacted mid-phase, which is where the agent most often loses the thread. Raising the auto-compact window only moves when that happens rather than adding capacity, and the model is not the thing that failed - the phase boundary went unclaimed.
+        </div>
+      </div>
+      <div class="quiz-question" id="mid-phase-compaction-loses-the-thread">
+        <p class="quiz-q-text">A compaction has to happen somewhere in a session that runs grilling then implementation. Where does it do the least damage?</p>
+        <ul class="quiz-choices">
+          <li class="correct">At the phase boundary, between grilling and implementing</li>
+          <li>Midway through implementation, once the style is settled</li>
+          <li>Midway through grilling, once the questions are all asked</li>
+          <li>Anywhere at all - the summary keeps the same information</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Cutting into implementation is often the worst case: the second half comes back in a different coding style and forgets features it was meant to build. Cutting into grilling makes the agent forget what you were discussing moments earlier. And the summary is lossy, so where it lands genuinely matters.
+        </div>
+      </div>
+      <div class="quiz-question" id="autocompact-window-is-configurable">
+        <p class="quiz-q-text">You want your agent to compact automatically at 250,000 tokens rather than wherever it currently fires. What do you change?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Set autoCompactWindow to 250000 in your settings file</li>
+          <li>Set compactThreshold to 250000 in your settings file</li>
+          <li>Pass a token budget to the /compact command each time</li>
+          <li>Turn auto-compact off in /config and compact by hand</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          autoCompactWindow is the setting that moves the trigger, and it accepts anything from 100,000 up to 1,000,000 tokens. No such compactThreshold key controls this, /compact only compacts on demand rather than setting a future trigger, and switching auto-compact off removes the automatic behaviour instead of moving it.
+        </div>
+      </div>
+    </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('section.chapter');
+  const navLinks = document.querySelectorAll('nav.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`nav.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

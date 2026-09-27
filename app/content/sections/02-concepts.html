@@ -1,0 +1,4273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02 Concepts</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0f1117;
+        --surface: #181c27;
+        --surface2: #1e2333;
+        --border: #2a3045;
+        --accent: #6c8ef5;
+        --accent2: #a78bfa;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --code-bg: #0d1117;
+        --code-border: #30363d;
+        --green: #34d399;
+        --yellow: #fbbf24;
+        --red: #f87171;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          'Segoe UI',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        font-size: 16px;
+      }
+
+      .page-wrap {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      nav.sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 1.5rem 0;
+      }
+
+      .sidebar-logo {
+        padding: 0 1.5rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1rem;
+      }
+
+      .sidebar-logo span {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.25rem;
+      }
+
+      .sidebar-logo strong {
+        font-size: 1rem;
+        color: var(--text);
+        line-height: 1.3;
+      }
+
+      nav.sidebar ul {
+        list-style: none;
+        padding: 0 0.75rem;
+      }
+
+      nav.sidebar li a {
+        display: block;
+        padding: 0.45rem 0.75rem;
+        border-radius: 6px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+
+      nav.sidebar li a:hover {
+        background: var(--surface2);
+        color: var(--text);
+      }
+      nav.sidebar li a.active {
+        background: rgba(108, 142, 245, 0.15);
+        color: var(--accent);
+      }
+
+      nav.sidebar .nav-section {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 1rem 1.5rem 0.3rem;
+      }
+
+      main {
+        flex: 1;
+        min-width: 0;
+        padding: 3rem 2rem 6rem;
+        max-width: 820px;
+      }
+
+      .chapter {
+        margin-bottom: 5rem;
+        padding-bottom: 3rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .chapter:last-child {
+        border-bottom: none;
+      }
+
+      h1.chapter-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--border);
+        position: relative;
+      }
+
+      h1.chapter-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+      }
+
+      h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 2.5rem 0 0.75rem;
+      }
+      h3 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--accent2);
+        margin: 1.75rem 0 0.5rem;
+      }
+      h4 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 1.5rem 0 0.4rem;
+      }
+
+      p {
+        margin-bottom: 1rem;
+        color: var(--text);
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(108, 142, 245, 0.3);
+        transition:
+          border-color 0.15s,
+          color 0.15s;
+      }
+
+      a:hover {
+        border-color: var(--accent);
+        color: #8facff;
+      }
+      strong {
+        color: var(--text);
+        font-weight: 700;
+      }
+      em {
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      .lesson-img {
+        display: block;
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        margin: 1.25rem 0;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      }
+
+      .img-caption {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: -0.75rem;
+        margin-bottom: 1.25rem;
+        font-style: italic;
+      }
+
+      pre {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-radius: 8px;
+        padding: 1.1rem 1.25rem;
+        overflow-x: auto;
+        margin: 1rem 0 1.25rem;
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+
+      code {
+        font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+        font-size: 0.875em;
+        background: rgba(108, 142, 245, 0.12);
+        color: #a5b4fc;
+        padding: 0.15em 0.4em;
+        border-radius: 4px;
+      }
+
+      pre code {
+        background: none;
+        padding: 0;
+        color: #c9d1d9;
+      }
+      .diff-add {
+        color: var(--green);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        margin: 1rem 0 1.25rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      thead tr {
+        background: var(--surface2);
+      }
+      th,
+      td {
+        padding: 0.6rem 1rem;
+        border: 1px solid var(--border);
+        text-align: left;
+      }
+      th {
+        font-weight: 700;
+        color: var(--text);
+      }
+      td {
+        color: var(--muted);
+      }
+      td code {
+        color: #a5b4fc;
+      }
+      td strong {
+        color: var(--text);
+      }
+      tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .checklist {
+        list-style: none;
+        padding: 0;
+        margin: 0.75rem 0 1.25rem;
+      }
+      .checklist li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.45rem 0;
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+      .checklist li::before {
+        content: '☐';
+        color: var(--accent);
+        font-size: 1.1em;
+        flex-shrink: 0;
+        margin-top: 0.05em;
+      }
+
+      .callout {
+        border-left: 4px solid var(--yellow);
+        background: rgba(251, 191, 36, 0.07);
+        border-radius: 0 8px 8px 0;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0 1.25rem;
+        font-size: 0.92rem;
+        color: var(--text);
+      }
+      .callout strong {
+        color: var(--yellow);
+      }
+      .callout-info {
+        border-color: var(--accent);
+        background: rgba(108, 142, 245, 0.08);
+      }
+      .callout-info strong {
+        color: var(--accent);
+      }
+
+      blockquote {
+        border-left: 4px solid var(--accent2);
+        background: rgba(167, 139, 250, 0.08);
+        border-radius: 0 8px 8px 0;
+        padding: 0.75rem 1rem;
+        margin: 1rem 0 1.25rem;
+        font-size: 0.95rem;
+        color: var(--text);
+      }
+
+      .commit-map {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin: 1rem 0 1.5rem;
+        font-size: 0.875rem;
+      }
+      .commit-map-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.6rem;
+      }
+      .commit-map-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.4rem 0;
+        border-top: 1px solid var(--border);
+      }
+      .commit-map-item:first-of-type {
+        border-top: none;
+      }
+      .commit-id {
+        font-family: 'Cascadia Code', monospace;
+        font-size: 0.8rem;
+        background: rgba(108, 142, 245, 0.15);
+        color: var(--accent);
+        padding: 0.1em 0.5em;
+        border-radius: 4px;
+        white-space: nowrap;
+        margin-top: 0.1em;
+      }
+
+      .prompt-block {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        border-left: 4px solid var(--accent2);
+        border-radius: 0 8px 8px 0;
+        padding: 1.25rem;
+        margin: 1rem 0 1.25rem;
+        font-size: 0.875rem;
+        line-height: 1.7;
+        color: #c9d1d9;
+        white-space: pre-wrap;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+      }
+
+      ul.body-list,
+      ol.body-list {
+        padding-left: 1.5rem;
+        margin: 0.5rem 0 1.25rem;
+      }
+      ul.body-list li,
+      ol.body-list li {
+        margin-bottom: 0.35rem;
+      }
+
+      .quiz-block {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1.25rem;
+        margin: 2rem 0 1.5rem;
+      }
+      .quiz-block-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent2);
+        margin-bottom: 1rem;
+      }
+      .quiz-question {
+        border-top: 1px solid var(--border);
+        padding-top: 1rem;
+        margin-top: 1rem;
+      }
+      .quiz-question:first-of-type {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 0;
+      }
+      .quiz-q-text {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text);
+      }
+      .quiz-choices {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 0.75rem;
+      }
+      .quiz-choices li {
+        padding: 0.4rem 0.6rem;
+        margin-bottom: 0.3rem;
+        border-radius: 6px;
+        font-size: 0.92rem;
+        color: var(--muted);
+        border: 1px solid transparent;
+      }
+      .quiz-choices li.correct {
+        background: rgba(52, 211, 153, 0.1);
+        border-color: rgba(52, 211, 153, 0.3);
+        color: var(--green);
+      }
+      .quiz-answer {
+        font-size: 0.875rem;
+        color: var(--muted);
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        line-height: 1.6;
+      }
+      .quiz-answer-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.35rem;
+      }
+
+      @media (max-width: 768px) {
+        nav.sidebar {
+          display: none;
+        }
+        main {
+          padding: 2rem 1.25rem 4rem;
+        }
+        h1.chapter-title {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <nav class="sidebar">
+        <div class="sidebar-logo">
+          <span>Section 02</span>
+          <strong>Concepts</strong>
+        </div>
+        <p class="nav-section">Lessons</p>
+        <ul>
+          <li>
+            <a href="#models-harnesses-agents-environments"
+              >Models, Harnesses, Agents, Environments</a
+            >
+          </li>
+          <li><a href="#non-determinism">Non-Determinism</a></li>
+          <li>
+            <a href="#turns-and-model-provider-requests"
+              >Turns And Model Provider Requests</a
+            >
+          </li>
+          <li>
+            <a href="#sessions-and-the-context">Sessions And The Context</a>
+          </li>
+          <li><a href="#smart-zone-dumb-zone">Smart Zone / Dumb Zone</a></li>
+          <li><a href="#statelessness">Statelessness</a></li>
+          <li><a href="#how-much-did-it-cost">How Much Did It Cost?</a></li>
+          <li><a href="#hallucination">Hallucination</a></li>
+          <li><a href="#effort">Effort</a></li>
+          <li><a href="#choosing-a-model">Choosing A Model</a></li>
+          <li><a href="#subagents">Subagents</a></li>
+        </ul>
+      </nav>
+
+      <main>
+        <section class="chapter" id="models-harnesses-agents-environments">
+          <h1 class="chapter-title">Models, Harnesses, Agents, Environments</h1>
+
+          <p>
+            The first most important thing you&#x27;ll need to understand in
+            order to work with AI
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agents</a
+            >
+            is what an agent even is, what its component parts are, and how they
+            relate to each other.
+          </p>
+          <p>There are four key elements to understand:</p>
+          <ul class="body-list">
+            <li>
+              <strong
+                >The
+                <a
+                  href="https://www.aihero.dev/ai-coding-dictionary/environment"
+                  >environment</a
+                ></strong
+              >
+              - The outside world your agent interacts with
+            </li>
+            <li>
+              <strong
+                >The
+                <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+                  >model</a
+                ></strong
+              >
+              - The thinking engine
+            </li>
+            <li>
+              <strong>The agent</strong> - The model harnessed in an environment
+            </li>
+            <li>
+              <strong
+                >The
+                <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+                  >harness</a
+                ></strong
+              >
+              - What connects the model to the environment
+            </li>
+          </ul>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783682671/ai-hero-images/zc6ciwnbhrbifp4mrxsy.png"
+            alt="Diagram showing the four components: environment, model, agent, and harness"
+          />
+          <p class="img-caption">
+            Diagram showing the four components: environment, model, agent, and
+            harness
+          </p>
+          <h2>The Model: The Thinking Engine</h2>
+          <p>
+            The model is the engine in the car. It&#x27;s the thinking brain
+            inside the whole setup.
+          </p>
+          <p>Examples of models include:</p>
+          <ul class="body-list">
+            <li>Claude Opus</li>
+            <li>Claude Sonnet</li>
+            <li>GPT 5.5</li>
+            <li>Grok</li>
+          </ul>
+          <p>
+            These models usually sit on some server somewhere, and they charge
+            you for access to make requests to them.
+          </p>
+          <p>
+            On its own, the model doesn&#x27;t really do much. You pass it text,
+            and it gives you back some text. To make it actually useful in the
+            world, you need some kind of harness around it.
+          </p>
+          <h2>The Harness: Connecting Model to World</h2>
+          <p>
+            The harness connects that model (that text-producing
+            <a href="https://www.aihero.dev/ai-coding-dictionary/stateless"
+              >stateless</a
+            >
+            thing) to the outside world. That outside world is represented by
+            the environment.
+          </p>
+          <p>
+            The harness is tied to the environment it&#x27;s in. It&#x27;s
+            designed around that environment.
+          </p>
+          <p>For example:</p>
+          <ul class="body-list">
+            <li>
+              <strong>Code editors and IDEs</strong> have an environment of the
+              <a href="https://www.aihero.dev/ai-coding-dictionary/filesystem"
+                >file system</a
+              >. They use
+              <a href="https://www.aihero.dev/ai-coding-dictionary/tool-call"
+                >tool calls</a
+              >
+              to interact with the file system, save files, edit files, and
+              search the web.
+            </li>
+            <li>
+              <strong>Chat interfaces</strong> like ChatGPT or Claude.ai have
+              their own environments. In Claude.ai, you can save documents and
+              search the web. It&#x27;s a slightly different virtual environment
+              from the file system.
+            </li>
+          </ul>
+          <h2>Defining an Agent</h2>
+          <p>
+            <strong>An agent is a model harnessed in an environment</strong>.
+          </p>
+          <p>
+            The agent isn&#x27;t really a separate thing. It&#x27;s just a name
+            for what we call the harness and the model together. When we talk
+            about Claude Opus running in an IDE on the file system, that is an
+            agent. It&#x27;s also a harness wrapping a model.
+          </p>
+          <p>Here are some concrete examples of agents:</p>
+          <ul class="body-list">
+            <li><strong>Opus running in an IDE</strong> on the file system</li>
+            <li>
+              <strong>Grok (the model)</strong> on Pi (the harness) operating on
+              the file system (the environment)
+            </li>
+            <li>
+              <strong>GPT 5.5</strong> on ChatGPT in the ChatGPT environment,
+              where it can create documents, search the web, and connect to
+              <a href="https://www.aihero.dev/ai-coding-dictionary/mcp">MCP</a>
+              servers
+            </li>
+          </ul>
+          <h2>The Blurry Lines</h2>
+          <p>
+            Like every analogy, this isn&#x27;t a perfect one. The harness and
+            the environment blur together a little bit.
+          </p>
+          <p>
+            For instance, if you have an NPM script, is that an aspect of the
+            harness? Is it something the harness can call, or is it something in
+            the environment? It&#x27;s in the environment, but other people
+            might say it&#x27;s in the harness. There&#x27;s a little bit of
+            bleed there.
+          </p>
+          <h2>Improving Performance Beyond Just the Model</h2>
+          <p>
+            People go crazy for the model. Everyone wants to swap in the latest
+            and greatest model and expects everything to become amazing.
+          </p>
+          <p>
+            But the model is just one aspect in a larger ecosystem. It&#x27;s
+            just the engine of the car.
+          </p>
+          <p>
+            If you want your agent to perform better, you can do more than just
+            swap out the model. You can think about:
+          </p>
+          <ul class="body-list">
+            <li>Improving the harness</li>
+            <li>
+              Improving the environment in which the harness and model operate
+            </li>
+          </ul>
+          <p>
+            <a href="https://www.aihero.dev/ai-coding-dictionary/training"
+              >Training</a
+            >
+            a new model is unbelievably expensive and out of reach for most
+            people and companies. So your work is going to be in improving the
+            harness and improving the environment that the agent works in.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="agent-is-model-plus-harness">
+              <p class="quiz-q-text">What is an agent?</p>
+              <ul class="quiz-choices">
+                <li class="correct">A model harnessed in an environment</li>
+                <li>A model trained on your own codebase</li>
+                <li>A set of tool calls wrapped in a script</li>
+                <li>A chat interface that can search the web</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The agent is not a separate thing - it is the name for the
+                harness and the model together. A model on its own only turns
+                text into text, so a model alone is not an agent. Tool calls are
+                how a harness reaches its environment, not the agent itself. And
+                a chat interface is one example of a harness plus an
+                environment, not the definition.
+              </div>
+            </div>
+            <div class="quiz-question" id="improving-agent-beyond-the-model">
+              <p class="quiz-q-text">
+                Your agent keeps underperforming on your project. Where is most
+                of your leverage to fix it?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Improve the harness and the environment it works in
+                </li>
+                <li>Swap in the newest and most capable model you can find</li>
+                <li>Train a new model on the code your team has written</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The model is only one part of a larger ecosystem - the engine of
+                the car. Swapping the model is the thing everybody reaches for
+                first, but it leaves the other two parts untouched. Training a
+                new model is unbelievably expensive and out of reach for most
+                people and companies. That leaves the harness and the
+                environment, which is where your work actually is.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="non-determinism">
+          <h1 class="chapter-title">Non-Determinism</h1>
+
+          <p>
+            The
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >model</a
+            >
+            is just one part of the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a
+            >. There&#x27;s also the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harness</a
+            >
+            and the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/environment"
+              >environment</a
+            >. Understanding how these components work together is key to
+            influencing the outcome of your AI coding agent.
+          </p>
+          <p>
+            Let&#x27;s focus on the model itself, because understanding it will
+            help us grasp the core of everything that&#x27;s going on.
+          </p>
+          <h2>Next Token Prediction</h2>
+          <p>
+            The main thing to understand about models is that they&#x27;re doing
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/next-token-prediction"
+              >next token prediction</a
+            >. However you try to change it, however you try to manipulate it,
+            it&#x27;s always
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/non-determinism"
+              >non-deterministic</a
+            >.
+          </p>
+          <h3>How Token Prediction Works</h3>
+          <p>
+            Models work by taking a sequence of
+            <a href="https://www.aihero.dev/ai-coding-dictionary/token"
+              >tokens</a
+            >
+            as input. Think of it like completing a sentence:
+          </p>
+          <blockquote>
+            <p>my space favorite space color space is space</p>
+          </blockquote>
+          <p>
+            These are all candidates for the next token. The model has to guess
+            what comes next.
+          </p>
+          <p>
+            The important part is that the model is asking itself to choose the
+            next token. It has a set of candidates already in its
+            <a href="https://www.aihero.dev/ai-coding-dictionary/training"
+              >training</a
+            >
+            weights.
+          </p>
+          <p>
+            The model looks across all possible tokens and identifies the most
+            likely candidates. From there, it assigns a probability to each one.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Candidate</th>
+                  <th>Probability</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>red</td>
+                  <td>32%</td>
+                </tr>
+                <tr>
+                  <td>blue</td>
+                  <td>28%</td>
+                </tr>
+                <tr>
+                  <td>orange</td>
+                  <td>14%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783688617/ai-hero-images/wwkmhs2fabb9t9stguwy.png"
+            alt="Visual representation of token candidates and their probability distributions"
+          />
+          <p class="img-caption">
+            Visual representation of token candidates and their probability
+            distributions
+          </p>
+          <h3>The Sampling Process</h3>
+          <p>
+            At this point, the prediction goes into the sampler. The sampler
+            takes a sample of each candidate and essentially picks one.
+          </p>
+          <p>
+            You might think: &quot;Why wouldn&#x27;t it always just pick the
+            most likely option?&quot; That makes the most sense, right?
+          </p>
+          <p>
+            What&#x27;s interesting about large language models is that
+            sometimes they pick the most likely option, sometimes they pick a
+            less likely one, and sometimes they will even pick a relatively
+            unlikely possibility.
+          </p>
+          <p>
+            This is because the sampler is usually tuned to be random or
+            relatively random, a sort of weighted randomness. There are lots of
+            different sampling algorithms, many of which are non-deterministic,
+            and a couple which are deterministic. But most agents pick
+            non-determinism.
+          </p>
+          <h2>Temperature Control</h2>
+          <p>
+            There&#x27;s also a concept called <code>temperature</code> that you
+            can pass to most samplers. Most models will accept a temperature
+            setting.
+          </p>
+          <ul class="body-list">
+            <li>
+              <strong>High temperature</strong>: The model chooses more randomly
+            </li>
+            <li>
+              <strong>Low temperature</strong>: The model chooses less randomly
+              and will always pick the most likely option
+            </li>
+          </ul>
+          <p>
+            So your question probably is: &quot;Why wouldn&#x27;t I always set
+            temperature to zero?&quot; Surely when coding, there&#x27;s always a
+            correct answer that&#x27;s best, and you should be able to get the
+            model to choose it every time.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783688618/ai-hero-images/qvqdrxuc2y6mfvc9aonp.png"
+            alt="Temperature scale showing relationship between temperature, diversity, and output quality"
+          />
+          <p class="img-caption">
+            Temperature scale showing relationship between temperature,
+            diversity, and output quality
+          </p>
+          <h2>The Likelihood Trap</h2>
+          <p>
+            This is actually a well-known trap in language modeling. It&#x27;s
+            called the <strong>likelihood trap</strong>, from a paper called
+            &quot;Trading Off Diversity and Quality in Natural Language
+            Generation.&quot;
+          </p>
+          <p>Here&#x27;s what the research shows:</p>
+          <p>
+            As you decrease temperature and remove diversity from the output,
+            always making the model choose the same thing, the quality actually
+            drops.
+          </p>
+          <p>
+            You can see this in the paper&#x27;s data. As temperature increases
+            initially, they get better quality, reaching a peak point. But as
+            they continue reducing temperature even further, the responses start
+            getting worse again.
+          </p>
+          <p>
+            This scale is based on human judgment. Humans actually judge these
+            really deterministic responses to be worse.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783688619/ai-hero-images/vhmbguji3w6cj42arlf9.png"
+            alt="Graph showing the likelihood trap with quality peaking at moderate temperature, not at zero"
+          />
+          <p class="img-caption">
+            Graph showing the likelihood trap with quality peaking at moderate
+            temperature, not at zero
+          </p>
+          <h2>Non-Determinism Is a Feature</h2>
+          <p>This means that non-determinism is a feature, not a bug.</p>
+          <p>
+            If you get the agent to choose the most likely candidate every time,
+            you fall into the likelihood trap, and your responses are going to
+            get worse.
+          </p>
+          <p>
+            And by the way, even if you do turn temperature to zero, because of
+            the way that models do their work (massively in parallel, with the
+            order of computation mattering), even on the same GPU with the same
+            model, it&#x27;s going to return different responses each time.
+            It&#x27;s very strange.
+          </p>
+          <p>
+            This means non-determinism is baked into the pie here. We cannot get
+            rid of it.
+          </p>
+          <h2>What This Means for AI Coding</h2>
+          <p>
+            When you watch exercises being performed, your agent is probably
+            going to do something different. That difference and the variance
+            here is something we need to get used to and get better at dealing
+            with.
+          </p>
+          <p>
+            Non-determinism echoes down into permissions as well. There&#x27;s
+            always a non-zero chance that the agent will do something really
+            weird and really bad, even if it&#x27;s very smart.
+          </p>
+          <p>
+            Keep this in your mind all the time:
+            <strong>non-determinism is baked in. You cannot remove it.</strong>
+            You can get your systems to perform more reliably, but there&#x27;s
+            always this non-deterministic engine at the base of it.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="temperature-zero-likelihood-trap">
+              <p class="quiz-q-text">
+                You want your coding agent to give the same good answer every
+                time, so you set the temperature to zero. What do you actually
+                get?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Lower quality output: this is the likelihood trap
+                </li>
+                <li>The highest quality answer it can give, every run</li>
+                <li>An identical response on every single run you make</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The research behind the likelihood trap shows quality peaking at
+                a moderate temperature and then falling again as you keep
+                removing diversity, so zero is not the quality setting people
+                assume it is. Identical output is not on offer either: models
+                compute massively in parallel and the order of computation
+                matters, so the same model on the same GPU still returns
+                different responses at temperature zero.
+              </div>
+            </div>
+            <div class="quiz-question" id="non-determinism-and-permissions">
+              <p class="quiz-q-text">
+                Your agent runs a very capable model and has behaved well all
+                week. How should that change the way you think about its
+                permissions?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Not at all: a smart agent can still do something bad
+                </li>
+                <li>Loosen them, because a smart model has earned the trust</li>
+                <li>
+                  Loosen them, but only after you set the temperature to zero
+                </li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Non-determinism echoes down into permissions: there is always a
+                non-zero chance the agent does something really weird and really
+                bad, even when it is very smart. A good week is a sample, not a
+                guarantee, so intelligence does not buy trust here. And
+                temperature zero does not close the gap either, because
+                non-determinism is baked in and cannot be removed.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="turns-and-model-provider-requests">
+          <h1 class="chapter-title">Turns And Model Provider Requests</h1>
+
+          <p>
+            One thing that many AI-powered developers lack is a way to describe
+            what an actual
+            <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turn</a>
+            with an
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agent</a
+            >
+            looks like.
+          </p>
+          <p>
+            How does the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harness</a
+            >, which is usually running locally, communicate with the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a
+            >, which is usually sitting in the cloud? Understanding this is
+            essential for the optimizations and thinking you&#x27;ll do later.
+          </p>
+          <h2>Setting Up the Request Logger</h2>
+          <p>
+            To understand this communication, you&#x27;ll use the request
+            logger. Run:
+          </p>
+          <pre><code>npm run request-logger</code></pre>
+          <p>
+            It asks which coding agent you use, and which model provider if your
+            agent can use more than one. It can remember your answer, so it only
+            has to ask once. It then prints the exact command to start that
+            agent through the logger.
+          </p>
+          <p>
+            Copy and paste that command into a new terminal and run it. Now
+            instead of pointing at the model provider&#x27;s servers, your agent
+            is pointing at your local request logger.
+          </p>
+          <p>
+            Next, open the side panel and navigate to the
+            <code>./request-logger/logs</code> directory. It should currently be
+            empty except for a <code>.gitkeep</code> file.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947825/ai-hero-images/qgmdzjbancwqaoragjph.png"
+            alt="File explorer showing empty logs directory with git keep file"
+          />
+          <p class="img-caption">
+            File explorer showing empty logs directory with git keep file
+          </p>
+          <h2>Seeing Your First Model Provider Request</h2>
+          <p>
+            Say hello to the agent. It responds with something like &quot;hello,
+            what would you like to work on today?&quot;
+          </p>
+          <p>
+            Now refresh the logs directory. A new file has appeared tracking the
+            request made to <code>v1/messages</code> on the Anthropic API.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947828/ai-hero-images/f0xhekvfvrpabxjhizvn.png"
+            alt="Request logs showing model provider request with XML tags and metadata"
+          />
+          <p class="img-caption">
+            Request logs showing model provider request with XML tags and
+            metadata
+          </p>
+          <h2>Inside the Request</h2>
+          <p>
+            This file contains everything sent to and received from the model.
+            There are different XML tags showing what was in the request.
+          </p>
+          <p>
+            At the top, you&#x27;ll see meta information and headers. Further
+            down around line 50, you&#x27;ll see the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt"
+              >system prompt</a
+            >
+            with all the text sent to the agent.
+          </p>
+          <p>
+            Scroll down to find where you said hello. Then find the agent&#x27;s
+            response. At the very bottom, you&#x27;ll see:
+          </p>
+          <pre><code>Hello, what would you like to work on today?</code></pre>
+          <p>
+            This entire huge request and the tiny response you got back - this
+            is a
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request"
+              ><strong>model provider request</strong></a
+            >.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Model Provider Request</td>
+                  <td>One request sent to the model, plus one response back</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://www.aihero.dev/ai-coding-dictionary/model-provider"
+                      >Model Provider</a
+                    >
+                  </td>
+                  <td>
+                    The service handling the request (Anthropic, Ollama, etc.)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>Following the Conversation</h2>
+          <p>Go back to the agent and ask a follow-up:</p>
+          <pre><code>tell me my hair looks nice</code></pre>
+          <p>
+            The agent responds with something like &quot;your hair looks
+            nice,&quot; and another model provider request is created in the
+            logs.
+          </p>
+          <h3>Multiple Hidden Requests</h3>
+          <p>
+            Refresh the logs directory. You&#x27;ll notice there are actually
+            multiple new requests, not just one. The agent doesn&#x27;t just
+            respond to your message - it&#x27;s doing other work behind the
+            scenes.
+          </p>
+          <p>
+            To figure out which request is which, click on one and scroll to the
+            bottom. You&#x27;ll see a title describing what that request was
+            for, like &quot;compliment request about hair.&quot;
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947829/ai-hero-images/f1g0knzkhogbfkyec5z5.png"
+            alt="Request logs showing multiple requests with descriptive titles"
+          />
+          <p class="img-caption">
+            Request logs showing multiple requests with descriptive titles
+          </p>
+          <h3>Suggestion Requests</h3>
+          <p>
+            Other requests might have titles like &quot;now let&#x27;s get to
+            work on proxy.ts.&quot; These are running in
+            <code>SuggestionMode</code> - they generate what you might naturally
+            type next into the agent.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947830/ai-hero-images/qmmjsbz1bzhwojn19xls.png"
+            alt="Request log showing SuggestionMode generating next prompt suggestions"
+          />
+          <p class="img-caption">
+            Request log showing SuggestionMode generating next prompt
+            suggestions
+          </p>
+          <p>
+            Every time you see something that looks AI-generated in the
+            interface, that&#x27;s the result of a model provider request. Even
+            the suggestions are coming from the model.
+          </p>
+          <h2>The Full Conversation History</h2>
+          <p>
+            As you look through the logs, you&#x27;ll notice something
+            important: every time you send a request to the agent, your entire
+            conversation history is passed along with it.
+          </p>
+          <p>The request includes:</p>
+          <ul class="body-list">
+            <li>Your previous messages</li>
+            <li>The agent&#x27;s previous responses</li>
+            <li>
+              All
+              <a href="https://www.aihero.dev/ai-coding-dictionary/context"
+                >context</a
+              >
+              accumulated so far
+            </li>
+          </ul>
+          <p>This file gets longer and longer as your conversation grows.</p>
+          <h2>Triggering Tool Use</h2>
+          <p>Now ask the agent to do something more complex:</p>
+          <pre><code>I would like you to write a file containing a list of compliments to me in a markdown file in the repository root.</code></pre>
+          <p>
+            Check the logs - there are now several requests. The first one is
+            properly dated to when you sent your message.
+          </p>
+          <p>
+            Inside, find where you sent your request. The agent processes it and
+            then something different happens. Instead of just responding with
+            text, you see a tool use section.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947831/ai-hero-images/yki1pp9tz2zck5qzztvh.png"
+            alt="Request log showing JSON tool use with file path and content parameters"
+          />
+          <p class="img-caption">
+            Request log showing JSON tool use with file path and content
+            parameters
+          </p>
+          <p>
+            Rather than plain text, the model is passing a
+            <code>file_path</code> and <code>content</code>.
+          </p>
+          <h2>What Is a Tool?</h2>
+          <p>
+            A
+            <a href="https://www.aihero.dev/ai-coding-dictionary/tool"
+              ><strong>tool</strong></a
+            >
+            is something the harness provides to the model to let it interact
+            with the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/environment"
+              >environment</a
+            >. In this case, there&#x27;s a <code>write</code> tool that takes:
+          </p>
+          <ul class="body-list">
+            <li>A <code>file_path</code> parameter</li>
+            <li>A <code>content</code> parameter</li>
+          </ul>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947832/ai-hero-images/vslqcuzrx9fva1ifmeff.png"
+            alt="Request log showing write tool definition with JSON schema"
+          />
+          <p class="img-caption">
+            Request log showing write tool definition with JSON schema
+          </p>
+          <p>
+            Looking further back in the request, you&#x27;ll see where the tool
+            was defined. It passes JSON schema telling the model how to call it.
+          </p>
+          <h2>The Tool Call Response</h2>
+          <p>In this single model provider request, the harness sent:</p>
+          <ol class="body-list">
+            <li>Instructions on how to call a tool</li>
+            <li>Your request to write a file</li>
+          </ol>
+          <p>The model responded: &quot;OK, let&#x27;s use this tool.&quot;</p>
+          <p>
+            That tool use part is then interpreted and executed by the harness.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947833/ai-hero-images/m1gpmctcb3kgyjds8kbx.png"
+            alt="Request log showing tool result indicating file created successfully"
+          />
+          <p class="img-caption">
+            Request log showing tool result indicating file created successfully
+          </p>
+          <p>
+            Looking at the next request, you&#x27;ll see a
+            <a href="https://www.aihero.dev/ai-coding-dictionary/tool-result"
+              >tool result</a
+            >
+            message. The harness then sends this result back to the model in
+            another request, and receives a new response:
+          </p>
+          <pre><code>Done, I created compliments.md in the repo root.</code></pre>
+          <h2>Defining a Turn</h2>
+          <p>This entire flow is called a <strong>turn</strong>.</p>
+          <p>
+            Both of these model provider requests were sent in a single turn:
+          </p>
+          <ol class="body-list">
+            <li>
+              First request: You sent a message and received instructions to
+              call a tool
+            </li>
+            <li>
+              Second request: You sent the tool result and received a message
+              back
+            </li>
+          </ol>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783947902/ai-hero-images/roquqmwc6036brvvbnlo.png"
+            alt="Diagram or view showing a complete turn with multiple model provider requests"
+          />
+          <p class="img-caption">
+            Diagram or view showing a complete turn with multiple model provider
+            requests
+          </p>
+          <p>
+            A single turn can last hours and contain hundreds of model provider
+            requests.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Element</th>
+                  <th>Definition</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Model Provider Request</td>
+                  <td>One round trip to the model (request + response)</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a
+                      href="https://www.aihero.dev/ai-coding-dictionary/tool-call"
+                      >Tool Call</a
+                    >
+                  </td>
+                  <td>
+                    The model&#x27;s instruction to use a tool (not the
+                    execution)
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tool Result</td>
+                  <td>The output of executing that tool</td>
+                </tr>
+                <tr>
+                  <td>Turn</td>
+                  <td>
+                    The entire cycle from user message to agent response,
+                    including all tool calls and results
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>This is the engine that powers everything.</p>
+          <h2>Next Steps</h2>
+          <p>
+            Continue your conversation with your agent and watch the requests
+            build up in the logs. Play around and see what you can find. The
+            language of model provider requests, turns, tool calls, and tool
+            results should now make sense for understanding how agents work.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="turn-versus-model-provider-request">
+              <p class="quiz-q-text">
+                You ask the agent to write a file. It calls the write tool, gets
+                the result back, and tells you it is done. How does that flow
+                break down?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Two model provider requests inside a single turn
+                </li>
+                <li>Two turns, one for each model provider request</li>
+                <li>One model provider request, making up one turn</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                A model provider request is one round trip: request out,
+                response back. Writing the file took two of them - one where the
+                model asked for the tool, one carrying the tool result. A turn
+                is the whole cycle from your message to the agent&#x27;s answer,
+                so both requests sit inside one turn. A turn can last hours and
+                hold hundreds of requests, so counting turns per request gets it
+                backwards.
+              </div>
+            </div>
+            <div class="quiz-question" id="tool-call-executed-by-harness">
+              <p class="quiz-q-text">
+                The model&#x27;s response contains a tool use block with a
+                file_path and content. Who actually writes that file to disk?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  The harness interprets the tool use and runs it
+                </li>
+                <li>The model writes the file as part of its response</li>
+                <li>The model provider runs the tool on its own servers</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                A tool call is the model&#x27;s instruction to use a tool, not
+                the execution of it. The model only produces text, so it cannot
+                touch the file system, and the model provider is just the
+                service handling the request. The harness is the part running
+                locally with access to the environment, so it executes the tool
+                and sends the result back in the next request.
+              </div>
+            </div>
+            <div class="quiz-question" id="full-history-resent-each-request">
+              <p class="quiz-q-text">
+                What does the harness send to the model on each new model
+                provider request in a conversation?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  The entire conversation history so far, every time
+                </li>
+                <li>
+                  Only your newest message, since the model recalls the rest
+                </li>
+                <li>
+                  A short summary of everything said earlier in the session
+                </li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The logs show the same file getting longer and longer: your
+                previous messages, the agent&#x27;s previous responses, and all
+                the context accumulated so far go out with every request.
+                Sending only the newest message would assume the model
+                remembers, which it does not. And nothing in the request is
+                summarised - the history is passed along in full.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="sessions-and-the-context">
+          <h1 class="chapter-title">Sessions And The Context</h1>
+
+          <p>
+            Looking at the request logs from our previous lesson, we need to
+            introduce a key term: the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a
+            >&#x27;s
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context"
+              >context</a
+            >.
+          </p>
+          <p>
+            All of this text, the instructions on how to use Git, the
+            parameters, the scope, all of these different
+            <a href="https://www.aihero.dev/ai-coding-dictionary/tool-call"
+              >tool calls</a
+            >, these are what we call the agent&#x27;s context. It&#x27;s the
+            available information that the agent has access to.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783949674/ai-hero-images/xwy8khw7l0ovbyhc997s.png"
+            alt="Request logs showing Git instructions, parameters, scope, and tool calls"
+          />
+          <p class="img-caption">
+            Request logs showing Git instructions, parameters, scope, and tool
+            calls
+          </p>
+          <p>
+            This text gets turned into
+            <a href="https://www.aihero.dev/ai-coding-dictionary/token"
+              >tokens</a
+            >
+            so the agent can then do
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/next-token-prediction"
+              >next token prediction</a
+            >. After all of this context, the agent is simply producing a little
+            piece of text in response.
+          </p>
+          <h2>Context Window Limits</h2>
+          <p>
+            You probably also know that there&#x27;s a maximum amount of context
+            that any
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >model</a
+            >
+            can receive.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783949675/ai-hero-images/ggnfzfhryjcu6xifnrxy.png"
+            alt="Arena.ai leaderboard showing LLM context window specifications"
+          />
+          <p class="img-caption">
+            Arena.ai leaderboard showing LLM context window specifications
+          </p>
+          <p>
+            Let&#x27;s look at a leaderboard for LLMs. You can see it lists
+            scores, price per million tokens, and context window on the right
+            side:
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Context Window</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>GPT 5.6 Sol</td>
+                  <td>1.1 million tokens</td>
+                </tr>
+                <tr>
+                  <td>Gemini 3 Pro</td>
+                  <td>1 million tokens</td>
+                </tr>
+                <tr>
+                  <td>GPT 5.2 Chat Latest</td>
+                  <td>128k tokens</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            This
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context-window"
+              >context window</a
+            >
+            is a somewhat arbitrary number. It&#x27;s picked by the developers
+            based on how much context they think their model and infrastructure
+            can handle.
+          </p>
+          <p>
+            If you send the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider"
+              >model provider</a
+            >
+            too many tokens in a single request, the request will fail. It
+            won&#x27;t produce any
+            <a href="https://www.aihero.dev/ai-coding-dictionary/output-tokens"
+              >output tokens</a
+            >.
+          </p>
+          <h2>Managing Context and Costs</h2>
+          <p>
+            Managing the text that&#x27;s in your context is really, really
+            important.
+          </p>
+          <p>
+            Every time you send a request to a model provider, you are going to
+            get billed for that text. You need to make sure that:
+          </p>
+          <ul class="body-list">
+            <li>The stuff you&#x27;re sending is worth sending</li>
+            <li>
+              The stuff you&#x27;re sending is relevant to the task at hand
+            </li>
+          </ul>
+          <p>
+            If you send models a ton of text, they can get confused and
+            distracted in the same way that humans can.
+          </p>
+          <h2>System Prompts and Harnesses</h2>
+          <p>
+            Whenever you&#x27;re using a
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harness</a
+            >
+            (an agentic framework or wrapper), the context window never starts
+            at zero.
+          </p>
+          <p>
+            The harness wraps the agent and gives it custom instructions right
+            from the start:
+          </p>
+          <ul class="body-list">
+            <li>
+              It tells the agent what
+              <a href="https://www.aihero.dev/ai-coding-dictionary/tool"
+                >tools</a
+              >
+              are available
+            </li>
+            <li>
+              It gives high-level instructions for what the agent is supposed to
+              do
+            </li>
+            <li>It specifies what role the agent is supposed to inhabit</li>
+          </ul>
+          <p>
+            This is often called the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt"
+              >system prompt</a
+            >. Here&#x27;s an example:
+          </p>
+          <pre><code>You are Claude Code, Anthropic&#x27;s official CLI for Claude.
+
+&lt;!-- cache_control breakpoint --&gt;
+
+
+You are an interactive agent that helps users with software engineering tasks.
+
+IMPORTANT: Assist with authorized security testing, defensive security, CTF challenges, and educational contexts. Refuse requests for destructive techniques, DoS attacks, mass targeting, supply chain compromise, or detection evasion for malicious purposes. Dual-use security tools (C2 frameworks, credential testing, exploit development) require clear authorization context: pentesting engagements, CTF competitions, security research, or defensive use cases.</code></pre>
+          <p>
+            The harness you choose has a lot of influence over the text
+            that&#x27;s sent to the agent. Different harnesses send different
+            amounts of text.
+          </p>
+          <h2>Sessions and Turns</h2>
+          <p>
+            We need a term for what happens when we build up the context over
+            multiple
+            <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turns</a
+            >: a
+            <a href="https://www.aihero.dev/ai-coding-dictionary/session"
+              >session</a
+            >.
+          </p>
+          <p>
+            Over multiple turns with the agent, you build up stuff in the
+            context so the agent can see every single thing that&#x27;s happened
+            in that session.
+          </p>
+          <p>For instance, in a conversation:</p>
+          <ul class="body-list">
+            <li>
+              Turn 1: five
+              <a
+                href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request"
+                >model provider requests</a
+              >
+            </li>
+            <li>Turn 2: three requests</li>
+            <li>Turn 3: four requests</li>
+          </ul>
+          <p>
+            On that last model provider request, when you send the entire
+            conversation history so far and get back the response, that is the
+            latest stuff in the context. This whole thing is the session.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783949676/ai-hero-images/fe1hm4txutzugjyzpbzd.png"
+            alt="Diagram showing multiple turns building up context within a session"
+          />
+          <p class="img-caption">
+            Diagram showing multiple turns building up context within a session
+          </p>
+          <p>This is important because you can:</p>
+          <ul class="body-list">
+            <li>
+              <a href="https://www.aihero.dev/ai-coding-dictionary/clearing"
+                >Clear</a
+              >
+              the context and start a new session
+            </li>
+            <li>
+              <a href="https://www.aihero.dev/ai-coding-dictionary/compaction"
+                >Compact</a
+              >
+              the session
+            </li>
+            <li>Move to a separate session and come back later</li>
+          </ul>
+          <p>
+            Having a word for this is very important when we&#x27;re thinking
+            about and navigating our interactions with agents.
+          </p>
+          <h2>Key Terms</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th>Definition</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Context</td>
+                  <td>
+                    All the available information that the agent has access to,
+                    including instructions, parameters, scope, and tool calls
+                  </td>
+                </tr>
+                <tr>
+                  <td>Context Window</td>
+                  <td>
+                    The maximum amount of context (in tokens) that a model can
+                    receive in a single request
+                  </td>
+                </tr>
+                <tr>
+                  <td>System Prompt</td>
+                  <td>
+                    The initial instructions given to the agent by the harness,
+                    defining its role and behavior
+                  </td>
+                </tr>
+                <tr>
+                  <td>Session</td>
+                  <td>
+                    A continuous conversation with an agent, where context
+                    builds up over multiple turns
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h2>Next Steps</h2>
+          <p>
+            Continue exploring these logs, this time looking specifically at the
+            system prompt to see what&#x27;s in there.
+          </p>
+          <p>
+            Your agent probably looks very different from what we&#x27;ve shown,
+            and even if you&#x27;re using Claude Code, they change these things
+            all the time. So there are probably different tweaks here from
+            what&#x27;s shown on screen.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div
+              class="quiz-question"
+              id="context-window-overflow-fails-request"
+            >
+              <p class="quiz-q-text">
+                You send a model provider more tokens than the model&#x27;s
+                context window allows. What happens?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  The request fails and gives you no output tokens
+                </li>
+                <li>The oldest messages are dropped and the rest is sent</li>
+                <li>It goes through, but you are billed at a higher rate</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The context window is a hard limit on a single request: go over
+                it and the request fails, producing no output tokens at all.
+                Nothing quietly trims the history for you, so assuming the
+                oldest messages fall away will leave you surprised. And there is
+                no overflow price - you cannot pay your way past the window.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="session-context-never-starts-at-zero"
+            >
+              <p class="quiz-q-text">
+                You open a brand new session in a harness and have not typed
+                anything yet. How much context is already in it?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Some: the harness has already sent a system prompt
+                </li>
+                <li>None: the context window starts at exactly zero</li>
+                <li>None until the agent makes its first tool call</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Whenever you use a harness, the context never starts at zero.
+                The harness has already told the model what tools exist, what it
+                is supposed to do, and what role to inhabit - that is the system
+                prompt. Tool calls add to the context later, but they are not
+                what puts the first tokens there, and different harnesses send
+                very different amounts of this text.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="context-text-is-billed-and-distracting"
+            >
+              <p class="quiz-q-text">
+                Why does it matter to keep irrelevant text out of your context?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  You pay for it each request, and it distracts the model
+                </li>
+                <li>It only matters once you get near the context window</li>
+                <li>It slows the harness down when it saves the session</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Two costs run in parallel here. You get billed for that text on
+                every request, and it is sent again on every request in the
+                session. On top of that, models given a ton of text get confused
+                and distracted in the same way humans do, so the damage starts
+                long before you approach the window limit. Harness save speed is
+                not the concern.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="smart-zone-dumb-zone">
+          <h1 class="chapter-title">Smart Zone / Dumb Zone</h1>
+
+          <p>
+            Looking at logs with thousands of tokens might seem overwhelming. A
+            typical
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agent</a
+            >
+            interaction uses around 18k
+            <a href="https://www.aihero.dev/ai-coding-dictionary/token"
+              >tokens</a
+            >, but modern
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >models</a
+            >
+            can handle up to a million tokens in their
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context-window"
+              >context window</a
+            >. You could send 950,000 tokens and get back 50,000.
+          </p>
+          <p>
+            But there&#x27;s a natural skepticism here:
+            <strong
+              >Can the model really reason about all this text at once?</strong
+            >
+          </p>
+          <h2>Attention Relationships</h2>
+          <p>
+            To understand what&#x27;s happening under the hood, let&#x27;s think
+            about how a model processes tokens.
+          </p>
+          <p>
+            When you send a single token, like the word &quot;the&quot;,
+            there&#x27;s no relationship to track. It&#x27;s just one thing.
+          </p>
+          <p>
+            But add a second token, like &quot;frog,&quot; and something
+            changes. Now the model needs to:
+          </p>
+          <ul class="body-list">
+            <li>Remember both tokens</li>
+            <li>Track the relationship between them</li>
+          </ul>
+          <p>
+            Even with just two tokens, you&#x27;re tracking three things: token
+            one, token two, and their relationship.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783951630/ai-hero-images/gj8hqwdawe7gkdbt7zba.png"
+            alt="Diagram showing two tokens with one relationship between them"
+          />
+          <p class="img-caption">
+            Diagram showing two tokens with one relationship between them
+          </p>
+          <p>
+            Add a third token, and the problem multiplies. Now you need to
+            track:
+          </p>
+          <ul class="body-list">
+            <li>All three tokens</li>
+            <li>The relationship between tokens 1 and 2</li>
+            <li>The relationship between tokens 1 and 3</li>
+            <li>The relationship between tokens 2 and 3</li>
+          </ul>
+          <p>That&#x27;s three tokens and three relationships.</p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783951631/ai-hero-images/y85xwe9nfovohbwntu87.png"
+            alt="Diagram showing three tokens with three relationships connecting them"
+          />
+          <p class="img-caption">
+            Diagram showing three tokens with three relationships connecting
+            them
+          </p>
+          <p>
+            <strong>The pattern scales quadratically.</strong> Every time you
+            add a token, the number of relationships explodes:
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tokens</th>
+                  <th>Relationships</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2</td>
+                  <td>1</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>6</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>10</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783951632/ai-hero-images/kro1sersqoefocgetom2.png"
+            alt="Diagram showing five tokens with ten relationships"
+          />
+          <p class="img-caption">
+            Diagram showing five tokens with ten relationships
+          </p>
+          <p>
+            This is like adding a football team to a league. It sounds simple,
+            but suddenly the number of games that league has to play scales
+            massively.
+          </p>
+          <p>
+            <strong>Look at the scale at a thousand tokens:</strong> 1 million
+            relationships. <strong>10,000 tokens:</strong> 100 million.
+            <strong>100,000 tokens:</strong> around 10 billion.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783951633/ai-hero-images/pojsmqiun7ajunirti1s.png"
+            alt="AI coding dictionary showing token to relationship scaling"
+          />
+          <p class="img-caption">
+            AI coding dictionary showing token to relationship scaling
+          </p>
+          <p>
+            These
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/attention-relationship"
+              >attention relationships</a
+            >
+            are how the model finds connections in text, jumps around it, and
+            understands it. The more relationships it has to track, the worse it
+            performs. It&#x27;s like lots of people shouting for attention in a
+            crowded room.
+          </p>
+          <h2>Attention Degradation</h2>
+          <p>
+            This has a direct consequence:
+            <strong
+              >the more text you send to a model, the worse it performs.</strong
+            >
+          </p>
+          <p>
+            It&#x27;s less able to pay attention to what matters. This is called
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/attention-degradation"
+              ><strong>attention degradation</strong></a
+            >. The attention mechanism, the system for understanding
+            relationships between tokens, gets worse as it has more to handle.
+          </p>
+          <p>
+            In practice, as you pass more
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context"
+              >context</a
+            >, your agent starts doing progressively dumber things.
+          </p>
+          <h2>Smart Zone vs. Dumb Zone</h2>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783951634/ai-hero-images/epsqhluqhaoz4vfpp5bn.png"
+            alt="Diagram showing smart zone and dumb zone in context window"
+          />
+          <p class="img-caption">
+            Diagram showing smart zone and dumb zone in context window
+          </p>
+          <p>Agents have two zones:</p>
+          <p>
+            <strong
+              ><a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone"
+                >Smart Zone</a
+              ></strong
+            >
+            - Early in the context window, the agent performs complex tasks
+            well:
+          </p>
+          <ul class="body-list">
+            <li>Planning</li>
+            <li>Building complex software</li>
+            <li>Strategic decisions</li>
+          </ul>
+          <p>
+            <strong>Dumb Zone</strong> - As context fills up, the agent
+            struggles:
+          </p>
+          <ul class="body-list">
+            <li>Simple file writes</li>
+            <li>Closing issues</li>
+            <li>Writing basic specs</li>
+          </ul>
+          <p>
+            You might still get results in the dumb zone, but you&#x27;re not
+            getting the best out of your agent.
+          </p>
+          <p>
+            And there&#x27;s a cost penalty too: every request sent into the
+            dumb zone involves sending massive amounts of tokens at once,
+            costing you more.
+          </p>
+          <h2>Where Does The Dumb Zone Start?</h2>
+          <p>
+            This is heavily debated and moves per model. At the time of
+            recording, the consensus for state-of-the-art models is that the
+            dumb zone starts around <strong>150,000 tokens</strong>.
+          </p>
+          <p>
+            This has moved up significantly. The previous recording of this
+            course put it at around 100k to 120k tokens. As models improve,
+            expect the dumb zone to move further back, giving you more smart
+            zone to work with.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783951635/ai-hero-images/v8ferohrfba45oz3agz5.png"
+            alt="Text showing 150,000 tokens as the current dumb zone threshold"
+          />
+          <p class="img-caption">
+            Text showing 150,000 tokens as the current dumb zone threshold
+          </p>
+          <p>
+            That 150k number might sound really low when
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider"
+              >model providers</a
+            >
+            advertise one million token context windows.
+            <strong
+              >Why do they claim something they can&#x27;t really use?</strong
+            >
+          </p>
+          <p>
+            First, it&#x27;s a nice headline. Second, not all use cases need the
+            smart zone. If you&#x27;re just retrieving text over a long body of
+            work, not building software, you don&#x27;t need peak performance.
+            That&#x27;s why the million-token window exists.
+          </p>
+          <p>
+            For coding work, you want to stay in the smart zone. If you&#x27;re
+            doing a lot of work in the dumb zone, you&#x27;ll produce lower
+            quality code that you then need to spend tokens cleaning up.
+          </p>
+          <h2>It&#x27;s A Slope, Not A Cliff</h2>
+          <p>
+            The dumb zone isn&#x27;t a cliff edge where you drop off
+            immediately. It&#x27;s a slow decline.
+          </p>
+          <p>
+            Use the 150k token mark as a signal. When your
+            <a href="https://www.aihero.dev/ai-coding-dictionary/session"
+              >session</a
+            >
+            reaches that point, start thinking about how to bail out. How can
+            you
+            <a href="https://www.aihero.dev/ai-coding-dictionary/handoff"
+              >hand off</a
+            >
+            the work? How can you change your approach to get back into the
+            smart zone?
+          </p>
+          <p>
+            This paranoia is extremely useful for getting high quality work at
+            the lowest token price.
+          </p>
+          <p>
+            The entire approach should be designed around making the most of the
+            smart zone.
+          </p>
+          <h2>The Underlying Mechanism Doesn&#x27;t Change</h2>
+          <p>
+            By the time you see this, the numbers might have moved. Different
+            models might have different thresholds. But the mechanism
+            underneath, attention degradation, isn&#x27;t going away.
+          </p>
+          <p>
+            It&#x27;s the constraint that underpins all LLMs right now. It
+            happens because of how attention relationships scale up as you add
+            tokens.
+          </p>
+          <p>
+            Understanding this mechanism is key to getting the best results from
+            your agent.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="dumb-zone-token-threshold">
+              <p class="quiz-q-text">
+                For today&#x27;s state-of-the-art models, roughly where does the
+                dumb zone start?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">Around 150,000 tokens</li>
+                <li>Around 110,000 tokens</li>
+                <li>Around 1,000,000 tokens</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The consensus puts it around 150,000 tokens. The 100k to 120k
+                figure is where the threshold used to sit - it has moved up as
+                models improved, and it will keep moving. A million tokens is
+                the advertised context window, not the point where quality
+                starts to fall; the two numbers are far apart on purpose.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="attention-relationships-scale-quadratically"
+            >
+              <p class="quiz-q-text">
+                What is the mechanism that makes a model perform worse as you
+                send it more text?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Attention relationships grow quadratically with tokens
+                </li>
+                <li>The harness truncates the oldest part of the context</li>
+                <li>The sampler raises temperature as the context grows</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Each token added has to be related to every other token, so the
+                relationship count explodes: 1,000 tokens is a million
+                relationships, 100,000 tokens is around 10 billion. The more it
+                tracks, the worse it attends. Nothing is being truncated and no
+                setting is being changed behind your back - this is attention
+                degradation, and it is why the numbers may move but the
+                constraint will not go away.
+              </div>
+            </div>
+            <div class="quiz-question" id="smart-zone-bailout-at-threshold">
+              <p class="quiz-q-text">
+                Your session has just passed 150,000 tokens and the coding work
+                is not finished. What now?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Start working out how to hand the work off and reset
+                </li>
+                <li>Carry on, because quality drops off a cliff much later</li>
+                <li>Move to a model advertising a million token window</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Treat the 150k mark as a signal to bail out - hand off the work,
+                or change the approach to get back into the smart zone. Carrying
+                on gets this backwards: the decline is a slope, not a cliff, so
+                you are already losing quality rather than waiting for a drop.
+                And a million token window does not buy you smart zone; it
+                exists for retrieval over long text, not for building software.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="statelessness">
+          <h1 class="chapter-title">Statelessness</h1>
+
+          <p>
+            A
+            <a href="https://www.aihero.dev/ai-coding-dictionary/session"
+              >session</a
+            >
+            is composed of multiple
+            <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turns</a
+            >, each of which contains
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request"
+              >model provider requests</a
+            >. This builds up a
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context"
+              >context</a
+            >
+            over time. Every model provider request retains the state of the
+            previous conversation in that session.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783953638/ai-hero-images/qoygrg1ilnthckrxknoq.png"
+            alt="Diagram showing session composed of turns with model provider requests"
+          />
+          <p class="img-caption">
+            Diagram showing session composed of turns with model provider
+            requests
+          </p>
+          <p>
+            But here&#x27;s the critical part: all of that state lives in the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harness</a
+            >, not in the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >model</a
+            >
+            itself. The model is totally
+            <a href="https://www.aihero.dev/ai-coding-dictionary/stateless"
+              >stateless</a
+            >.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783953638/ai-hero-images/dmzffxmuvw5ukrn83bdq.png"
+            alt="Diagram highlighting the harness containing session state while model remains stateless"
+          />
+          <p class="img-caption">
+            Diagram highlighting the harness containing session state while
+            model remains stateless
+          </p>
+          <h2>The Harness vs The Model</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Concept</th>
+                  <th>Stateful?</th>
+                  <th>Scope</th>
+                  <th>Responsibility</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Model</td>
+                  <td>Stateless</td>
+                  <td>N/A</td>
+                  <td>Processes a single request based on provided context</td>
+                </tr>
+                <tr>
+                  <td>Harness</td>
+                  <td>Stateful</td>
+                  <td>Within one session</td>
+                  <td>Remembers all messages and session history</td>
+                </tr>
+                <tr>
+                  <td>Environment</td>
+                  <td>Stateful</td>
+                  <td>Indefinite</td>
+                  <td>Persists files, changes, and data on disk</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The harness is responsible for remembering all of the
+            session—remembering all of the messages so far. It communicates all
+            of that in one big chunk to the model. Because the model
+            doesn&#x27;t remember anything, doesn&#x27;t retain any state.
+          </p>
+          <p>
+            The harness carries information forward, but only through the
+            duration of the session. It remembers everything that happened in
+            that session throughout the different turns. But as soon as you
+            <a href="https://www.aihero.dev/ai-coding-dictionary/clearing"
+              >clear</a
+            >
+            it, then it forgets everything again.
+          </p>
+          <h2>Why This Matters</h2>
+          <p>
+            Many people see the statelessness of the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agent</a
+            >
+            as a bad thing. They want the agent to be
+            <a href="https://www.aihero.dev/ai-coding-dictionary/stateful"
+              >stateful</a
+            >, to remember things about them, to improve over time.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783953639/ai-hero-images/ujjryazw2kby70sywrt4.png"
+            alt="Discussion of agent statelessness and desire for memory"
+          />
+          <p class="img-caption">
+            Discussion of agent statelessness and desire for memory
+          </p>
+          <p>
+            This is why you see lots of people building
+            <a href="https://www.aihero.dev/ai-coding-dictionary/memory-system"
+              >memory systems</a
+            >. They&#x27;re trying to bring state into a stateless system to get
+            the agent to remember stuff over time.
+          </p>
+          <h2>The Real Solution: Save to the Environment</h2>
+          <p>
+            The way to get the agent to have memory is to save things in the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/environment"
+              >environment</a
+            >. The
+            <a href="https://www.aihero.dev/ai-coding-dictionary/filesystem"
+              >file system</a
+            >
+            and the environment that the agent is in is really important for
+            retaining state.
+          </p>
+          <p>
+            If you save a file in the file system and then clear the session,
+            that state is still going to be there. The file is still going to be
+            saved.
+          </p>
+          <p>Breaking this down:</p>
+          <ul class="body-list">
+            <li><strong>Model</strong>: Totally stateless</li>
+            <li>
+              <strong>Harness</strong>: Stateful within the same session only
+            </li>
+            <li><strong>Environment</strong>: Always stateful</li>
+          </ul>
+          <p>
+            You can always save stuff in the environment. Then the harness and
+            the model can work together to pull things out of the environment.
+          </p>
+          <p>
+            Memory systems are ways to augment the environment to help it
+            remember more stuff. This lets the agent remember things across
+            sessions. You&#x27;ll sometimes see harnesses trying to retain a bit
+            more state across sessions as well.
+          </p>
+          <h2>Default to Statelessness</h2>
+          <p>
+            As
+            <a href="https://x.com/badlogicgames/status/2076638642529800396"
+              >Mario Zechner</a
+            >, creator of Pi, says:
+          </p>
+          <blockquote>
+            <p>
+              i get asked what memory system i use often. my answer has always
+              been: my codebase is my memory system.
+            </p>
+          </blockquote>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1783953640/ai-hero-images/nxibfzl6ltuyuxfmqwig.png"
+            alt="Mario Zechner quote about codebase as memory system"
+          />
+          <p class="img-caption">
+            Mario Zechner quote about codebase as memory system
+          </p>
+          <p>
+            Just like Mario, the preference is to default to statelessness where
+            possible and save the stuff that&#x27;s important for memory inside
+            the codebase.
+          </p>
+          <p>
+            The reason is pure simplicity. It&#x27;s found to work better. By
+            default:
+          </p>
+          <ul class="body-list">
+            <li>The model is totally stateless</li>
+            <li>The harness is stateful within a session</li>
+            <li>
+              The environment is always stateful because you can save stuff in
+              it
+            </li>
+          </ul>
+          <p>
+            A lot of people want to bolt on a memory system onto the agent
+            itself. But be suspicious about that. Just modifying the codebase
+            tends to be enough.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="statelessness-what-survives-a-clear">
+              <p class="quiz-q-text">
+                You clear the session. Which part of the setup still holds what
+                happened before?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  The environment: files on disk stay where they are
+                </li>
+                <li>The harness: it remembers the messages you sent it</li>
+                <li>The model: it retains what it learned about you</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The environment is always stateful - save a file, clear the
+                session, and the file is still there. The harness is stateful
+                too, but only for the duration of one session: clear it and it
+                forgets everything. The model is stateless full stop; it
+                processes one request from the context it is given and retains
+                nothing at all.
+              </div>
+            </div>
+            <div class="quiz-question" id="codebase-as-the-memory-system">
+              <p class="quiz-q-text">
+                You want your agent to remember a decision after this session
+                ends. What do you reach for first?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Write it into the codebase for the agent to read back
+                </li>
+                <li>Bolt a memory system onto the agent so it can store it</li>
+                <li>Keep the session open so the harness holds onto it</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The way to give a stateless system memory is to save things in
+                the environment, and the codebase is the environment you already
+                have - as Mario Zechner puts it, the codebase is the memory
+                system. Bolting a memory system onto the agent is what lots of
+                people do, but be suspicious of it: modifying the codebase tends
+                to be enough, and it is simpler. Keeping the session open only
+                postpones the problem, since the harness forgets the moment you
+                clear it.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="how-much-did-it-cost">
+          <h1 class="chapter-title">How Much Did It Cost?</h1>
+
+          <p>
+            Understanding how you get billed for the work that
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agents</a
+            >
+            do is very important, and it&#x27;s a lot harder than you might
+            think. The cost is spread out over
+            <a href="https://www.aihero.dev/ai-coding-dictionary/session"
+              >sessions</a
+            >,
+            <a href="https://www.aihero.dev/ai-coding-dictionary/turn">turns</a
+            >, and
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request"
+              >model provider requests</a
+            >.
+          </p>
+          <p>
+            The usual experience of paying for agent work is watching your bill
+            climb higher and higher without being able to attribute it to
+            anything specific. You can see your bill climbing, but you&#x27;re
+            not quite sure what the optimization surface is. How do you improve
+            it? How do you get things cheaper, or fix the bad habits that are
+            causing sessions to become expensive?
+          </p>
+          <h2>The numbers do exist</h2>
+          <p>
+            Well, the numbers that explain it do exist. The provider returns
+            them on every model provider request.
+          </p>
+          <p>
+            Every time you send a model provider request during a turn, you are
+            sending
+            <a href="https://www.aihero.dev/ai-coding-dictionary/input-tokens"
+              >input tokens</a
+            >, and then you are getting back
+            <a href="https://www.aihero.dev/ai-coding-dictionary/output-tokens"
+              >output tokens</a
+            >
+            from the response.
+          </p>
+          <ul class="body-list">
+            <li>
+              <strong>Input tokens</strong> are what you send: the current state
+              of the repo, the current state of what the agent knows in the
+              <a href="https://www.aihero.dev/ai-coding-dictionary/environment"
+                >environment</a
+              >
+            </li>
+            <li><strong>Output tokens</strong> are what the agent produces</li>
+          </ul>
+          <p>
+            And output tokens are billed at a much higher rate than input
+            tokens.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1785244793/ai-hero-images/jeogsbavdgjtc9l5eeqb.png"
+            alt="Claude API pricing page showing input tokens at $10 per million and output tokens at $50 per million"
+          />
+          <p class="img-caption">
+            Claude API pricing page showing input tokens at $10 per million and
+            output tokens at $50 per million
+          </p>
+          <h3>Pricing comparison</h3>
+          <p>
+            For instance, if we look at
+            <a href="https://platform.claude.com/docs/en/about-claude/pricing"
+              >Claude Haiku 4 on the API rates</a
+            >, we can see that input tokens are $10 per million tokens sent,
+            whereas output tokens are five times that - they&#x27;re $50 per
+            million tokens.
+          </p>
+          <p>
+            Input tokens are usually by far the larger number. The request
+            output is often just a few hundred tokens, either producing a
+            <a href="https://www.aihero.dev/ai-coding-dictionary/tool-call"
+              >tool call</a
+            >
+            or replying to something you just sent it, whereas the input is the
+            entire session so far.
+          </p>
+          <p>
+            Every single model provider request you&#x27;re building up state,
+            which is then going into input tokens, whereas the output tokens
+            stay relatively static.
+          </p>
+          <h2>Exploring the request logger</h2>
+          <p>
+            To take a look at this, we can examine the request logger. Start it,
+            then copy and paste the command it prints into a new terminal to
+            start an agent through it.
+          </p>
+          <p>
+            We&#x27;ll send a simple message and then go into the logs to look
+            at the first request that comes back.
+          </p>
+          <p>
+            If we go all the way down to the response tag, we can see a usage
+            output with some really interesting numbers. We can see that there
+            were only two input tokens used and the output tokens were 14.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1785244794/ai-hero-images/tkk1rqmz2u4qrsexhtok.png"
+            alt="Request logger showing usage statistics with input tokens, output tokens, and cache token counts"
+          />
+          <p class="img-caption">
+            Request logger showing usage statistics with input tokens, output
+            tokens, and cache token counts
+          </p>
+          <p>
+            So it came back with its typical &quot;hello, what can I help you
+            with today?&quot; message. The interesting question is: why were the
+            input tokens only two here? Because we know that it sends the full
+            <a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt"
+              >system prompt</a
+            >
+            along with it.
+          </p>
+          <p>
+            Well, we can see that we have
+            <code>cache_creation_input_tokens</code> and then
+            <code>cache_read_input_tokens</code>. In other words, some of these
+            input tokens were cached in the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/prefix-cache"
+              >prefix cache</a
+            >.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1785244795/ai-hero-images/o740h2dnzjvvv8jm8gnq.png"
+            alt="Request logger showing cache_creation_input_tokens and cache_read_input_tokens fields"
+          />
+          <p class="img-caption">
+            Request logger showing cache_creation_input_tokens and
+            cache_read_input_tokens fields
+          </p>
+          <h2>How the prefix cache works</h2>
+          <p>
+            Most
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider"
+              >providers</a
+            >
+            keep a prefix cache. When a request begins with the same set of
+            tokens as a recent request, then the provider reuses the work that
+            it did on that stretch and bills it as
+            <a href="https://www.aihero.dev/ai-coding-dictionary/cache-tokens"
+              >cached input tokens</a
+            >
+            instead.
+          </p>
+          <p>
+            If we go back to the pricing page, we can see that cache hits and
+            refreshes are billed at 10 times lower than base input tokens.
+          </p>
+          <p>
+            However, what we did wasn&#x27;t a cache read - it was a cache
+            write. The logs show
+            <code>cache_creation_input_tokens: 22214</code>. In other words, we
+            have now created the cache, which we&#x27;re then going to hit on
+            the subsequent request.
+          </p>
+          <h2>Warming up the cache</h2>
+          <p>
+            Let&#x27;s go into our agent again and send another message. Then if
+            we look at the log that it creates, we can see in the response it
+            pulled in 504 input tokens, created a cache output of 59, but then
+            read 22,000.
+          </p>
+          <p>
+            In other words, now we have warmed up the cache and we are now
+            hitting the cache. So in effect, we were only billed for around 500,
+            maybe approaching 600 input tokens here, plus the 46 output tokens
+            that were produced.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1785244796/ai-hero-images/j2ex7ctahoswcajbhadp.png"
+            alt="Request logger showing second request with majority of tokens from cache_read_input_tokens"
+          />
+          <p class="img-caption">
+            Request logger showing second request with majority of tokens from
+            cache_read_input_tokens
+          </p>
+          <p>
+            We can see there are output tokens but there are also thinking
+            tokens, which are billed the same as output tokens since
+            they&#x27;re essentially the same.
+          </p>
+          <p>
+            This means that subsequent requests do get cheaper because your
+            input tokens write to a cache, which are then cached as input
+            tokens, and these cached input tokens are billed significantly
+            lower.
+          </p>
+          <h2>Sessions and the cache</h2>
+          <p>
+            This is, of course, suited to the way that sessions work because
+            they grow by appending. Every request is the previous request with
+            just a bit more at the end.
+          </p>
+          <p>
+            That&#x27;s why you notice that the request is designed in the way
+            that it is - it has the stuff that rarely changes at the start of
+            the request and stuff that does change more often further down,
+            often actually delivered inside user messages.
+          </p>
+          <h2>The complexity of session billing</h2>
+          <p>
+            That&#x27;s why figuring out the billing for a session is so
+            complicated, because there are so many variables here.
+          </p>
+          <p>
+            Sure, you&#x27;ve written to the cache in the first model provider
+            request, but then you&#x27;ve mostly read from the cache on the
+            second. But maybe on the third, you&#x27;ve produced lots of output
+            tokens, which are very expensive.
+          </p>
+          <p>
+            Maybe you took an hour&#x27;s break between turn 2 and turn 3, and
+            so the cache was totally exhausted - it had timed out by that point.
+          </p>
+          <h2>Context management matters</h2>
+          <p>
+            Now most of this, of course, is the harness&#x27;s concern.
+            It&#x27;s the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harness</a
+            >&#x27;s job to make sure that information is organized in the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context-window"
+              >context window</a
+            >
+            so that you get the best out of your cache.
+          </p>
+          <p>
+            But one thing I want you to notice here is that every input token
+            you provide to the agent gets re-added into the session every single
+            request. In other words, it&#x27;s very easy to build up sediments
+            in this very first model provider request that then gets taken
+            through and is continually built every single model provider
+            request.
+          </p>
+          <p>
+            This means that keeping
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context"
+              >context</a
+            >
+            small and keeping context relevant is not only good for the agent,
+            but it&#x27;s also good for your wallet.
+          </p>
+          <p>
+            And helping you navigate the difference between input tokens, cached
+            input tokens and output tokens will hopefully help this whole thing
+            feel a bit less opaque.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="prefix-cache-billing-discount">
+              <p class="quiz-q-text">
+                The provider reuses a stretch of your request from its prefix
+                cache. How is that stretch billed?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  At ten times lower than base input tokens
+                </li>
+                <li>At ten times higher than base input tokens</li>
+                <li>At exactly the same rate as base input tokens</li>
+                <li>Not at all, since the work was already done once</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Cache hits and refreshes are billed ten times lower than base
+                input tokens. They are not free - a cache read still shows up on
+                the bill as cache_read_input_tokens - and they are cheaper than
+                base input tokens rather than the same rate, and certainly not
+                more expensive.
+              </div>
+            </div>
+            <div class="quiz-question" id="cache-timeout-between-turns">
+              <p class="quiz-q-text">
+                You send a message, take an hour&#x27;s break, then send
+                another. The second message bills far more input tokens than the
+                messages before the break. What happened?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  The prefix cache timed out, so nothing could be read from it
+                </li>
+                <li>
+                  The session restarted, so the system prompt was sent a second
+                  time
+                </li>
+                <li>
+                  The break pushed the session into the dumb zone, forcing a
+                  retry
+                </li>
+                <li>
+                  The thinking tokens from the last turn were re-billed as input
+                </li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                A long enough gap exhausts the prefix cache, so the whole prefix
+                is charged at the base input rate again. The session did not
+                restart - it keeps appending, which is why the prefix matched at
+                all before the break. The dumb zone describes the quality of the
+                output rather than the bill, and thinking tokens are billed the
+                same as output tokens, not as input.
+              </div>
+            </div>
+            <div class="quiz-question" id="context-size-is-a-billing-lever">
+              <p class="quiz-q-text">
+                Why does keeping the context small save you money, rather than
+                only improving what the agent produces?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Every input token is re-sent on every model provider request
+                </li>
+                <li>
+                  Output tokens are charged at a lower rate in shorter sessions
+                </li>
+                <li>
+                  A small context skips the prefix cache and its write cost
+                </li>
+                <li>
+                  A small context makes the harness send fewer turns per session
+                </li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                A session grows by appending, so a token added in the first
+                request is sent again on every request after it - sediment there
+                is paid for many times over. Output tokens are billed at one
+                rate whatever the session length, the prefix cache is a saving
+                you want rather than a cost to avoid, and the number of turns is
+                set by the work rather than by the size of the context.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="hallucination">
+          <h1 class="chapter-title">Hallucination</h1>
+
+          <p>
+            In a previous lesson, we talked about the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone"
+              >dumb zone</a
+            >
+            and the smart zone, where
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/attention-degradation"
+              >attention degradation</a
+            >
+            kicks in as the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/session"
+              >session</a
+            >
+            gets longer and the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >model</a
+            >
+            gets progressively worse. But we didn&#x27;t really talk about what
+            those &quot;dumb things&quot; actually are - what symptoms
+            you&#x27;re likely to see inside the dumb zone and sometimes even in
+            the smart zone itself.
+          </p>
+          <h2>The Core Problem: Hallucination</h2>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784024580/ai-hero-images/k4qdql452l89nqf1yhhx.png"
+            alt="Hallucination definition displayed on screen"
+          />
+          <p class="img-caption">
+            Hallucination definition displayed on screen
+          </p>
+          <p>
+            The big one, and the one we&#x27;re always working to prevent at any
+            cost, is
+            <a href="https://www.aihero.dev/ai-coding-dictionary/hallucination"
+              ><strong>hallucination</strong></a
+            >
+            - confidently wrong model output.
+          </p>
+          <p>
+            A hallucination can be absolutely disastrous when you&#x27;re
+            coding. It can:
+          </p>
+          <ul class="body-list">
+            <li>Produce broken code</li>
+            <li>
+              Take you down a direction in the product you didn&#x27;t want
+            </li>
+            <li>Recommend that you use an API that&#x27;s no longer secure</li>
+            <li>Do all sorts of really dangerous stuff</li>
+          </ul>
+          <p>
+            Often what we&#x27;re trying to do is provide an
+            <a href="https://www.aihero.dev/ai-coding-dictionary/environment"
+              >environment</a
+            >
+            that gives the model things to work with that lessen the likelihood
+            of hallucinations.
+          </p>
+          <p>
+            In this lesson, we&#x27;re going to create a dictionary for
+            hallucinations - a way of understanding how to prevent them and what
+            they really are.
+          </p>
+          <h2>Two Main Flavors of Hallucination</h2>
+          <p>
+            There are two main flavors of hallucination:
+            <strong>factuality</strong> and <strong>faithfulness</strong>.
+          </p>
+          <h3>Factuality Hallucination</h3>
+          <p>
+            A <strong>factuality hallucination</strong> is invented or simply
+            wrong facts about the world. Examples include:
+          </p>
+          <ul class="body-list">
+            <li>A function that doesn&#x27;t exist</li>
+            <li>A wrong API signature</li>
+            <li>A citation to an article that doesn&#x27;t exist</li>
+          </ul>
+          <p>
+            These happen because of a lack of
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/parametric-knowledge"
+              ><strong>parametric knowledge</strong></a
+            >.
+          </p>
+          <h2>Understanding Parametric Knowledge</h2>
+          <p>
+            When the model is trained initially, the information in its
+            <a href="https://www.aihero.dev/ai-coding-dictionary/training"
+              >training</a
+            >
+            is stored in its
+            <a href="https://www.aihero.dev/ai-coding-dictionary/parameters"
+              ><strong>parameters</strong></a
+            >. Every model&#x27;s brain, its memory essentially, is stored in
+            these huge arrays of numbers, sometimes billions and billions of
+            numbers.
+          </p>
+          <p>
+            These are sometimes called <strong>weights</strong>. Parametric
+            knowledge is the knowledge encoded in these parameters, and
+            it&#x27;s encoded once at the time the model is trained.
+          </p>
+          <p>
+            The reason the model is
+            <a href="https://www.aihero.dev/ai-coding-dictionary/stateless"
+              >stateless</a
+            >
+            is that these parameters never change after that. They&#x27;re
+            literally frozen after the training process.
+          </p>
+          <h3>The Problem With Parametric Knowledge</h3>
+          <p>
+            However, think about this: if you take all of the terabytes and
+            terabytes of training data and compress them down into a couple of
+            billion numbers, a lot of stuff going to get lost.
+          </p>
+          <p>
+            When you have a really detailed image and compress it down to a tiny
+            size, you sometimes can&#x27;t see the finer detail.
+          </p>
+          <p>
+            Not only that, but parametric knowledge has a cutoff to it. The
+            model was trained at a certain time, and data that came after that -
+            new events, new libraries, new APIs - has escaped the model. Models
+            often need to be continually updated to make sure they&#x27;ve got
+            the new stuff.
+          </p>
+          <h2>Knowledge Cutoff</h2>
+          <p>
+            All models have a
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/knowledge-cutoff"
+              ><strong>knowledge cutoff</strong></a
+            >. And the way training works is you can&#x27;t just patch more
+            information into the model - you have to retrain it from scratch.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784024581/ai-hero-images/bz1izt12vqibu1oaeoma.png"
+            alt="Knowledge cutoff concept displayed"
+          />
+          <p class="img-caption">Knowledge cutoff concept displayed</p>
+          <p>This means factuality hallucinations can come from two places:</p>
+          <ol class="body-list">
+            <li>
+              You&#x27;re asking for information that&#x27;s after its knowledge
+              cutoff
+            </li>
+            <li>
+              You&#x27;re asking for information about stuff before the
+              knowledge cutoff, but it&#x27;s only got a kind of fuzzy JPEG - a
+              blurry image to reference
+            </li>
+          </ol>
+          <p>
+            The model isn&#x27;t going to be very good at retrieving information
+            from its parametric knowledge because of the way it&#x27;s stored.
+            It&#x27;s not stored like a database of facts. It&#x27;s just stored
+            as fuzzy vibes.
+          </p>
+          <h2>A Real Example: The X API Pricing</h2>
+          <p>
+            Here&#x27;s a hallucination from Claude Opus. When asked &quot;How
+            expensive is the X API? Don&#x27;t search for information, just tell
+            me based on what you know,&quot; it replied:
+          </p>
+          <blockquote>
+            <p>
+              Based on my knowledge, which may be outdated, here are the rough
+              tiers for the X Twitter API from my training:
+            </p>
+            <ul class="body-list">
+              <li>Free: very limited</li>
+              <li>Basic: $100/month</li>
+              <li>Pro: $5,000/month</li>
+              <li>Enterprise: custom pricing</li>
+            </ul>
+          </blockquote>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784024582/ai-hero-images/x6gp672wjetimr2b2cnp.png"
+            alt="Agent response showing outdated X API pricing"
+          />
+          <p class="img-caption">
+            Agent response showing outdated X API pricing
+          </p>
+          <p>
+            This is actually not true. The pricing has gone down massively
+            relatively recently. When we then ask it to search for the
+            information, it goes off and searches - using web search - and
+            checks whether its parametric knowledge was correct.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784024582/ai-hero-images/exjhndztsp3fzlfvfrar.png"
+            alt="Agent performing web search"
+          />
+          <p class="img-caption">Agent performing web search</p>
+          <p>
+            The search reveals that the pricing model changed significantly in
+            February. This was actually before this current model&#x27;s
+            knowledge cutoff, so what we had there was a factuality
+            hallucination - invented or wrong facts about the world.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784024583/ai-hero-images/dmwdrmmgiklfy8wscou1.png"
+            alt="Corrected X API pricing after web search"
+          />
+          <p class="img-caption">Corrected X API pricing after web search</p>
+          <h2>The Fix: Contextual Knowledge</h2>
+          <p>
+            The fix column shows us: load in the
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/contextual-knowledge"
+              ><strong>contextual knowledge</strong></a
+            >. Contextual knowledge is knowledge that is in the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context-window"
+              >context window</a
+            >
+            of the model.
+          </p>
+          <p>
+            From research, hallucinations are much less common when the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agent</a
+            >
+            works from contextual knowledge. The answer is right in front of it,
+            not dredged up from blurred memory.
+          </p>
+          <p>
+            However, contextual knowledge is not a cure for hallucinations
+            because we also have <strong>faithfulness hallucinations</strong>.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784024584/ai-hero-images/uzmdia0d3or52wnsfb79.png"
+            alt="Faithfulness hallucination definition"
+          />
+          <p class="img-caption">Faithfulness hallucination definition</p>
+          <h2>Faithfulness Hallucination</h2>
+          <p>
+            A <strong>faithfulness hallucination</strong> is where even if
+            you&#x27;ve passed the information to the LLM in its
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context"
+              >context</a
+            >, it will:
+          </p>
+          <ul class="body-list">
+            <li>Ignore it</li>
+            <li>Drift away from it</li>
+            <li>Do something slightly strange with it</li>
+          </ul>
+          <p>
+            This is the thing that the dumb zone makes really, really bad
+            because of attention degradation. Because you have so much
+            information in the context, the model can&#x27;t find the relevant
+            stuff. There are so many
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/attention-relationship"
+              >attention relationships</a
+            >
+            to keep track of that it doesn&#x27;t know which ones are the
+            important ones.
+          </p>
+          <p>
+            This means that you can pass the agent all the relevant information.
+            You can set things up perfectly. But if there&#x27;s just too much
+            in its context window, then it won&#x27;t be able to follow
+            instructions as well, and it will hallucinate more.
+          </p>
+          <p>
+            That means it will produce worse code, open you up to security
+            risks, and do really strange stuff.
+          </p>
+          <h2>A Decision Tree for Hallucinations</h2>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784024585/ai-hero-images/unchljbemloc0eaegyxm.png"
+            alt="Decision tree flowchart for diagnosing hallucinations"
+          />
+          <p class="img-caption">
+            Decision tree flowchart for diagnosing hallucinations
+          </p>
+          <p>
+            Here&#x27;s a decision tree you can use when you see a
+            hallucination:
+          </p>
+          <p>
+            <strong
+              >First question: Was the information available in the model&#x27;s
+              context window?</strong
+            >
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Scenario</th>
+                  <th>Problem Type</th>
+                  <th>Solution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>No</strong></td>
+                  <td>Factuality problem</td>
+                  <td>Load the information into context</td>
+                </tr>
+                <tr>
+                  <td><strong>Yes</strong></td>
+                  <td>Faithfulness problem</td>
+                  <td>
+                    Clear your context window to reduce attention degradation
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>If It&#x27;s a Factuality Problem</h3>
+          <p>
+            If the information wasn&#x27;t in the context, it&#x27;s a
+            factuality problem. The model is looking at its parametric knowledge
+            and coming up short.
+          </p>
+          <p>
+            The fix: <strong>Never trust an unsourced LLM.</strong> Always make
+            sure the agent is working from sourced information, from contextual
+            info.
+          </p>
+          <p>
+            However, you might end up right back with another hallucination. And
+            if the information is in context, then you&#x27;ve got a
+            faithfulness problem.
+          </p>
+          <h3>If It&#x27;s a Faithfulness Problem</h3>
+          <p>
+            The agent is not being faithful to the information you&#x27;ve
+            provided to it.
+          </p>
+          <p>
+            This can happen in the smart zone, but most of the time you&#x27;ve
+            just got to get out of the dumb zone. Clear your context window.
+            Make sure the attention degradation goes down. Let the agent relax a
+            little bit.
+          </p>
+          <p>
+            It usually doesn&#x27;t happen in the smart zone, but because models
+            are
+            <a
+              href="https://www.aihero.dev/ai-coding-dictionary/non-determinism"
+              >non-deterministic</a
+            >, you will very occasionally get a faithfulness error in the smart
+            zone.
+          </p>
+          <h2>The Long Game</h2>
+          <p>
+            The hope is that
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider"
+              >model providers</a
+            >
+            improve models to the point where we don&#x27;t have to worry about
+            hallucinations so much. Factuality and faithfulness errors are
+            things they test for, but we can&#x27;t really see a world in which
+            we&#x27;re not having to deal with these sometimes.
+          </p>
+          <p>
+            Knowing about how they work and understanding them at a deep level
+            is a really important part of AI coding. During the rest of this
+            course, keep an eye out for factuality errors and faithfulness
+            errors - and now you&#x27;ll know how to deal with them.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div
+              class="quiz-question"
+              id="hallucination-in-context-means-faithfulness"
+            >
+              <p class="quiz-q-text">
+                You pasted the exact file the agent needed into the context, and
+                it still used a function from somewhere else. What do you do
+                first?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Clear the context window, then hand it the file again
+                </li>
+                <li>Paste in the surrounding files as well, to be thorough</li>
+                <li>Ask it to search the web for the correct signature</li>
+                <li>Send the same prompt again and see if it lands</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The information was in the context and the agent drifted from
+                it, so this is a faithfulness problem, and the fix is to reduce
+                attention degradation by clearing the context. Pasting in more
+                files makes the degradation worse. Searching the web fixes a
+                factuality problem, which this is not - the fact was already in
+                front of the model. Resending the same prompt leans on
+                non-determinism instead of removing the cause.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="hallucination-unsourced-means-factuality"
+            >
+              <p class="quiz-q-text">
+                The agent states an API&#x27;s pricing that it was never given
+                and that turns out to be wrong. What is the problem, and what is
+                the fix?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  A factuality problem - load sourced information into the
+                  context
+                </li>
+                <li>
+                  A faithfulness problem - clear the context window and ask
+                  again
+                </li>
+                <li>
+                  A factuality problem - wait for the model to be retrained on
+                  it
+                </li>
+                <li>
+                  A faithfulness problem - the model drifted away from its
+                  training
+                </li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The fact was never in the context, so the model was dredging it
+                out of parametric knowledge - a factuality hallucination, fixed
+                by never trusting an unsourced model and giving it a source. It
+                cannot be a faithfulness problem, because faithfulness is about
+                ignoring information the model was given. And waiting for a
+                retrain is not a fix you control - the answer is available right
+                now if you put it in the context.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="knowledge-cutoff-requires-retraining"
+            >
+              <p class="quiz-q-text">
+                A model&#x27;s knowledge cutoff sits before a library you use.
+                How does new information get into its parametric knowledge?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  The model has to be retrained from scratch
+                </li>
+                <li>The provider patches the new facts into the parameters</li>
+                <li>Anything you put in the context is written back to it</li>
+                <li>A web search the model runs updates its parameters</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Parameters are frozen at the end of training, which is exactly
+                why the model is stateless, so new information means a retrain
+                rather than a patch. Context and web search results do help the
+                model answer, but they are contextual knowledge and vanish with
+                the context window - neither writes anything back into the
+                parameters.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="effort">
+          <h1 class="chapter-title">Effort</h1>
+
+          <p>
+            <a href="https://www.aihero.dev/ai-coding-dictionary/effort"
+              >Effort</a
+            >
+            is a dial you can adjust on the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >model</a
+            >
+            that is provided by pretty much every
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider"
+              >model provider</a
+            >
+            now. In Claude Code here you can specify <code>/effort</code> and
+            then choose the effort level you want.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784118751/ai-hero-images/qextun0tafvvlwomeyud.png"
+            alt="Claude Code showing the /effort command with different effort levels displayed"
+          />
+          <p class="img-caption">
+            Claude Code showing the /effort command with different effort levels
+            displayed
+          </p>
+          <p>
+            The dial ranges from faster effort levels on the left to smarter
+            effort levels on the right. This video explores how to decide what
+            effort level to use for your work.
+          </p>
+          <h2>Comparing Low vs Max Effort</h2>
+          <p>
+            Let&#x27;s see what the difference looks like in practice. Setting
+            effort to <code>max</code> and asking the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agent</a
+            >
+            to explore a codebase and tell you about it produces very different
+            results compared to setting it to <code>low</code>.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784118752/ai-hero-images/fvjdpc479zlti8pno7ri.png"
+            alt="Terminal showing max effort run with 41,000 tokens used and 2 minutes 15 seconds elapsed"
+          />
+          <p class="img-caption">
+            Terminal showing max effort run with 41,000 tokens used and 2
+            minutes 15 seconds elapsed
+          </p>
+          <p>When running the same prompt with different effort levels:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Low Effort</th>
+                  <th>Max Effort</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Time taken</td>
+                  <td>1 minute 11 seconds</td>
+                  <td>2 minutes 15 seconds</td>
+                </tr>
+                <tr>
+                  <td>Tokens used</td>
+                  <td>11,000</td>
+                  <td>41,000</td>
+                </tr>
+                <tr>
+                  <td>Analysis depth</td>
+                  <td>Basic facts, tech stack</td>
+                  <td>
+                    Deeper exploration, features, file structure, potential
+                    issues
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The low effort version captured the basic facts about the repo - it
+            figured out the request logger subproject and the tech stack.
+          </p>
+          <p>
+            The max effort version went deeper, exploring actual features,
+            authentication implementation details, and file structure. It even
+            found some documentation drift that the low effort version missed.
+          </p>
+          <p>
+            The max effort approach put in more work and got slightly better
+            feedback, but it spent four times as many
+            <a href="https://www.aihero.dev/ai-coding-dictionary/token"
+              >tokens</a
+            >
+            to do so. That&#x27;s the core trade-off: more thinking for more
+            cost.
+          </p>
+          <p>
+            So what is happening here? Why is it putting more effort in? What
+            mechanism is it using to do that?
+          </p>
+          <h2>How Reasoning Tokens Work</h2>
+          <p>
+            Models can produce three types of outputs: text,
+            <a href="https://www.aihero.dev/ai-coding-dictionary/tool-call"
+              >tool calls</a
+            >, and reasoning. Those reasoning tokens are the model&#x27;s own
+            train of thought, a kind of stream of consciousness for what the
+            model is thinking.
+          </p>
+          <p>
+            In some interfaces, these reasoning tokens are displayed to the
+            user. Some agents show them directly. But in Claude Code, you only
+            see the text and tool calls - the reasoning happens behind the
+            scenes.
+          </p>
+          <p>
+            The theory behind this comes from an
+            <a href="https://arxiv.org/pdf/2201.11903"
+              >older technique called
+              <strong>Chain of Thought Prompting</strong></a
+            >. The research showed that when you ask a model to show its
+            working, it does a better job.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784118753/ai-hero-images/xg4rlrubh81kj1b8cnay.png"
+            alt="Chain of Thought paper showing standard prompting example with incorrect answer"
+          />
+          <p class="img-caption">
+            Chain of Thought paper showing standard prompting example with
+            incorrect answer
+          </p>
+          <p>For example, with standard prompting:</p>
+          <pre><code>The cafeteria had 23 apples. If they used 20 to make lunch
+and bought 6 more, how many apples do they have?
+
+Answer: 27</code></pre>
+          <p>
+            This answer is wrong. But if you get the model to go through the
+            steps:
+          </p>
+          <pre><code>They had 23 apples originally
+They used 20 to make lunch: 23 - 20 = 3
+They bought 6 more apples: 3 + 6 = 9
+
+Answer: 9</code></pre>
+          <p>By showing its reasoning, the model gets the right answer.</p>
+          <p>
+            When you increase effort, you&#x27;re essentially telling the model:
+            produce more reasoning tokens, show more of your thinking.
+          </p>
+          <h2>Effort Levels and Benchmark Performance</h2>
+          <p>
+            This approach is proven across benchmarks to increase performance.
+            <a href="https://deepswe.datacurve.ai/">DeepSWE</a> is a reputable
+            benchmark that shows how different models perform at different
+            effort levels.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784118753/ai-hero-images/rziqhl3gcttxmsfsxsbf.png"
+            alt="DeepSWE benchmark graph showing performance vs cost for different effort levels"
+          />
+          <p class="img-caption">
+            DeepSWE benchmark graph showing performance vs cost for different
+            effort levels
+          </p>
+          <p>Looking at the performance data:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Low</th>
+                  <th>Medium</th>
+                  <th>High</th>
+                  <th>Extra High</th>
+                  <th>Max</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Claude</td>
+                  <td>60%</td>
+                  <td>65%</td>
+                  <td>69%</td>
+                  <td>70%</td>
+                  <td>70%</td>
+                </tr>
+                <tr>
+                  <td>GPT 5.6</td>
+                  <td>45%</td>
+                  <td>61%</td>
+                  <td>69%</td>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>As effort increases, so does the cost per task.</p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784118754/ai-hero-images/m6igfxeysyi8nurhzw6z.png"
+            alt="DeepSWE graph showing Claude Sonnet 5 cost and performance metrics"
+          />
+          <p class="img-caption">
+            DeepSWE graph showing Claude Sonnet 5 cost and performance metrics
+          </p>
+          <p>
+            Claude Sonnet 5, for instance, starts at 31% quality on low effort
+            but costs $26 per task. To get better performance, you might switch
+            to GPT 5.6, which only costs $1.86 to outperform that baseline.
+          </p>
+          <p>
+            <strong>The critical insight</strong>: effort is not just a quality
+            trade-off. It&#x27;s also a latency trade-off. The more tokens you
+            use, the sooner you hit the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone"
+              >dumb zone</a
+            >, where the model&#x27;s reasoning becomes degraded. More effort
+            means you&#x27;re burning through your token budget faster, leaving
+            less room for actual work.
+          </p>
+          <h2>Choosing Your Effort Level</h2>
+          <p>
+            The first point: avoid <code>max</code> effort. Max and even
+            <code>extra high</code> are extremely wasteful uses of tokens. Model
+            providers include these settings mainly to push their benchmark
+            scores higher by a few percentage points. If they can squeeze out 2%
+            improvement on benchmarks, that might rank them higher than
+            competitors.
+          </p>
+          <p>
+            But your concern is different: day-to-day cost, latency, and
+            quality.
+          </p>
+          <p>
+            For a model like GPT 5.6, the difference between low, medium, and
+            high can feel like you&#x27;re using different models entirely.
+            It&#x27;s a genuinely impactful difference. However, don&#x27;t
+            over-optimize your setup by constantly tweaking effort levels per
+            task.
+          </p>
+          <p>
+            Instead, pick one setting and stick with it. The author uses
+            <strong>Claude Opus 4.8 with medium effort</strong> and doesn&#x27;t
+            change it task by task. The reasoning is simple: consistency matters
+            more than optimization.
+          </p>
+          <p>
+            When you change and tune your model and its effort level,
+            you&#x27;re modifying one part of your system. But when you change
+            the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harness</a
+            >
+            and
+            <a href="https://www.aihero.dev/ai-coding-dictionary/environment"
+              >environment</a
+            >, you can swap out models and improve the entire system. By staying
+            model agnostic and keeping your effort level consistent, you
+            preserve flexibility.
+          </p>
+          <p>
+            This is a subjective take - different approaches work for different
+            workflows. You can share your own experiences and discuss which
+            models work best for you in the
+            <a href="https://aihero.dev/discord">Discord</a>. The key is making
+            a deliberate choice and measuring the results rather than constantly
+            adjusting knobs.
+          </p>
+          <h3>What to Consider When Choosing Effort</h3>
+          <p>
+            When deciding on an effort level, you need to balance multiple
+            factors:
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Factor</th>
+                  <th>Low Effort</th>
+                  <th>Medium Effort</th>
+                  <th>High Effort</th>
+                  <th>Max Effort</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Cost</strong></td>
+                  <td>Cheapest</td>
+                  <td>Moderate</td>
+                  <td>Higher</td>
+                  <td>Most expensive</td>
+                </tr>
+                <tr>
+                  <td><strong>Speed</strong></td>
+                  <td>Fastest</td>
+                  <td>Fast</td>
+                  <td>Slower</td>
+                  <td>Slowest</td>
+                </tr>
+                <tr>
+                  <td><strong>Quality</strong></td>
+                  <td>Basic</td>
+                  <td>Good</td>
+                  <td>Better</td>
+                  <td>Marginally better</td>
+                </tr>
+                <tr>
+                  <td><strong>Dumb zone risk</strong></td>
+                  <td>Lowest</td>
+                  <td>Low</td>
+                  <td>Higher</td>
+                  <td>Highest</td>
+                </tr>
+                <tr>
+                  <td><strong>Best for</strong></td>
+                  <td>Mechanical edits, simple tasks</td>
+                  <td>Everyday work</td>
+                  <td>Genuinely hard problems</td>
+                  <td>Benchmarking only</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The sweet spot for most work is medium effort. It provides a good
+            balance of cost, speed, and quality without burning through your
+            token budget unnecessarily.
+          </p>
+          <h2>Final Recommendations</h2>
+          <p>
+            The effort setting dramatically changes both the cost and quality of
+            the model you&#x27;re using. Before settling on an approach:
+          </p>
+          <ul class="body-list">
+            <li>
+              <strong>Check the benchmarks</strong> - Look at performance graphs
+              for the models you use on sites like
+              <a href="https://deepswe.datacurve.ai/">DeepSWE</a>. They show
+              token spend ratios and differences between low, medium, and high.
+            </li>
+            <li>
+              <strong>Remember benchmarks are flawed</strong> - The work you do
+              day-to-day is probably very different from what benchmarks test.
+              The only way to know what works for you is to try different effort
+              levels in your actual workflow.
+            </li>
+            <li>
+              <strong>Avoid constant min-maxing</strong> - Pick a model and
+              effort level that feels right, and stick with it. The time you
+              spend tuning is time you&#x27;re not shipping.
+            </li>
+            <li>
+              <strong>Be consistent</strong> - A stable, predictable setup beats
+              endlessly optimized one-offs.
+            </li>
+          </ul>
+          <p>
+            The goal is to make an informed choice and move forward, not to find
+            the perfect setting. Your setup should serve your workflow, not
+            constrain it.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="effort-pick-one-and-stick">
+              <p class="quiz-q-text">
+                You sit down to a normal day of feature work and open the effort
+                menu. What do you pick?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Medium, and leave it there for the next task too
+                </li>
+                <li>
+                  Max, because this feature matters more than the last one
+                </li>
+                <li>Whichever fits each task, changed as the work changes</li>
+                <li>Low, and raise it only once the output looks wrong</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Medium is the sweet spot for everyday work, and the point of
+                picking it is that you stop moving it - consistency beats
+                optimisation, and time spent tuning is time not shipping. Max is
+                a benchmarking setting rather than a working one. Tuning per
+                task, or ratcheting up from low each time something fails, is
+                the constant min-maxing that costs you more time than it ever
+                wins back.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="effort-spends-token-budget-not-just-money"
+            >
+              <p class="quiz-q-text">
+                Raising the effort level costs you more money. What else does it
+                cost?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Token budget, so you reach the dumb zone sooner
+                </li>
+                <li>Quality, since the extra reasoning confuses the model</li>
+                <li>Tool calls, since reasoning tokens are produced instead</li>
+                <li>Nothing else, since the token bill is the only cost</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Effort is a latency trade-off as well as a quality one - more
+                reasoning tokens burn the budget faster and leave less room
+                before the dumb zone. Extra reasoning raises quality rather than
+                lowering it, which is the whole point of chain of thought.
+                Reasoning does not replace tool calls, since text, tool calls
+                and reasoning are three separate kinds of output. And the bill
+                is not the only cost, or the choice would be easy.
+              </div>
+            </div>
+            <div class="quiz-question" id="max-effort-is-for-benchmarks">
+              <p class="quiz-q-text">
+                Why do model providers ship a max effort level at all?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  To push their benchmark score up a couple of points
+                </li>
+                <li>To give day to day work the best possible output</li>
+                <li>To let heavy users buy a faster answer on hard tasks</li>
+                <li>To keep a long session inside the smart zone for longer</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Max exists so a provider can squeeze out a couple of percent on
+                a benchmark and rank above a competitor. It is not for day to
+                day work, where the quality gain over high is marginal and the
+                token cost is not. Higher effort is slower, not faster. And
+                spending more tokens on reasoning moves you toward the dumb zone
+                rather than holding you in the smart zone.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="choosing-a-model">
+          <h1 class="chapter-title">Choosing A Model</h1>
+
+          <p>
+            One of the questions I get asked most often is: what
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >model</a
+            >
+            should I use? Does it make sense to swap models for certain
+            situations?
+          </p>
+          <p>
+            My business partner Joel once observed the way I sigh on stream when
+            chat tells me to use a different model and I have to explain it
+            again. I do get a little bit annoyed by the constant barrage of
+            people saying &quot;try this model, try this model. This new model
+            beats the rest of the models hands down. You have to try it or
+            you&#x27;re being left behind.&quot;
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784126474/ai-hero-images/bahfbz5sbwsrpuufel1l.png"
+            alt="Twitter conversation about model switching"
+          />
+          <p class="img-caption">Twitter conversation about model switching</p>
+          <h2>Model, Harness, and Environment</h2>
+          <p>
+            In my mental model, the model is just one part of a larger
+            ecosystem. There&#x27;s the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harness</a
+            >
+            that surrounds it, and then the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/environment"
+              >environment</a
+            >
+            that the harness plus model operates in.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784126475/ai-hero-images/mppgqhhchshzkgothgqy.png"
+            alt="Diagram showing model, harness, and environment"
+          />
+          <p class="img-caption">
+            Diagram showing model, harness, and environment
+          </p>
+          <p>
+            I consider the model to be about 50-50 equal with the harness plus
+            environment. In other words, the model is a very consequential part
+            of the whole operation. If you switch out to a crap model, then you
+            are not going to get anywhere.
+          </p>
+          <p>
+            But if you have a model that&#x27;s working very well, then
+            there&#x27;s often things that you can do in your harness and your
+            environment to improve the outputs that you get from the model.
+          </p>
+          <p>
+            I do want to talk about how you choose a model in this lesson, but I
+            also want to de-emphasize it as an important consequential thing.
+          </p>
+          <p>
+            As long as you&#x27;re using one of the models in the top tier, you
+            will probably be okay.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784126476/ai-hero-images/xh0m0f9e408uoy4xtnpa.png"
+            alt="Graph showing models in top right corner"
+          />
+          <p class="img-caption">Graph showing models in top right corner</p>
+          <p>
+            At the time of recording, I&#x27;m currently on Claude Opus 4.8
+            medium. There is probably some optimization I could do with my
+            model, but first I&#x27;m more interested in optimizing my harness
+            and the environment my code runs in.
+          </p>
+          <p>
+            All the time I see low-hanging fruit that I can grab. And crucially,
+            if I put the effort in to improve the environment and the harness,
+            then that means I can swap out to any model and it should be okay.
+          </p>
+          <p>
+            I kind of think of the model as an employee in your company, and
+            employees come and go. So if you can invest in your company
+            infrastructure to make sure that any employee who comes in can
+            succeed, then you&#x27;re going to be in a good spot.
+          </p>
+          <h2>Efficiency: Cost Per Task</h2>
+          <p>
+            However, with all that said, I do want to give you a mental model so
+            that you can choose the right model in the right situation.
+          </p>
+          <p>
+            One thing I love about
+            <a href="https://deepswe.datacurve.ai/">the DeepSWE benchmark</a> is
+            that it has average cost per task at the bottom.
+          </p>
+          <p>
+            If we go up here to its
+            <a href="https://www.aihero.dev/ai-coding-dictionary/output-tokens"
+              >output tokens</a
+            >
+            filter you can see that if we choose output tokens then it&#x27;s
+            quite a different picture. For instance, Gemini 3.5 Flash spends a
+            ton of
+            <a href="https://www.aihero.dev/ai-coding-dictionary/token"
+              >tokens</a
+            >
+            to not achieve very much.
+          </p>
+          <p>
+            But if we actually look at the cost per token, you can see it&#x27;s
+            actually relatively cheap and pulls it far back over this side of
+            the picture. So some
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider"
+              >model providers</a
+            >
+            simply charge more per token than others.
+          </p>
+          <p>
+            Not only that, but for instance, these tokens are presumably billed
+            at API token level, whereas if you purchase a subscription, it is
+            much, much cheaper.
+          </p>
+          <p>
+            And so you&#x27;re not only choosing a model, you&#x27;re also
+            choosing a pricing structure along with it.
+          </p>
+          <p>
+            So whenever you&#x27;re doing these comparisons, you need to think
+            about the fact that efficiency is the key. It&#x27;s not just raw
+            cost in tokens, it&#x27;s what are you getting for those tokens.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784126477/ai-hero-images/aetvpuxgpmmuogjtvipl.png"
+            alt="DeepSWE graph showing models grouped in top right corner"
+          />
+          <p class="img-caption">
+            DeepSWE graph showing models grouped in top right corner
+          </p>
+          <p>
+            While this graph is fantastic because we can see everything grouped
+            up towards the top right corner, which is the most efficient, this
+            is still a pretty abstract benchmark that might not correspond to
+            your actual work.
+          </p>
+          <p>
+            For more on subscription versus API pricing, see
+            <a
+              href="https://support.claude.com/en/articles/11049762-choosing-a-claude-plan"
+              >Anthropic&#x27;s plan comparison</a
+            >.
+          </p>
+          <h2>Matching Quality to Task Needs</h2>
+          <p>
+            The next thing to say is that different tasks require different
+            levels of quality.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784126478/ai-hero-images/zaygpyx8yrxgifr4bro7.png"
+            alt="Graph showing GPT 5.6 SOL effort levels"
+          />
+          <p class="img-caption">Graph showing GPT 5.6 SOL effort levels</p>
+          <p>
+            For instance, if we look at a model like GPT 5.6 SOL, there might be
+            situations where we only need to use the low
+            <a href="https://www.aihero.dev/ai-coding-dictionary/effort"
+              >effort</a
+            >
+            level. For instance, exploration, research and summarization might
+            only need a low effort level.
+          </p>
+          <p>
+            Whereas detailed planning or code review it might be tempting to go
+            up to the high effort level that really takes a big old jump. And so
+            there&#x27;s an element here of picking the right tool for the job.
+          </p>
+          <p>
+            That could mean using one model for planning for difficult stuff and
+            another model for implementation.
+          </p>
+          <h2>Assess Models With Your Own Data</h2>
+          <p>
+            Now, throughout this, I&#x27;ve been pointing at this graph as if
+            it&#x27;s the thing that you should trust here, but really I&#x27;m
+            using this as an analogy for your own assessments.
+          </p>
+          <p>
+            What you need to be doing is watching your own usage, watching the
+            bill like a hawk, and also just getting a sense for a model. Models
+            really are like employees and the only way you can get the best out
+            of your employees is by getting to know them.
+          </p>
+          <p>
+            And so you will develop your own personal hierarchy of models and
+            effort levels. However, what I would say again is don&#x27;t spend
+            too much time min-maxing between all of these different choices.
+          </p>
+          <p>
+            I prefer to pick one I like and then stick with it. And what I find
+            is that the more I work with the same model and the same effort
+            level, the better I get at prompting it.
+          </p>
+          <p>
+            Later in the course, we will take a look at a more empirical way to
+            assess models. That really is pretty simple, which is you take the
+            same inputs and you set up two different models, or maybe the same
+            model with different effort levels, or even the different harness,
+            let&#x27;s say, you just get two different setups to perform the
+            same task.
+          </p>
+          <p>
+            Then you assess which one&#x27;s better, maybe note that down
+            somewhere, maybe run that experiment a few different times, and
+            you&#x27;ve got some pretty good data. That&#x27;s going to be
+            better than looking at these graphs because these graphs don&#x27;t
+            correspond to the actual tasks that your
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agents</a
+            >
+            are going to be doing in your company every day.
+          </p>
+          <h2>Key Takeaways on Model Selection</h2>
+          <p>
+            So to sum up then, models are just one part of the overall picture.
+            They are an important part but it&#x27;s about 50-50.
+          </p>
+          <p>
+            When you&#x27;re choosing models, you&#x27;re not just choosing
+            output tokens or output tokens versus quality, it&#x27;s also the
+            cost per task.
+          </p>
+          <p>
+            As you start using a few different models, then you will get a sense
+            for what your favourites are in certain situations. And in my
+            opinion, you should probably stick to one model, one effort level
+            and get to know it really, really well.
+          </p>
+          <p>
+            Everyone has an opinion about model selection. I would love to hear
+            from you what your opinions are when it comes to this stuff and how
+            you assess different models and different effort levels.
+          </p>
+          <p>
+            Join the conversation in the
+            <a href="https://aihero.dev/discord">AI Hero Discord</a>.
+          </p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div class="quiz-question" id="model-vs-harness-where-to-optimize">
+              <p class="quiz-q-text">
+                You are on a top tier model and the output your agent gives you
+                is still not good enough. Where do you spend the next hour?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  On the harness and environment, which any model benefits from
+                </li>
+                <li>
+                  On swapping to whichever model tops the newest benchmark
+                </li>
+                <li>
+                  On raising the effort level of the model you already run
+                </li>
+                <li>
+                  On rewriting the prompt until this model gets the task right
+                </li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The model is only about half the picture, and work put into the
+                harness and environment survives a model change - like company
+                infrastructure that lets any employee succeed. Swapping to the
+                newest benchmark leader buys very little once you are already in
+                the top tier. Effort tuning and prompt rewriting both improve
+                one setup only, and you lose the gain the moment the model
+                changes.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="model-assessment-run-your-own-comparison"
+            >
+              <p class="quiz-q-text">
+                A teammate insists a different model is better for your
+                codebase. How do you settle it?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Give two setups the same task and judge which result is better
+                </li>
+                <li>
+                  Read the benchmark graph and take the model nearest the top
+                  right
+                </li>
+                <li>
+                  Take whichever model shows the lowest average cost per task
+                </li>
+                <li>
+                  Switch model every week until one of them starts to feel best
+                </li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Same inputs, two setups, judge the outputs, repeat it a few
+                times - that is real data about your own work. A benchmark graph
+                is abstract and may not correspond to the tasks your agents
+                actually do, which rules out both reading the graph and picking
+                the cheapest point on it. Rotating models weekly is min-maxing,
+                and it stops you getting good at prompting any one of them.
+              </div>
+            </div>
+            <div
+              class="quiz-question"
+              id="model-cost-is-efficiency-not-token-price"
+            >
+              <p class="quiz-q-text">
+                You are comparing two models on cost. What does the raw price
+                per token miss?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Cost per task, and whether you pay API or subscription rates
+                </li>
+                <li>
+                  Context window size, which caps how much one task can hold
+                </li>
+                <li>Time per task, which is the real cost of a slow model</li>
+                <li>Effort level, which is chosen separately from the model</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                Efficiency is what you get for your tokens, so the question is
+                cost per task, and a subscription makes the same model much
+                cheaper than API rates. A model that burns a lot of cheap tokens
+                can still win. Context window size and effort level are real
+                choices, but neither is hidden inside the token price. Latency
+                matters too, but it is not what the cost per task figure at the
+                bottom of the benchmark is showing you.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter" id="subagents">
+          <h1 class="chapter-title">Subagents</h1>
+
+          <p>
+            Now we understand some of the constraints of
+            <a href="https://www.aihero.dev/ai-coding-dictionary/model"
+              >models</a
+            >, like
+            <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone"
+              >smart zone</a
+            >
+            and dumb zone, and about how
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context-window"
+              >context window</a
+            >
+            fills up and slowly degrades. Let&#x27;s look at a really common
+            technique that
+            <a href="https://www.aihero.dev/ai-coding-dictionary/harness"
+              >harnesses</a
+            >
+            use to mitigate those downsides.
+          </p>
+          <h2>Visualizing Agent Context Usage</h2>
+          <p>
+            I&#x27;ve got a little visualization of the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/context"
+              >context</a
+            >
+            of the
+            <a href="https://www.aihero.dev/ai-coding-dictionary/agent"
+              >agent</a
+            >
+            here.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784121226/ai-hero-images/hqce2ycvtkbcipev6y4d.png"
+            alt="Visualization showing agent context divided into colored sections"
+          />
+          <p class="img-caption">
+            Visualization showing agent context divided into colored sections
+          </p>
+          <p>
+            Each section represents different tasks that the agent needs to do
+            in that
+            <a href="https://www.aihero.dev/ai-coding-dictionary/session"
+              >session</a
+            >.
+          </p>
+          <ul class="body-list">
+            <li>
+              <strong>Grey section</strong>: The stuff that&#x27;s always in the
+              <a
+                href="https://www.aihero.dev/ai-coding-dictionary/system-prompt"
+                >system prompt</a
+              >
+              - the request logger
+            </li>
+            <li><strong>Yellow section</strong>: Exploration</li>
+            <li><strong>Green section</strong>: Implementation</li>
+          </ul>
+          <h2>The Token Optimization Problem</h2>
+          <p>
+            The dream for any harness would be to make these chunks smaller. We
+            want to spend fewer
+            <a href="https://www.aihero.dev/ai-coding-dictionary/token"
+              >tokens</a
+            >. This has two benefits:
+          </p>
+          <ol class="body-list">
+            <li>We spend less money</li>
+            <li>
+              We have more space in the context window, less
+              <a
+                href="https://www.aihero.dev/ai-coding-dictionary/attention-degradation"
+                >attention degradation</a
+              >, more space in the smart zone
+            </li>
+          </ol>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784121226/ai-hero-images/g96q1padgph4vsj2s4hy.png"
+            alt="Context visualization showing desire to reduce chunk sizes"
+          />
+          <p class="img-caption">
+            Context visualization showing desire to reduce chunk sizes
+          </p>
+          <p>
+            However, there&#x27;s a trade-off. If we do less legwork in the
+            exploration phase, we&#x27;re going to end up with worse
+            exploration, which means our implementation might suffer because of
+            bad information. It feels like we&#x27;re locked in for spending
+            this amount of tokens in our exploration phase.
+          </p>
+          <p>
+            <strong>How do you bridge this divide?</strong> How do you make the
+            exploration cheaper, or a certain phase cheaper, so that other
+            phases can benefit?
+          </p>
+          <h2>Delegating Work to Subagents</h2>
+          <p>
+            Lots of harnesses employ a really smart solution: they delegate it
+            to another agent.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784121227/ai-hero-images/lgzghqp97a6gpmraier0.png"
+            alt="Visualization showing a subagent being spawned from the main agent"
+          />
+          <p class="img-caption">
+            Visualization showing a subagent being spawned from the main agent
+          </p>
+          <p>
+            The main agent spawns another agent, and that agent can spend lots
+            of tokens really in-depth exploring the code base, then summarize
+            that information back to the main agent. This is kind of like a
+            senior developer going to a junior developer and saying: &quot;Just
+            research something for me and then report your findings.&quot;
+          </p>
+          <h3>Parallel Subagent Work</h3>
+          <p>
+            The main agent (the orchestrator) can also spawn multiple
+            <a href="https://www.aihero.dev/ai-coding-dictionary/subagent"
+              >subagents</a
+            >
+            at the same time in parallel to do different tasks. Maybe it needs
+            to research two things at the same time while those two junior
+            developers can go and work in parallel and report their findings.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784121228/ai-hero-images/w8redztjkgmkbkinlonk.png"
+            alt="Visualization showing multiple subagents spawned in parallel"
+          />
+          <p class="img-caption">
+            Visualization showing multiple subagents spawned in parallel
+          </p>
+          <h3>Flexible Subagent Configuration</h3>
+          <p>These subagents can be spawned with different configurations:</p>
+          <ul class="body-list">
+            <li>Different system prompts</li>
+            <li>Different models</li>
+            <li>
+              Different
+              <a href="https://www.aihero.dev/ai-coding-dictionary/effort"
+                >effort</a
+              >
+              levels
+            </li>
+          </ul>
+          <h3>Recursive Subagents</h3>
+          <p>
+            You can even have a subagent spawn its own subagents. Some harnesses
+            support this, some don&#x27;t. Some only allow you to go one level
+            deep, but this means subagents can act just as powerful as the
+            agents above them.
+          </p>
+          <img
+            class="lesson-img"
+            src="https://res.cloudinary.com/total-typescript/image/upload/v1784121229/ai-hero-images/uk8mosnbzotudxlxz0cc.png"
+            alt="Visualization of nested subagents spawning their own subagents"
+          />
+          <p class="img-caption">
+            Visualization of nested subagents spawning their own subagents
+          </p>
+          <p>
+            We&#x27;re going to leave the exploration at the theoretical level
+            for now because we&#x27;re going to be using subagents a lot more
+            when we get into the fundamentals.
+          </p>
+          <p>Nice work and I will see you in the next one.</p>
+          <div class="quiz-block">
+            <div class="quiz-block-title">Quiz</div>
+            <div
+              class="quiz-question"
+              id="subagent-keeps-exploration-out-of-main-context"
+            >
+              <p class="quiz-q-text">
+                Your main agent hands a deep codebase exploration to a subagent.
+                What does the main agent get out of that?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  It receives the summary, not the tokens spent finding it
+                </li>
+                <li>It gets the exploration done faster than it could alone</li>
+                <li>It pays nothing for the tokens the subagent burns</li>
+                <li>It has its own context window emptied back to the start</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                The subagent spends the tokens exploring and reports findings
+                back, so only the summary lands in the main agent&#x27;s context
+                - less money spent and more room in the smart zone. The
+                subagent&#x27;s tokens are still spent, just not in the
+                orchestrator&#x27;s window. Speed is what parallel subagents
+                buy, not delegation on its own. And nothing about spawning a
+                subagent clears what the main agent already holds.
+              </div>
+            </div>
+            <div class="quiz-question" id="subagent-config-differs-from-parent">
+              <p class="quiz-q-text">
+                What can a subagent be spawned with that differs from the agent
+                that spawned it?
+              </p>
+              <ul class="quiz-choices">
+                <li class="correct">
+                  Its own system prompt, model, and effort level
+                </li>
+                <li>Its own system prompt, but the parent&#x27;s model</li>
+                <li>Its own model, but the parent&#x27;s system prompt</li>
+                <li>Nothing, since a subagent inherits the whole setup</li>
+              </ul>
+              <div class="quiz-answer">
+                <div class="quiz-answer-label">Answer</div>
+                All three are configurable, which is what lets you send a cheap
+                fast subagent at a mechanical search and a stronger one at a
+                hard question. The narrower answers all understate it, and a
+                subagent that inherited everything would be no cheaper than
+                doing the work in the main agent - it can even spawn subagents
+                of its own in some harnesses.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const sections = document.querySelectorAll('section.chapter')
+      const navLinks = document.querySelectorAll('nav.sidebar a')
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              navLinks.forEach((link) => link.classList.remove('active'))
+              const active = document.querySelector(
+                `nav.sidebar a[href="#${entry.target.id}"]`,
+              )
+              if (active) active.classList.add('active')
+            }
+          })
+        },
+        { rootMargin: '-20% 0px -70% 0px' },
+      )
+
+      sections.forEach((s) => observer.observe(s))
+    </script>
+  </body>
+</html>

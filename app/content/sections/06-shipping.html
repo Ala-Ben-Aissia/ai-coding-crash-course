@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>06 Shipping</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1e2333;
+      --border: #2a3045;
+      --accent: #6c8ef5;
+      --accent2: #a78bfa;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --code-bg: #0d1117;
+      --code-border: #30363d;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #f87171;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .page-wrap { display: flex; min-height: 100vh; }
+
+    nav.sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.5rem 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-logo span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-logo strong {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    nav.sidebar ul { list-style: none; padding: 0 0.75rem; }
+
+    nav.sidebar li a {
+      display: block;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    nav.sidebar li a:hover { background: var(--surface2); color: var(--text); }
+    nav.sidebar li a.active { background: rgba(108,142,245,0.15); color: var(--accent); }
+
+    nav.sidebar .nav-section {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 1rem 1.5rem 0.3rem;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 3rem 2rem 6rem;
+      max-width: 820px;
+    }
+
+    .chapter {
+      margin-bottom: 5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chapter:last-child { border-bottom: none; }
+
+    h1.chapter-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    h1.chapter-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    h2 { font-size: 1.3rem; font-weight: 700; color: var(--text); margin: 2.5rem 0 0.75rem; }
+    h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent2); margin: 1.75rem 0 0.5rem; }
+    h4 { font-size: 0.95rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.4rem; }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(108,142,245,0.3);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    a:hover { border-color: var(--accent); color: #8facff; }
+    strong { color: var(--text); font-weight: 700; }
+    em { color: var(--muted); font-style: italic; }
+
+    .lesson-img {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .img-caption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: -0.75rem;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.875em;
+      background: rgba(108,142,245,0.12);
+      color: #a5b4fc;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+    }
+
+    pre code { background: none; padding: 0; color: #c9d1d9; }
+    .diff-add { color: var(--green); }
+
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr { background: var(--surface2); }
+    th, td { padding: 0.6rem 1rem; border: 1px solid var(--border); text-align: left; }
+    th { font-weight: 700; color: var(--text); }
+    td { color: var(--muted); }
+    td code { color: #a5b4fc; }
+    td strong { color: var(--text); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+    .checklist { list-style: none; padding: 0; margin: 0.75rem 0 1.25rem; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.45rem 0;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .checklist li::before {
+      content: '☐';
+      color: var(--accent);
+      font-size: 1.1em;
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+
+    .callout {
+      border-left: 4px solid var(--yellow);
+      background: rgba(251,191,36,0.07);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .callout strong { color: var(--yellow); }
+    .callout-info { border-color: var(--accent); background: rgba(108,142,245,0.08); }
+    .callout-info strong { color: var(--accent); }
+
+    blockquote {
+      border-left: 4px solid var(--accent2);
+      background: rgba(167,139,250,0.08);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .commit-map {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.875rem;
+    }
+    .commit-map-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .commit-map-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.4rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .commit-map-item:first-of-type { border-top: none; }
+    .commit-id {
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      background: rgba(108,142,245,0.15);
+      color: var(--accent);
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 0.1em;
+    }
+
+    .prompt-block {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    ul.body-list, ol.body-list {
+      padding-left: 1.5rem;
+      margin: 0.5rem 0 1.25rem;
+    }
+    ul.body-list li, ol.body-list li { margin-bottom: 0.35rem; }
+
+    .quiz-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 2rem 0 1.5rem;
+    }
+    .quiz-block-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+    .quiz-question {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+    .quiz-question:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+    .quiz-q-text { font-weight: 600; margin-bottom: 0.75rem; color: var(--text); }
+    .quiz-choices { list-style: none; padding: 0; margin: 0 0 0.75rem; }
+    .quiz-choices li {
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.3rem;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .quiz-choices li.correct {
+      background: rgba(52,211,153,0.1);
+      border-color: rgba(52,211,153,0.3);
+      color: var(--green);
+    }
+    .quiz-answer {
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+    .quiz-answer-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+
+    @media (max-width: 768px) {
+      nav.sidebar { display: none; }
+      main { padding: 2rem 1.25rem 4rem; }
+      h1.chapter-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span>Section 06</span>
+      <strong>Shipping</strong>
+    </div>
+    <p class="nav-section">Lessons</p>
+    <ul>
+      <li><a href="#how-to-tackle-massive-tasks">How to Tackle Massive Tasks</a></li>
+      <li><a href="#set-up-your-issue-tracker">Set Up Your Issue Tracker</a></li>
+      <li><a href="#write-great-specs-with-this-skill">Write Great Specs With This Skill</a></li>
+      <li><a href="#write-great-specs-with-this-skill-solution">Write Great Specs With This Skill Solution</a></li>
+      <li><a href="#write-great-specs-with-this-skill-2">Write Great Specs With This Skill</a></li>
+      <li><a href="#split-features-across-context-windows-with-tickets">Split Features Across Context Windows With Tickets</a></li>
+      <li><a href="#split-features-across-context-windows-with-tickets-solution">Split Features Across Context Windows With Tickets Solution</a></li>
+      <li><a href="#executing-your-tickets">Executing Your Tickets</a></li>
+      <li><a href="#executing-your-tickets-solution">Executing Your Tickets Solution</a></li>
+      <li><a href="#should-you-keep-your-specs">Should You Keep Your Specs?</a></li>
+      <li><a href="#rerouting-when-the-destination-changes">Rerouting: When The Destination Changes</a></li>
+      <li><a href="#the-goal-command">The Goal Command</a></li>
+      <li><a href="#enforcing-your-coding-standards">Enforcing Your Coding Standards</a></li>
+      <li><a href="#ask-matt">Ask Matt</a></li>
+      <li><a href="#where-you-go-from-here">Where You Go From Here</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section class="chapter" id="how-to-tackle-massive-tasks">
+      <h1 class="chapter-title">How to Tackle Massive Tasks</h1>
+
+      <p>You have hopefully been infected by my <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> paranoia. As you can tell, I&#x27;m constantly thinking about the <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>, constantly thinking about the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a> and the dumb zone.</p>
+      <h2>Staying in the Smart Zone</h2>
+      <p>With the current generation of <a href="https://www.aihero.dev/ai-coding-dictionary/model">models</a>, what I advocate for is staying inside the early part of the context window, the smart zone.</p>
+      <p>And that is fine for tasks that only require you to operate in one context window. So small features or bug fixes, one <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> start to finish.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785746820/ai-hero-images/dlzjpatyo2uvlinpnurk.png" alt="Tasks #1 and #2 fitting entirely within the smart zone" />
+      <p class="img-caption">Tasks #1 and #2 fitting entirely within the smart zone</p>
+      <h2>When Tasks Don&#x27;t Fit</h2>
+      <p>But what happens when you try to do something larger, something that will go into the dumb zone, like a refactor that touches every layer of the application?</p>
+      <p>Or something where it&#x27;s just obvious up front that it&#x27;s not even going to fit into a single context window, let alone fit into the smart zone?</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785746820/ai-hero-images/qk2upijustihkz3vrgqe.png" alt="Task #3 spilling into the dumb zone and task #4 overflowing the entire context window" />
+      <p class="img-caption">Task #3 spilling into the dumb zone and task #4 overflowing the entire context window</p>
+      <p>In other words, how do you ship huge chunks of work all at once?</p>
+      <h2>Breaking Down the Problem</h2>
+      <p>Well, you do it in the way that devs have been doing it for decades. You take the big task and you break it down into small chunks, each of which can fit into the smart zone of the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785746821/ai-hero-images/ltpkc4slcmjfjtpmflxv.png" alt="Task #4 broken down across four smart zone boxes" />
+      <p class="img-caption">Task #4 broken down across four smart zone boxes</p>
+      <p>So the question then becomes, what kind of upfront planning do you need to do to make this work? Because up to this point, our plans have really only been to last the duration of a single context window.</p>
+      <p>We&#x27;ve not really considered what it might look like to have an agent work over multiple sessions, to have work that spans multiple context windows.</p>
+      <h2>Two Essential Documents</h2>
+      <p>I&#x27;ve been experimenting with this a lot and trying out lots of different approaches, and I&#x27;ve landed on one that relies on having two documents.</p>
+      <h3>1. The Spec</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785746822/ai-hero-images/cdlh4y2suvu6hvnrwxf8.png" alt="Spec definition: a handoff artifact describing the destination of a multi-session piece of work" />
+      <p class="img-caption">Spec definition: a handoff artifact describing the destination of a multi-session piece of work</p>
+      <p>The first document we need is a description of the destination, the place that we&#x27;re going. Because if we don&#x27;t know where we&#x27;re heading, how are we going to complete the task or know that we did it correctly?</p>
+      <p>I&#x27;m going to call this destination document a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a>, a <a href="https://www.aihero.dev/ai-coding-dictionary/handoff-artifact">handoff artifact</a> describing the destination of a multi-session piece of work.</p>
+      <p>This spec is going to be passed to every single session so the individual session knows how its work contributes to the final goal.</p>
+      <p>We&#x27;re also going to use the spec at the end to review it, to make sure that we actually got where we said we were going.</p>
+      <h3>2. Tickets</h3>
+      <p>But there&#x27;s a problem. If you only specify the destination in the spec, how does the agent know how to break it down into small chunks? We need to describe the journey as well as the destination.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785746823/ai-hero-images/ypvllb4glotxq93lhajh.png" alt="Tickets definition showing both spec and tickets as handoff artifacts" />
+      <p class="img-caption">Tickets definition showing both spec and tickets as handoff artifacts</p>
+      <p>This is why alongside the spec, you also write <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a>. So one ticket per piece of work that you want to fit into a smart zone. So here we would have four tickets.</p>
+      <p>Each ticket describes what&#x27;s going to be done in that session, so it&#x27;s an implementation plan for that spec.</p>
+      <h2>Scaling Ambitious Work</h2>
+      <p>With this approach, you can take on seriously ambitious work. I&#x27;ve had enormous specs with 30 tickets underneath that have turned out okay.</p>
+      <p>And so that&#x27;s the idea of this section. We are going to be talking about how to use specs and tickets to ship larger, more ambitious projects than you could conceive of before.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="break-work-into-smart-zone-tickets">
+        <p class="quiz-q-text">A refactor touches every layer of your application, and it is obvious up front that it will not fit inside one context window. How do you set the work up?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Write a spec for the destination, then one ticket per chunk</li>
+          <li>Run it as one long session and let it fill the whole window</li>
+          <li>Write one very detailed spec and hand it to a single session</li>
+          <li>Start on the first file and decide the next step as you go</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The break-down exists so that each piece of work fits into an agent&#x27;s smart zone. A single long session spends most of its life in the dumb zone, or overflows the window entirely. A spec on its own only describes the destination, so nothing tells the agent how to split the journey up. And deciding as you go gives no destination to review the finished work against.
+        </div>
+      </div>
+      <div class="quiz-question" id="spec-destination-tickets-journey">
+        <p class="quiz-q-text">What is the difference between a spec and a ticket?</p>
+        <ul class="quiz-choices">
+          <li class="correct">The spec is the destination; each ticket is one leg of the journey</li>
+          <li>The spec is the long version; a ticket is the same plan written short</li>
+          <li>The spec is written after the tickets, to record what got built</li>
+          <li>The spec is for you to read; the tickets are for the agent to read</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The spec describes where the work is going, and it is handed to every session so each one knows how its piece contributes. Tickets describe the journey, one per piece of work that fits a smart zone, so they are not a shorter restatement of the same thing. The spec comes first, and it is written to be read by both you and the agent.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="set-up-your-issue-tracker">
+      <h1 class="chapter-title">Set Up Your Issue Tracker</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">setup-skills-skill</span>
+          <span>Start the lesson: the <code>/setup-matt-pocock-skills</code> skill added</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">run-setup-skill</span>
+          <span>See my solution: the skill run, with <code>AGENTS.md</code> pointing at <code>docs/agents/issue-tracker.md</code></span>
+        </div>
+    </div>
+      <p>You now know about <a href="https://www.aihero.dev/ai-coding-dictionary/spec">specs</a> and <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a>, but where do you actually store these documents? Are they local files? Where do they go?</p>
+      <p>The place I recommend putting both specs and tickets is outside of the repository in an issue tracker. An issue tracker is familiar if you&#x27;ve ever done development - it&#x27;s used to coordinate work across different teams or across members of your team.</p>
+      <p>One cool thing about working with an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> is that an agent can read from the same issue tracker that you contribute to. The most famous issue tracker out there is GitHub. You can create GitHub issues which are then able to be accessed by your coding agent via the GitHub CLI.</p>
+      <p>While this course uses GitHub, you can use any of the concepts we learn here on any issue tracker - Jira, Linear, Todoist, whatever you like. We&#x27;re going to use GitHub because it&#x27;s easy to set up, it&#x27;s free, and you probably already have an account.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748085/ai-hero-images/i8bspbkon8hkcywx3sqq.png" alt="GitHub issues page showing 1,200 closed issues and 28 open issues" />
+      <p class="img-caption">GitHub issues page showing 1,200 closed issues and 28 open issues</p>
+      <h2>Steps To Complete</h2>
+      <h3>Install and Authenticate the GitHub CLI</h3>
+      <p>The GitHub CLI is how the agent is going to communicate from your local setup to GitHub to fetch the issues.</p>
+      <ul class="checklist"><li>Install the GitHub CLI</li></ul>
+      <p>Visit <a href="https://cli.github.com/">cli.github.com</a> to find installation instructions for your platform.</p>
+      <ul class="checklist"><li>Run <code>gh auth login</code> to authenticate</li></ul>
+      <pre><code>gh auth login</code></pre>
+      <p>You&#x27;ll be prompted to choose where you use GitHub (choose <code>github.com</code>), your preferred protocol (choose <code>HTTPS</code>), and whether to authenticate Git with your GitHub credentials (I recommend yes). Then log in with a web browser to complete the process.</p>
+      <ul class="checklist"><li>Verify your authentication with <code>gh auth status</code></li></ul>
+      <pre><code>gh auth status</code></pre>
+      <p>You should see output showing you&#x27;re logged in to your GitHub account with an active account status.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748086/ai-hero-images/cturn2rdpjgioqtzbexo.png" alt="Terminal showing gh auth status output with logged in account" />
+      <p class="img-caption">Terminal showing gh auth status output with logged in account</p>
+      <pre><code>github.com
+  ✓ Logged in to github.com account &lt;your-username&gt; (...)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: gho_************************************</code></pre>
+      <h3>Fork the Course Repo</h3>
+      <p>By default, any issues you raise will be against the main version of the crash course repo, which means everything&#x27;s going to be very messy because we&#x27;ll all be reading each other&#x27;s issues. That would be a disaster.</p>
+      <p>So you need to fork the repo to create your own private copy.</p>
+      <ul class="checklist"><li>Run <code>npx ai-hero-cli fork</code></li></ul>
+      <pre><code>npx ai-hero-cli fork</code></pre>
+      <ul class="checklist"><li>Provide a name for your private GitHub repo</li></ul>
+      <p>You&#x27;ll be prompted for a new name for your repo. You can use the default or provide your own.</p>
+      <ul class="checklist"><li>Confirm the operation</li></ul>
+      <p>The CLI will warn you that it&#x27;s going to replace this folder&#x27;s git history with a single fresh commit and create a new private GitHub repo. Agree to continue.</p>
+      <p>Once complete, you&#x27;ll see a success message with a link to your new private repo on GitHub. All of the previous commands like <code>pull</code>, <code>reset</code>, and <code>cherry-pick</code> still work - the crucial difference is you now have your own set of issues.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748087/ai-hero-images/lj5tidngy4u2txfhjsmt.png" alt="Browser showing the newly created private GitHub repo" />
+      <p class="img-caption">Browser showing the newly created private GitHub repo</p>
+      <h3>Configure the Repo to Use GitHub Issues</h3>
+      <p>Now you need to set up this repo to use the correct issue tracker.</p>
+      <ul class="checklist"><li>Run <code>npm run reset</code></li></ul>
+      <pre><code>npm run reset</code></pre>
+      <ul class="checklist"><li>Search for &quot;setup skills skill&quot;</li></ul>
+      <p>This will add the <code>/setup-matt-pocock-skills</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> to the repo.</p>
+      <ul class="checklist"><li>Run <code>/setup-matt-pocock-skills</code> in Claude Code</li></ul>
+      <p>The skill will do a brief exploration of the repo&#x27;s current state and provide a recommendation on the issue tracker to use.</p>
+      <ul class="checklist"><li>When prompted, confirm you want to use GitHub</li></ul>
+      <p>Type something like &quot;yes, GitHub - write both files&quot; to confirm.</p>
+      <p>The skill will add infrastructure to your setup so that the agent knows GitHub is the issue tracker. It writes two files:</p>
+      <ul class="body-list"><li>An <code>## Agent skills</code> section in <code>AGENTS.md</code> with a <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">pointer</a> to the issue tracker documentation</li><li><code>docs/agents/issue-tracker.md</code> with the full GitHub conventions</li></ul>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748088/ai-hero-images/mtm3i1chq1y3tyuvde4z.png" alt="Claude Code showing the AGENTS.md file with the new Agent skills section" />
+      <p class="img-caption">Claude Code showing the AGENTS.md file with the new Agent skills section</p>
+      <pre><code>## Agent skills
+
+### Issue tracker
+
+Issues and PRDs live as GitHub issues on &lt;your-username&gt;/&lt;your-repo&gt;, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.</code></pre>
+      <p>The <code>docs/agents/issue-tracker.md</code> file contains all the conventions for how the agent should interact with GitHub - commands for creating, reading, listing, commenting on, labeling, and closing issues.</p>
+      <h3>Test Your Setup</h3>
+      <p>Now let&#x27;s verify everything works by creating a test issue.</p>
+      <ul class="checklist"><li>Run <code>/clear</code> to <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> the <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a></li></ul>
+      <ul class="checklist"><li>Ask the agent to add a test issue</li></ul>
+      <pre><code>Add an issue to the issue tracker just as a test, just for a dummy.</code></pre>
+      <p>The agent should read <code>docs/agents/issue-tracker.md</code>, see that issues live in GitHub, and run:</p>
+      <pre><code>gh issue create --title &quot;Test issue (dummy)&quot; --body &quot;Dummy issue created as a test of the issue tracker. Safe to close.&quot;</code></pre>
+      <ul class="checklist"><li>Verify the issue was created</li></ul>
+      <p>Click the GitHub URL returned by the command to see your new issue in your repo&#x27;s issue tracker.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748088/ai-hero-images/vuxjykubewybv7fggomi.png" alt="GitHub issue page showing the test dummy issue" />
+      <p class="img-caption">GitHub issue page showing the test dummy issue</p>
+      <p>You are now ready to use GitHub as your issue tracker for specs and tickets. If you have any issues with this, ask in the Discord.</p>
+    </section>
+
+    <section class="chapter" id="write-great-specs-with-this-skill">
+      <h1 class="chapter-title">Write Great Specs With This Skill</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">to-spec-skill</span>
+          <span>Start the lesson: the <code>/to-spec</code> skill added</span>
+        </div>
+    </div>
+      <p>We now understand why we would want a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a>. A spec is a destination document. It helps us manage <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> over multiple <a href="https://www.aihero.dev/ai-coding-dictionary/session">sessions</a>, and it gives us somewhere to aim at.</p>
+      <p>So you&#x27;re probably asking, how do I go and create one? Well, there is a <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> for that.</p>
+      <h2>The <code>/to-spec</code> Skill</h2>
+      <p>The <code>/to-spec</code> skill takes the current conversation and codebase understanding and produces a spec. In other words, it&#x27;s not going to <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grill</a> you about the conversation. It&#x27;s expecting that a grilling session has already happened in the conversation history.</p>
+      <p>You can pull it in by running:</p>
+      <pre><code>npm run reset</code></pre>
+      <p>Then select the <strong><code>to-spec-skill</code></strong> step from the list, reset the current branch, and the skill will appear in your working tree.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748551/ai-hero-images/qg2hwcj1xnaigeo2wxe9.png" alt="Running npm run reset and selecting the to-spec-skill step" />
+      <p class="img-caption">Running npm run reset and selecting the to-spec-skill step</p>
+      <p>The skill lives at <code>.agents/skills/to-spec/SKILL.md</code>. It&#x27;s configured with <code>disable-model-invocation: true</code>, which means it&#x27;s a slash command only - Claude will never reach for it on its own.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748551/ai-hero-images/za02v1ilcw0wexer5jvp.png" alt="The to-spec skill file showing disable-model-invocation configuration" />
+      <p class="img-caption">The to-spec skill file showing disable-model-invocation configuration</p>
+      <h2>The Process</h2>
+      <p>Our process is going to look something like this:</p>
+      <ol class="body-list"><li>Initial grilling session</li><li>Turn that grilling session into a spec</li><li>Turn that spec into <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a></li><li>Implement each individual ticket</li><li>Review against the spec that we initially created</li></ol>
+      <p>Don&#x27;t worry, we&#x27;re going to be going back to this diagram a lot to explain it and flesh it out, but this is the basic idea.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748552/ai-hero-images/wl0tldormkmno18uxthe.png" alt="Diagram showing the process: grilling session → spec → tickets → implement → review" />
+      <p class="img-caption">Diagram showing the process: grilling session → spec → tickets → implement → review</p>
+      <p>In this exercise, we&#x27;re only doing the first two steps - the grilling session and the spec. We&#x27;re not going to implement it from there because we need to turn that spec later into tickets. We&#x27;re just producing the spec in this lesson.</p>
+      <h2>The Spec Template</h2>
+      <p>The spec that&#x27;s created uses a template that&#x27;s nice and meaty. It includes:</p>
+      <ul class="body-list"><li>A problem statement</li><li>A solution description</li><li>A bunch of user stories (a classic software development technique)</li><li>Implementation decisions</li><li>Testing decisions</li><li>Out of scope items</li><li>Further notes</li></ul>
+      <pre><code>## Problem Statement
+
+The problem that the user is facing, from the user&#x27;s perspective.
+
+## Solution
+
+The solution to the problem, from the user&#x27;s perspective.
+
+## User Stories
+
+A LONG, numbered list of user stories. Each user story should be in the format of:
+
+1. As an &lt;actor&gt;, I want a &lt;feature&gt;, so that &lt;benefit&gt;
+
+## Implementation Decisions
+
+A list of implementation decisions that were made. This can include:
+
+- The modules that will be built/modified
+- The interfaces of those modules that will be modified
+- Technical clarifications from the developer
+- Architectural decisions
+- Schema changes
+- API contracts
+- Specific interactions
+
+Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.
+
+## Testing Decisions
+
+A list of testing decisions that were made.
+
+## Out of Scope
+
+A description of the things that are out of scope for this spec.
+
+## Further Notes
+
+Any further notes about the feature.</code></pre>
+      <p>There&#x27;s enough here that anything that picks this up, the implementer <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>, is going to get a really nice injection of information to complete the implementation.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785748552/ai-hero-images/sewhq60jnrksflqludrj.png" alt="The spec template showing problem statement, solution, user stories, and implementation decisions" />
+      <p class="img-caption">The spec template showing problem statement, solution, user stories, and implementation decisions</p>
+      <h2>The Feature We&#x27;re Building</h2>
+      <p>The thing we&#x27;re looking at is the instructor dashboard. If you log in as an instructor (Sarah Chen), go to the dashboard and there&#x27;s just like nothing here.</p>
+      <p>We did create a nice questions UI for the unanswered questions, but the instructor can&#x27;t see any analytics, anything that might inform them on how their course is doing.</p>
+      <p>We need to give them something so that they can see:</p>
+      <ul class="body-list"><li>How many users are in their courses</li><li>How much they are earning</li><li>Completion rates</li><li>Quiz scores</li></ul>
+      <p>An analytics page is so big, so potentially scope creepy and could expand larger and larger that I think it makes a very good candidate for a grilling session followed by a spec. We need to shape this into something reasonable and it&#x27;s definitely going to be larger than one <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">Smart Zone</a>.</p>
+      <h2>Steps To Complete</h2>
+      <h3>Run a Grilling Session</h3>
+      <ul class="checklist"><li>Run a <code>/grill-me</code> session about the Instructor Analytics dashboard</li></ul>
+      <p>Have a conversation with Claude about what this analytics dashboard should include. Let the grilling session shape the feature into something reasonable and well-defined.</p>
+      <h3>Create the Spec</h3>
+      <ul class="checklist"><li>Run <code>/to-spec</code> on that conversation</li></ul>
+      <p>This will synthesize everything from the grilling session into a structured spec document. The spec will be published to your GitHub issue tracker (which you set up in an earlier lesson) with the <code>ready-for-agent</code> triage label applied.</p>
+      <h3>Review the Spec</h3>
+      <ul class="checklist"><li>Read the spec that ends up in your issue tracker</li></ul>
+      <p>Take a look at what was generated. Does it capture the conversation well? Is it detailed enough?</p>
+      <ul class="checklist"><li>See if the spec matches how you would like a spec to be built</li></ul>
+      <p>This template is for you to fiddle with if you have any ideas on it. You can modify <code>.agents/skills/to-spec/SKILL.md</code> to adjust:</p>
+      <ul class="body-list"><li>The structure of the spec</li><li>What sections are included</li><li>How detailed each section should be</li><li>The format of user stories</li></ul>
+      <ul class="checklist"><li>Stop here - do not implement the feature</li></ul>
+      <p>We&#x27;re not going to implement it from the spec in this lesson. We need to turn that spec into tickets later. We&#x27;re just producing the spec for now.</p>
+    </section>
+
+    <section class="chapter" id="write-great-specs-with-this-skill-solution">
+      <h1 class="chapter-title">Write Great Specs With This Skill Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">to-spec-skill</span>
+          <span>Follow along: the <code>/to-spec</code> skill added</span>
+        </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="write-great-specs-with-this-skill-2">
+      <h1 class="chapter-title">Write Great Specs With This Skill</h1>
+
+      <p>We&#x27;re going to run through the <code>/grill-me</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> again, where we&#x27;re going to initialize it and then use dictation to describe what we want to build.</p>
+      <p>The full <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a> this <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> produces is on GitHub: <a href="https://github.com/ai-hero-dev/ai-coding-crash-course/issues/4">Instructor Analytics Dashboard</a>. Worth having open alongside this article so you can read the finished document while we build up to it.</p>
+      <h2>The Initial Prompt</h2>
+      <p>I would like to build an instructor analytics dashboard so that instructors have something to look at when they log into the platform.</p>
+      <p>Not only that, but we also need to be able to show them crucial information. They need to be able to see:</p>
+      <ul class="body-list"><li>How much they&#x27;re earning on the platform</li><li>Completion rates</li><li>Lesson drop-off points</li></ul>
+      <p>I&#x27;m pretty open to suggestions that you have about anything that we might want to implement here too.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749548/ai-hero-images/iymo3oicu8a2fwjfigdu.png" alt="Dictating the initial prompt for the instructor analytics dashboard" />
+      <p class="img-caption">Dictating the initial prompt for the instructor analytics dashboard</p>
+      <p>I&#x27;m kind of interested in how this is going to go because we&#x27;re <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grilling</a> on a pretty open scope here. Part of the grilling session is going to be figuring out this scope and making sure that we&#x27;re building the right thing.</p>
+      <h2>The Explore Phase</h2>
+      <p>It&#x27;s running a pretty deep explore phase. We&#x27;ve got <code>Map schema and domain model</code>, <code>Map routes, auth, and UI conventions</code>. So it&#x27;s going pretty deep here initially.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749549/ai-hero-images/dlaaviyt4rbn5lom4oxx.png" alt="Claude running exploration subagents in the background" />
+      <p class="img-caption">Claude running exploration subagents in the background</p>
+      <p>And it&#x27;s come back with a good chunk of stuff here.</p>
+      <h3>High-Quality Observations</h3>
+      <p>It&#x27;s made some observations at the start saying there is no earnings concept in the database - no fee, payout, refund, currency, price history.</p>
+      <p>How much they&#x27;re earning is currently only derivable as the amount paid joined through <code>courses.instructor_id</code>. That&#x27;s gross platform sales.</p>
+      <pre><code>// Current reality: earnings = SUM of purchase amounts
+SUM(purchases.amount_paid)
+  JOIN courses ON purchases.course_id = courses.id
+  WHERE courses.instructor_id = ?</code></pre>
+      <p>This is really high quality information, especially about drop-off has almost no data. This is giving us some really good insights as to what is feasible based on our current data model.</p>
+      <p>This is kind of like the engineer pushing back on the product owner saying, &quot;No, I&#x27;m not sure we can do that with our current data model. That&#x27;s a bigger lift than you think.&quot;</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749550/ai-hero-images/hnv7n8c7d11arxwabrse.png" alt="Claude&#x27;s observations about missing data in the current schema" />
+      <p class="img-caption">Claude&#x27;s observations about missing data in the current schema</p>
+      <h2>Round 1: Answering the Questions</h2>
+      <p>But let&#x27;s now go through and answer these questions.</p>
+      <p>I agree with your recommendation that a new route under Instructor Analytics makes sense.</p>
+      <p>We want to see both a cross-course roll-up and a per-course deep dive.</p>
+      <p>I like the idea of having an admin see something here, and the admin should probably see all instructors with an instructor picker. That&#x27;s pretty neat.</p>
+      <p>Let&#x27;s say that the platform takes a 20% cut. So let&#x27;s calculate that with a hard-coded rate constant.</p>
+      <p>When it comes to completion rates, that&#x27;s an interesting one. I agree with your take that mean per-student calculated progress is probably the best thing, but I won&#x27;t be sure about that until we see it in action.</p>
+      <p>I agree that lesson progress is probably cleaner and less lossy than video watch events.</p>
+      <p>Yes, I agree that a time range filter makes sense so we can have 30, 90 and all time.</p>
+      <p>That&#x27;s the first batch done. That is feeling pretty good.</p>
+      <h2>Background Exploration</h2>
+      <p>There were a couple of questions in there that I couldn&#x27;t really tell what the answer would be until I saw it, and that&#x27;s sometimes the nature of grilling. Sometimes you do need to actually see something there before you can figure it out.</p>
+      <p>One nice feature of grilling is in the <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harnesses</a> that support it, it can actually background an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>. So it can do some exploration in the background while you&#x27;re continuing chatting, which I really like.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749551/ai-hero-images/lcdgwrkbd8otbefgg486.png" alt="Background exploration running while answering questions" />
+      <p class="img-caption">Background exploration running while answering questions</p>
+      <h2>Round 2: The &quot;Zoom Out&quot; Technique</h2>
+      <p>We&#x27;re now on to round two.</p>
+      <p>I agree that there are buyers and students and they are separate stats. And we should probably also have a leaderboard for the person who&#x27;s bought the most so that we can reach out and actually contact them and say, offer them further support.</p>
+      <p>Here&#x27;s an interesting case. For question number two, I&#x27;m actually not quite sure what it&#x27;s on about, and so I&#x27;ll show you what that looks like when I ask it for more information.</p>
+      <p>Duration-weight the progress calculation? I don&#x27;t know, that&#x27;s a bit too jargony for me.</p>
+      <p>I&#x27;m not sure what you mean by question two. Could you zoom out a little bit and give me more, maybe a bit simpler version of that question.</p>
+      <p>&quot;Zoom out&quot; is like the key leading word for the agent there. It&#x27;s going to give me a bit more context about the question and hopefully I&#x27;ll be able to answer it at that point.</p>
+      <p>Let&#x27;s look now at question three.</p>
+      <p>I&#x27;m actually having a pretty similar feeling with question three, which is, I don&#x27;t know what a genuinely monotonic funnel is, or I don&#x27;t know what a real cliff is. You&#x27;re talking in jargon, please help me out here.</p>
+      <h3>Implementation Questions</h3>
+      <p>Next, it&#x27;s asking about grouped SQL or reuse the student helpers in a loop.</p>
+      <p>This is a really important implementation question and it&#x27;s doing a good job at explaining it from my level, but if you&#x27;re not necessarily very experienced with development you might be confused by it and so you might want to ask it to zoom out again.</p>
+      <p>With number four, I think you should do whatever you feel you need to. It&#x27;s very hard to anticipate performance questions beforehand, and so we may just want to build the thing that we think is the best effort and then measure performance afterwards.</p>
+      <p>For number five, yes, use recharts and shadcn&#x27;s <code>chart.tsx</code>. That seems fine.</p>
+      <p>We want to put the course selector into URL search params, not client state.</p>
+      <p>I think for these extras let&#x27;s actually just put all of them in and then we can always pull back later if needed. I think seeing everything on the screen will be helpful as a first pass and then for a V2 we can always pull it back.</p>
+      <p>That&#x27;s a really interesting observation, by the way. We are doing a big chunk of work here, but we&#x27;re not necessarily expecting the end state to be final, right? We&#x27;re going to continue working on this. And so it makes sense sometimes to just splurge out a bunch of features and then pull them back.</p>
+      <p>Is that the end of this round? Yes.</p>
+      <h3>The Restated Questions</h3>
+      <p>It&#x27;s now restated the questions that we asked it to in plain terms, and this is much better.</p>
+      <p>How do we turn lessons done into a percentage?</p>
+      <p>Right, you either count the lessons directly or you weight longer lessons as more in the percentage.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749551/ai-hero-images/iqho4t0pyb0f5wpkqwbl.png" alt="Claude restating the jargon-heavy questions in plain terms" />
+      <p class="img-caption">Claude restating the jargon-heavy questions in plain terms</p>
+      <p>In my experience, the lessons that are short in duration do not necessarily take less time to complete. You might be sending them off to do external work or sending them off to do an exercise.</p>
+      <p>So I think the only thing that makes sense is to count just purely by lessons.</p>
+      <p>Next, Q3 restated: what does each bar in the drop-off chart mean?</p>
+      <p>It&#x27;s sort of pointing at a hole inside our drop-off logic, which assumes that students always do every single part of the course.</p>
+      <p>Let&#x27;s have a look.</p>
+      <p>Maybe I just don&#x27;t like this feature, to be honest.</p>
+      <p>I guess maybe we need to just sort of see it in action before we can tell.</p>
+      <p>I think option B is a sensible one for Q3, but I kind of need to see it in action before I know if this feature is even any good. So let&#x27;s go with option B.</p>
+      <h2>Round 3: Seed Data and Leaderboards</h2>
+      <p>We&#x27;re on to round three.</p>
+      <p>Let&#x27;s modify the seed data to match what we&#x27;re actually seeing here so that we can QA it properly.</p>
+      <p>We still want 30, 90 all time. We may even want the last week as well, which is especially useful for launches.</p>
+      <p>I agree with your recommendation on 10.</p>
+      <p>Let&#x27;s roll this through.</p>
+      <p>Note how little <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> we&#x27;re spending on this planning. This is only about 40K here. We&#x27;ve not even had to do that much in terms of talking, I suppose. Like we&#x27;re just answering the questions as they come with relatively short answers.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749552/ai-hero-images/tzhnouyhtutk49vwpaxu.png" alt="Context usage showing approximately 40K tokens" />
+      <p class="img-caption">Context usage showing approximately 40K tokens</p>
+      <p>It&#x27;s sending off another <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">sub-agent</a> here to check the seed coupling to test. That&#x27;s a really interesting question.</p>
+      <p>It&#x27;s asking whether the seed data is coupled to how we&#x27;re doing our testing, and I&#x27;m pretty sure it isn&#x27;t, but this is something very important to verify.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749553/ai-hero-images/rlk3nnnp01g4oyqrtssn.png" alt="Background agent checking seed coupling to tests" />
+      <p class="img-caption">Background agent checking seed coupling to tests</p>
+      <h2>Round 4: Final Details</h2>
+      <p>It&#x27;s saying one page or tabs. I think tabs make sense, but I probably won&#x27;t know until I see it.</p>
+      <p>Zooming down, what do we have?</p>
+      <p>I want you to give your best effort on 12 and then we can critique it afterwards.</p>
+      <p>I agree that database indexes are important and so let&#x27;s add them as part of this.</p>
+      <p>Sure, we can delete the dead include quizzes parameter on <code>calculateProgress</code>. That seems cheap and easy.</p>
+      <p>We do need to build an explicit empty state for a brand new instructor. That&#x27;s a good catch.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749553/ai-hero-images/nputagb9kujpidvzjljv.png" alt="Claude catching the edge case of a brand new instructor with no data" />
+      <p class="img-caption">Claude catching the edge case of a brand new instructor with no data</p>
+      <p>That&#x27;s a really good catch by the way. That is like a classic thing that comes out in grilling is that the agent just thinks of an edge case that you haven&#x27;t realized yet and just says, what do you want to do in this case and offers you a good recommendation. So nice.</p>
+      <p>16, yes the extended seed sounds good and that&#x27;s the right level of scope.</p>
+      <p>Look at this, this is awesome. It&#x27;s actually picking up on our testing services skill and it&#x27;s asking what test coverage we want based on the steering that we&#x27;ve already provided it. Beautiful.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749555/ai-hero-images/zxwjsu7rtovdg7jfxumo.png" alt="Claude using the testing-services skill to ask about test coverage" />
+      <p class="img-caption">Claude using the testing-services skill to ask about test coverage</p>
+      <p>A little bit of our steering coming in and now affecting the way that we&#x27;re grilling. Beautiful, beautiful stuff.</p>
+      <p>100% agree with your recommendation on test coverage.</p>
+      <p>OK, zooming down, zooming down. OK, that&#x27;s it for round four. Lovely.</p>
+      <p>It looks like after this, the frontier is empty.</p>
+      <h2>Reaching Shared Understanding</h2>
+      <p>We are reaching the state where we have a <a href="https://www.aihero.dev/ai-coding-dictionary/design-concept">shared understanding</a> with the agent. I feel pretty confident about what we&#x27;re building. I&#x27;m expecting a pretty big analytics page, a big chunk of new seed data, maybe tabs I think, and lots of new queries and quite a lot of new code I think.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749556/ai-hero-images/ghzadkfz67oosfpqa3x7.png" alt="Frontier empty, reaching shared understanding with the agent" />
+      <p class="img-caption">Frontier empty, reaching shared understanding with the agent</p>
+      <p>It&#x27;s given us a very small kind of like output here of the information and so it&#x27;s time to say <code>/to-spec</code>.</p>
+      <p>And all I&#x27;m going to do is just go forward slash <code>to-spec</code> here and it should just handle the rest.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749557/ai-hero-images/rfacv9r1pq6y3yf8ndod.png" alt="Typing the /to-spec command" />
+      <p class="img-caption">Typing the /to-spec command</p>
+      <p>You just missed it there, but it immediately went off and read the information on how to issue the spec and where to put it and which issue tracker to use.</p>
+      <h2>The Test Seam Checkpoint</h2>
+      <p>And it says before I write and publish the spec, once the test seams agreed.</p>
+      <p>Testing is a really important part of building anything, and so in the <code>/to-spec</code> skill, I have a little checkpoint here where it asks the user, where do you want your tests built? At which seam in the application?</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749557/ai-hero-images/ngksywzpdmlw6ec0g58s.png" alt="The test seam checkpoint in the /to-spec skill" />
+      <p class="img-caption">The test seam checkpoint in the /to-spec skill</p>
+      <p>This concept of test seams comes from _Working Effectively with Legacy Code_ by Michael Feathers. I do have the book, so I would do the traditional book wave, but I can&#x27;t find it.</p>
+      <p>In this case, it&#x27;s a very simple decision because we just have this proposed seams one here. So there&#x27;s only one testing seam, which is we&#x27;re testing the services themselves.</p>
+      <p>It says that only works if the root loader is a genuinely thin pass-through. And so what it&#x27;s doing is it&#x27;s designing around this constraint to make sure that we&#x27;re using the existing test seams.</p>
+      <p>So let&#x27;s zoom down here. Confirm the single-seam approach. Yes, it looks good.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749559/ai-hero-images/gs5rtktmapfdlpvuegio.png" alt="Confirming the single-seam testing approach" />
+      <p class="img-caption">Confirming the single-seam testing approach</p>
+      <p>So with that, it should have all the information it needs to go and write the spec.</p>
+      <h2>Walking Through The Spec</h2>
+      <p>And we have our spec.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749560/ai-hero-images/pykooud554jujaxrnb40.png" alt="The completed spec as a GitHub issue" />
+      <p class="img-caption">The completed spec as a GitHub issue</p>
+      <p>Let&#x27;s now walk through and just look at each individual section.</p>
+      <h3>The Why: Problem and Solution</h3>
+      <p>One really important part of a spec is not just to tackle the what, but also tackle the why. If the agent has the why, then even if there&#x27;s a point at which it has to make a tie-breaking decision about like, what should we be doing in this specific situation, this isn&#x27;t on the spec, then because it&#x27;s got the why, it can make an informed decision about the purpose of the thing it&#x27;s building and hopefully get towards the solution better.</p>
+      <p>This why is in the problem statement and in the solution.</p>
+      <p>So the problem statement: instructors have no idea how they are doing. When an instructor logs in, they land on the marketing homepage and the only thing built for them is a list of their courses and a per course student roster.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749561/ai-hero-images/ynypqrc3s6jydghane0j.png" alt="Reading the problem statement from the spec" />
+      <p class="img-caption">Reading the problem statement from the spec</p>
+      <p>And so the solution is a dedicated instructor analytics page reachable from the sidebar that gives instructor one screen answering &quot;how is my teaching business doing.&quot;</p>
+      <h3>User Stories</h3>
+      <p>Then we have a bunch of user stories here, a lot of them, so 49 of them.</p>
+      <p>Many of them are as an instructor, and then we&#x27;ve also got a few more as an admin, as a student, as a developer.</p>
+      <p>If you&#x27;ve never seen a user story before, this is what they look like. They say, as a role, I want something to happen so that something, something.</p>
+      <p>For instance:</p>
+      <blockquote><p>As an instructor with a course but no sales yet, I want each empty panel to explain itself, so that I can tell nothing has happened yet from this feature has broken.</p></blockquote>
+      <p>That&#x27;s the why.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749563/ai-hero-images/vkq4rawumdk2gny6e2vw.png" alt="Example user story showing the as/I want/so that structure" />
+      <p class="img-caption">Example user story showing the as/I want/so that structure</p>
+      <p>The number of the user stories is weirdly important because then it can go and reference the number and say, OK, this fixes user story 35, this fixes user story 37, etc.</p>
+      <h3>Implementation Decisions</h3>
+      <p>Then we go to implementation decisions. So this is some of the implementation decisions that need to be done in the spec.</p>
+      <p>There&#x27;s an open question as to how many of these you should include. What I like to do is I like to imagine that these specs are going to be sitting around for a while before they&#x27;re approved. The idea is you would pass this off to your team to say, okay, this is what I&#x27;m planning to build, this is how I&#x27;m planning to do it.</p>
+      <p>And so it doesn&#x27;t necessarily reference like individual files, let&#x27;s say. It&#x27;s mostly saying, okay, these are the specifics of how we&#x27;re implementing it.</p>
+      <p>For instance, it&#x27;s got like types inside here, so <code>analytics_range</code>, and there are also some testing decisions here.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749565/ai-hero-images/fophmixgrlo0vohnv536.png" alt="Implementation decisions section showing types and approaches" />
+      <p class="img-caption">Implementation decisions section showing types and approaches</p>
+      <h3>Testing Strategy</h3>
+      <p>We explicitly say what makes a good test, we say the testing seams, and we say the module&#x27;s tested, the analytics service only.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749566/ai-hero-images/qizglgswhxhnuzkkovth.png" alt="Testing strategy section of the spec" />
+      <p class="img-caption">Testing strategy section of the spec</p>
+      <p>It also looks at the cases that must be covered and there&#x27;s also a decently sized out of scope section.</p>
+      <p>The further notes stuff is nice.</p>
+      <p>We&#x27;re even noting in here two designs the developer expects to critique. The two tabs split, and the final visual both accepted, with the explicit caveat they cannot be judged until they can be seen. Build the best version, expect iteration, do not treat either as settled.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749567/ai-hero-images/ob4pie4oh9o5lq41nunu.png" alt="Further notes section mentioning designs to critique" />
+      <p class="img-caption">Further notes section mentioning designs to critique</p>
+      <h2>Why I Don&#x27;t Read My Own Specs</h2>
+      <p>You&#x27;ll notice this has not really drifted at all from our conversation. And because of that, I rarely actually go and read these specs myself.</p>
+      <p>If I were to read the spec, what would I actually be testing for? I&#x27;d just be testing the agent&#x27;s ability to summarize what we just talked about. And that&#x27;s something that I kind of take on trust.</p>
+      <p>Overall, I&#x27;m super happy with this spec. This is a really great destination that we can then test against once we have our implemented code.</p>
+      <p>And hopefully the process of grilling and then running <code>/to-spec</code> made sense and especially the decision about the test seam as well.</p>
+      <p>Nice work, and I will see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="split-features-across-context-windows-with-tickets">
+      <h1 class="chapter-title">Split Features Across Context Windows With Tickets</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">to-tickets-skill</span>
+          <span>Start the lesson: the <code>/to-tickets</code> skill added</span>
+        </div>
+    </div>
+      <p>You have a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a>, but you don&#x27;t yet have a journey. You know the destination, but not how you&#x27;re going to get there.</p>
+      <p>You need to create individual <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a> for each <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>, each <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>. Each ticket will be picked up and implemented one at a time.</p>
+      <p>But there are good ways to slice up work, and there are bad ways.</p>
+      <h2>Horizontal Slices Are a Trap</h2>
+      <p>Every application has layers. You might have a database, an API, and a front-end as separate deployable units. Within your application, you might have services that talk to the front-end, and within the front-end you might have components with their own layers.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749912/ai-hero-images/mn0uzggkfkztyds0nybu.png" alt="Diagram showing application layers: database, API, front-end, services, and components" />
+      <p class="img-caption">Diagram showing application layers: database, API, front-end, services, and components</p>
+      <p>When an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> looks at breaking up work that involves different layers, it will usually break them into horizontal slices. Each layer gets its own phase.</p>
+      <p>Phase 1 focuses on the database. Phase 2 hooks it up to the service. Phase 3 hooks everything up to the front-end.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749914/ai-hero-images/wxgun1hajhkycnbnks2n.png" alt="Diagram illustrating horizontal slices with separate phases for each layer" />
+      <p class="img-caption">Diagram illustrating horizontal slices with separate phases for each layer</p>
+      <p>This looks well-organized and reasonable, but it&#x27;s a trap. Software developers have known about this for decades.</p>
+      <p>If you do it this way, all of the code in phase 1, you don&#x27;t really know if it works or if it&#x27;s well designed until you&#x27;re implementing phase 3. You need to cross the layers to work out if the code for that layer is well designed.</p>
+      <p>With horizontal slices, you get feedback on the whole system far too late.</p>
+      <h2>Vertical Slices Give Early Feedback</h2>
+      <p>The way to fix this is vertical slices. The agent works across layers from the very first phase.</p>
+      <p>From the word go, they&#x27;re touching the database, the API, and the front-end. They&#x27;re building out a minimal implementation first, then building from there.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749914/ai-hero-images/by0ajypofoikn8ar68bj.png" alt="Diagram showing vertical slices cutting across all layers from the first phase" />
+      <p class="img-caption">Diagram showing vertical slices cutting across all layers from the first phase</p>
+      <p>This means they&#x27;re getting feedback on their design, its feasibility, and seeing how all the layers integrate from the first phase.</p>
+      <p>Every phase that builds on that is pretty trivial because it&#x27;s just building on work that it already knows is well integrated.</p>
+      <p>Using the phrase &quot;vertical slices&quot; is actually really good because the agent already understands vaguely what it means. The concept of vertical slices and tracer bullets has been around for a long time - it goes back to <a href="https://www.amazon.co.uk/Pragmatic-Programmer-Andrew-Hunt/dp/020161622X"><em>The Pragmatic Programmer</em></a>.</p>
+      <h2>The /to-tickets Skill</h2>
+      <p>To get beautifully vertically sliced tickets, you use the <code>/to-tickets</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a>.</p>
+      <p>You can grab it by running <code>npm run reset</code> inside the crash course. It&#x27;s called <code>/to-tickets</code> and after you reset your branch, you&#x27;ll see it inside <code>.agents/skills</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749915/ai-hero-images/yvuiq1im6getaeq7vs4d.png" alt="Terminal showing npm run reset command and the /to-tickets skill in .agents/skills directory" />
+      <p class="img-caption">Terminal showing npm run reset command and the /to-tickets skill in .agents/skills directory</p>
+      <p>The skill breaks a plan, spec, or conversation into a set of tickets - tracer-bullet vertical slices, each declaring the tickets that block it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749916/ai-hero-images/r00jheuxfqybn8liu0ii.png" alt="The /to-tickets skill description showing it breaks plans into tracer-bullet vertical slices" />
+      <p class="img-caption">The /to-tickets skill description showing it breaks plans into tracer-bullet vertical slices</p>
+      <h2>When to Call /to-tickets</h2>
+      <p>When you reach the end of a phase, you need to decide what to do next. After <code>/to-spec</code>, that&#x27;s definitely the end of a piece of work.</p>
+      <p>Walk through this decision tree:</p>
+      <p><strong>Can you continue?</strong> Do you have enough smart zone left?</p>
+      <p>If yes, and your <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> is relevant to the next piece of work, you can keep going in the same session.</p>
+      <p><strong>Is your context irrelevant?</strong> If the information in your context isn&#x27;t relevant to the next task, <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">start fresh</a>.</p>
+      <p>In this case, the context is extremely relevant. All the decisions that went into the spec are in the context. It makes sense to keep this around.</p>
+      <p><strong>Do we need to <a href="https://www.aihero.dev/ai-coding-dictionary/handoff">hand off</a>?</strong> Not if we&#x27;re staying within the same agent and directory.</p>
+      <p><strong>Can this be done <a href="https://www.aihero.dev/ai-coding-dictionary/afk">AFK</a>?</strong> Not if you need <a href="https://www.aihero.dev/ai-coding-dictionary/human-review">human review</a>.</p>
+      <p>This situation is a great candidate for <a href="https://www.aihero.dev/ai-coding-dictionary/compaction">compacting</a> if you&#x27;re outside the smart zone. However, if you don&#x27;t need to, you can just continue.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749917/ai-hero-images/bmg4weovualzcxoiu28j.png" alt="Decision tree diagram for when to continue, compact, or start fresh at the end of a phase" />
+      <p class="img-caption">Decision tree diagram for when to continue, compact, or start fresh at the end of a phase</p>
+      <h2>Steps To Complete</h2>
+      <h3>Install the /to-tickets Skill</h3>
+      <ul class="checklist"><li>Run <code>npm run reset</code> to install the <code>/to-tickets</code> skill</li></ul>
+      <pre><code>npm run reset</code></pre>
+      <p>This will pull down the latest skills from the course repository. You should see the <code>/to-tickets</code> skill appear in <code>.agents/skills</code>.</p>
+      <h3>Run /to-tickets in the Same Conversation</h3>
+      <ul class="checklist"><li>Go back into the conversation where you ran <code>/to-spec</code></li></ul>
+      <p>This is the same session where you created the spec. All the context and decisions are already there.</p>
+      <ul class="checklist"><li>Compact if you need to</li></ul>
+      <p>Check your smart zone remaining. If you&#x27;re running low, compact the conversation. Otherwise, just continue.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785749917/ai-hero-images/bweprexs101w0w7szeyp.png" alt="Claude Code status bar showing 64k smart zone remaining" />
+      <p class="img-caption">Claude Code status bar showing 64k smart zone remaining</p>
+      <ul class="checklist"><li>Invoke the <code>/to-tickets</code> skill</li></ul>
+      <pre><code>/to-tickets</code></pre>
+      <p>The skill will present you with a breakdown of the different tickets it&#x27;s going to create, and it will ask for your feedback.</p>
+      <h3>Review the Ticket Breakdown</h3>
+      <ul class="checklist"><li>Check whether the tickets are horizontally sliced or vertically sliced</li></ul>
+      <p>Each ticket should cut across all layers - database, API, front-end - not focus on just one layer.</p>
+      <p>Look for tickets that say things like &quot;implement the database schema&quot; or &quot;build the API endpoints&quot; as separate phases. That&#x27;s horizontal slicing.</p>
+      <p>Good vertical slices deliver end-to-end behavior in each ticket - a narrow but complete path through every layer.</p>
+      <ul class="checklist"><li>Check that the tickets are not too big</li></ul>
+      <p>Remember, you&#x27;ve only got one smart zone per session to play with. Each ticket should be sized to fit in a single fresh <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>.</p>
+      <p>If a ticket looks like it&#x27;s trying to do too much, ask the agent to split it further.</p>
+      <ul class="checklist"><li>Provide feedback to the agent</li></ul>
+      <p>The agent will iterate with you until you approve the breakdown. Don&#x27;t move forward until the tickets are properly vertically sliced and appropriately sized.</p>
+    </section>
+
+    <section class="chapter" id="split-features-across-context-windows-with-tickets-solution">
+      <h1 class="chapter-title">Split Features Across Context Windows With Tickets Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">to-tickets-skill</span>
+          <span>Follow along: the <code>/to-tickets</code> skill added</span>
+        </div>
+    </div>
+      <p>You&#x27;ve <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grilled</a> the feature, you&#x27;ve turned it into a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a> - now you need to break it down into <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a>.</p>
+      <p>Let&#x27;s run <code>/to-tickets</code> and see what happens.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750366/ai-hero-images/fzv8dcovlrfmlztghwos.png" alt="Running the /to-tickets command in Claude Code" />
+      <p class="img-caption">Running the /to-tickets command in Claude Code</p>
+      <h2>The first proposal: 10 tickets</h2>
+      <p>It comes back pretty fast and gives us 10 tickets.</p>
+      <p>10 tickets feels way too much for this. If you think of the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a> as 150,000 <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a>, then this would mean we are budgeting 1.5 million tokens for this feature.</p>
+      <p>That feels like way too much to me. I&#x27;m picturing that maximum we would need 450k. So let&#x27;s say three tickets.</p>
+      <p>The way I&#x27;m able to make that judgment call is just a gut feeling really, just having done a lot of this, a lot of looking at these proposed ticket breakdowns and seeing what comes out.</p>
+      <p>450k even feels generous. I think this could probably even be done in two <a href="https://www.aihero.dev/ai-coding-dictionary/session">sessions</a>, but I don&#x27;t want to push it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750367/ai-hero-images/b4n4acgnk6xljddnwfde.png" alt="Claude&#x27;s initial 10-ticket breakdown showing horizontal slicing" />
+      <p class="img-caption">Claude&#x27;s initial 10-ticket breakdown showing horizontal slicing</p>
+      <h2>Horizontal slicing is still a problem</h2>
+      <p>What we can see here too is doing classic horizontal slicing as well, which is frustrating because I&#x27;m really trying inside the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> to not get it to do this, but it still just persistently does it.</p>
+      <p>This is why I feel a human looking at this is so important, by the way.</p>
+      <p>I think 10 is not a good candidate, I&#x27;m just going to say:</p>
+      <pre><code>I would like to break this down into maximum three tickets. 
+I think ten feels way too much.</code></pre>
+      <p>Let&#x27;s give this a go.</p>
+      <h2>Three tickets, but Claude pushes back</h2>
+      <p>Okay, it&#x27;s now given me three pretty large pieces of work here and it&#x27;s actually saying:</p>
+      <blockquote><p>One trade I want to be explicit about: tickets two and three are larger than a single fresh <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>.</p></blockquote>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750368/ai-hero-images/bwajkdz4qmcnb7hymrml.png" alt="Claude&#x27;s warning about tickets exceeding context window size" />
+      <p class="img-caption">Claude&#x27;s warning about tickets exceeding context window size</p>
+      <p>So it&#x27;s saying that it&#x27;s pretty scared about this overview tab. Okay. Maybe we&#x27;ll pull it to like five or something.</p>
+      <p>What I can see though is that these three are pretty good vertical slices. There is some groundwork that&#x27;s being done here. There&#x27;s some stuff that&#x27;s kind of being included in this PR that probably could be elsewhere. So there&#x27;s indexes, the seed rewrite, and the dead parameter prefactor.</p>
+      <p>Prefactor by the way if you&#x27;ve never heard of this - this is just a refactor before you do some work.</p>
+      <p>This will burn a lot of tokens because we&#x27;re just like plowing in a bunch of seed data, and so just like lots of <a href="https://www.aihero.dev/ai-coding-dictionary/output-tokens">output tokens</a> will be produced during this. And so I guess it makes sense to have it before we do any of the other vertical slices.</p>
+      <p>But the other ones, because they&#x27;re now grouping a ton of work together, they are by definition vertical because they&#x27;re like building out throughout an entire feature.</p>
+      <p>So let&#x27;s see if it retains the vertical slices when we go to five:</p>
+      <pre><code>Could we have five tickets instead of three?</code></pre>
+      <h2>Five tickets: the sweet spot</h2>
+      <p>Okay, so the groundwork is looking the same here and then it starts then with a page shell. That&#x27;s a good classic vertical slice. I really like that.</p>
+      <p>It then goes on and adds some extra overview panels, then the course detail selector, progress and drop-off funnel and course detail extras. Okay.</p>
+      <p>It&#x27;s even explicitly saying here:</p>
+      <blockquote><p>Every ticket lands as something you can look at</p></blockquote>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750368/ai-hero-images/yb646ltvz7xlz79fgg5f.png" alt="Claude&#x27;s message stating every ticket lands as something you can look at" />
+      <p class="img-caption">Claude&#x27;s message stating every ticket lands as something you can look at</p>
+      <h2>Blocking relationships and parallel work</h2>
+      <p>It also, by the way, does this clever thing where it has blocking relationships here.</p>
+      <p>So technically we can do these in parallel if we wanted to. For instance, in the overview panels, like two, we&#x27;ve got the page shell, and then three is blocked by two and four is blocked by two.</p>
+      <p>So this means we could work on one and two and then split up to do three and four in separate context windows if we wanted to.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750370/ai-hero-images/sttnynjuwkqxqbe9rkib.png" alt="Dependency graph showing tickets 3 and 4 both blocked by ticket 2" />
+      <p class="img-caption">Dependency graph showing tickets 3 and 4 both blocked by ticket 2</p>
+      <p>That&#x27;s entirely optional, you don&#x27;t have to do that, but it is a little bit quicker if you can make that work. And this means that we can scale this <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> up to actually fanning out, producing multiple pieces of work and merging them back together.</p>
+      <p>So, okay, I&#x27;m pretty happy with this. Let&#x27;s publish them to the tracker.</p>
+      <h2>The published tickets</h2>
+      <p>Okie doke, here we go. We have our <a href="https://github.com/ai-hero-dev/ai-coding-crash-course/issues/4">Instructor Analytics Dashboard</a> and it now has five sub-issues underneath it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750371/ai-hero-images/se8fkn0dgceufagulqds.png" alt="GitHub issues page showing the parent issue #4 with five sub-issues" />
+      <p class="img-caption">GitHub issues page showing the parent issue #4 with five sub-issues</p>
+      <p>So we&#x27;ve got our spec and we have the first one that&#x27;s unblocked, which is the groundwork.</p>
+      <p>We get an explicit link to the parent, and then we get what to build and the acceptance criteria.</p>
+      <p>Notice this ticket is pretty light here because we have the parent spec to rely on. All we&#x27;re doing is really specifying which bit of the spec we&#x27;re building now.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750371/ai-hero-images/yhhanzipoqbleo1hhehr.png" alt="Ticket #5 showing parent link and acceptance criteria" />
+      <p class="img-caption">Ticket #5 showing parent link and acceptance criteria</p>
+      <p>And having this explicit acceptance criteria is really nice for giving it a point where it can stop.</p>
+      <h2>Review the tickets lightly</h2>
+      <p>What I recommend you do is read through some of these. Again, I don&#x27;t recommend actually reviewing each of these because they&#x27;re just summaries of the things that we&#x27;ve decided already.</p>
+      <p>These tickets are relatively light, they&#x27;re just splitting up the spec so that we can go and work on it.</p>
+      <h2>Share your experience</h2>
+      <p>I would love to hear from you how your experience went.</p>
+      <ul class="body-list"><li>Did you create the same number of tickets as I did?</li><li>Did you spot vertical slices?</li><li>Did you get any weird horizontal slicing stuff?</li></ul>
+      <p>Do ping in the <a href="https://aihero.dev/discord">Discord</a> to join the conversation.</p>
+      <p>So we have our set of tickets. Nice work, and I will see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="executing-your-tickets">
+      <h1 class="chapter-title">Executing Your Tickets</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">implement-skill</span>
+          <span>Start the lesson: the <code>/implement</code>, <code>/tdd</code> and <code>/code-review</code> skills added</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">analytics-quiz-and-geography</span>
+          <span>See my solution: all five tickets implemented, up to quiz pass rates and revenue by country</span>
+        </div>
+    </div>
+      <p>We&#x27;ve got our <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a> and <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a>. Now we need to actually implement them.</p>
+      <p>There are three <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> that handle this: <code>/implement</code>, <code>/tdd</code>, and <code>/code-review</code>. They work together to build features, write tests first, and review the work before committing.</p>
+      <p>Let&#x27;s look at how they fit together.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750677/ai-hero-images/ruazusamecb6lqbzo7vk.png" alt="The /implement skill file open in the editor" />
+      <p class="img-caption">The /implement skill file open in the editor</p>
+      <h2>The <code>/implement</code> Skill</h2>
+      <p>The <code>/implement</code> skill is the orchestrator. It delegates most of its work to the other two skills.</p>
+      <p>Here&#x27;s what it does:</p>
+      <ul class="body-list"><li>Implement the work described in the spec or tickets</li><li>Use <code>/tdd</code> where possible, at pre-agreed seams</li><li>Run <a href="https://www.aihero.dev/ai-coding-dictionary/automated-check">typechecking</a> regularly, single test files regularly, full test suite once at the end</li><li>Once done, use <code>/code-review</code> to review the work</li><li>Commit your work to the current branch</li></ul>
+      <p>It&#x27;s very simple. The real work happens in <code>/tdd</code> and <code>/code-review</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750678/ai-hero-images/zkusvjlpu0qiarzrbzci.png" alt="The /tdd skill file showing the TDD workflow" />
+      <p class="img-caption">The /tdd skill file showing the TDD workflow</p>
+      <h2>The <code>/tdd</code> Skill</h2>
+      <p>The <code>/tdd</code> skill is where the quality comes from. <a href="https://www.aihero.dev/ai-coding-dictionary/agent">Agents</a> do their best work when they have the most feedback, and TDD is a great technique for that.</p>
+      <p>You write the unit test for the feature first, then implement it. The test gives the agent immediate feedback on whether the implementation is correct.</p>
+      <p>The skill includes:</p>
+      <ul class="body-list"><li>What a good test is - tests verify behavior through public interfaces, not implementation details</li><li>Advice on mocking and tests</li><li>What seams are - the public boundary you test at</li><li>What bad tests are - implementation-coupled, tautological, or horizontal slicing</li><li>Rules of the loop - red before green, one slice at a time, refactoring belongs in review</li></ul>
+      <h3>Test Only at Pre-Agreed Seams</h3>
+      <p>A <strong>seam</strong> is the public boundary you test at. Tests live at seams, never against internals.</p>
+      <p>Before writing any test, you write down the seams under test and confirm them with the user. No test is written at an unconfirmed seam.</p>
+      <p>This keeps testing effort on the critical paths and complex logic instead of every edge case.</p>
+      <h3>Tautological Tests</h3>
+      <p>One anti-pattern worth calling out: <strong>tautological tests</strong>. These are tests where the assertion recomputes the expected value the way the code does.</p>
+      <p>For example: <code>expect(add(a, b)).toBe(a + b)</code>. The test passes by construction and can never disagree with the code.</p>
+      <p>Expected values must come from an independent source of truth - a known-good literal, a worked example, the spec.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750679/ai-hero-images/nvg72btkhpsllth4qcqp.png" alt="The /code-review skill file open in the editor" />
+      <p class="img-caption">The /code-review skill file open in the editor</p>
+      <h2>The <code>/code-review</code> Skill</h2>
+      <p>The <code>/code-review</code> skill does a two-axis review of the diff between <code>HEAD</code> and a fixed point you supply.</p>
+      <p>It runs two <a href="https://www.aihero.dev/ai-coding-dictionary/automated-review">reviews</a> in parallel <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">sub-agents</a>:</p>
+      <ul class="body-list"><li><strong>Standards</strong> - does the code conform to this repo&#x27;s documented coding standards?</li><li><strong>Spec</strong> - does the code faithfully implement the originating issue / PRD / spec?</li></ul>
+      <h3>Why Two Axes</h3>
+      <p>A change can pass one axis and fail the other:</p>
+      <ul class="body-list"><li>Code that follows every standard but implements the wrong thing - <strong>Standards pass, Spec fail</strong></li><li>Code that does exactly what the issue asked but breaks the project&#x27;s conventions - <strong>Spec pass, Standards fail</strong></li></ul>
+      <p>Reporting them separately stops one axis from masking the other.</p>
+      <h3>The Standards Sub-Agent</h3>
+      <p>The Standards sub-agent gets:</p>
+      <ul class="body-list"><li>The full diff command and commit list</li><li>The list of standards-source files found in the repo</li><li>A smell baseline from <em>Refactoring</em> - Mysterious Name, Duplicated Code, Feature Envy, Data Clumps, and others</li></ul>
+      <p>It reports every place the diff violates a documented standard, and any baseline smell it spots. Documented-standard breaches can be hard violations, but baseline smells are always judgement calls.</p>
+      <h3>The Spec Sub-Agent</h3>
+      <p>The Spec sub-agent gets:</p>
+      <ul class="body-list"><li>The diff command and commit list</li><li>The path or fetched contents of the spec</li></ul>
+      <p>It reports:</p>
+      <ul class="body-list"><li>Requirements the spec asked for that are missing or partial</li><li>Behavior in the diff that wasn&#x27;t asked for (scope creep)</li><li>Requirements that look implemented but where the implementation looks wrong</li></ul>
+      <p>This second pass massively increases the quality of the output. It often goes and fixes the really bad stuff itself.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750679/ai-hero-images/s8u0bujduvuexgkqsdze.png" alt="GitHub issue showing the spec and its sub-issues" />
+      <p class="img-caption">GitHub issue showing the spec and its sub-issues</p>
+      <h2>Context Management</h2>
+      <p>There&#x27;s a debate: do you review after all tickets are complete, or review individual tickets against the spec?</p>
+      <p>For this lesson, we&#x27;re going to review each individual ticket. But sometimes you&#x27;ll just do it right at the end.</p>
+      <h3>Clearing vs. Compacting</h3>
+      <p>Once you finish the planning phase, you need to decide: <a href="https://www.aihero.dev/ai-coding-dictionary/clearing"><strong>clear</strong></a> or <a href="https://www.aihero.dev/ai-coding-dictionary/compaction"><strong>compact</strong></a>?</p>
+      <p>The spec and tickets stay outside of <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>. They&#x27;re in documents, so the conversation history is now disposable. It&#x27;s just a more verbose version of the documents you already have.</p>
+      <p>If you <strong>compact</strong>, the next <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a> might not have to do so much exploration because it should already have the right context for it.</p>
+      <p>However, it&#x27;s just cheaper and faster to <strong>clear</strong>. That way you&#x27;re going to start your new session with the maximum of the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>.</p>
+      <p>For this lesson, we&#x27;re at ~90k <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> after planning. The planning context is now disposable because it&#x27;s been encoded into the spec and the tickets. So we&#x27;re going to clear it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785750680/ai-hero-images/ilqd7fnypw0klo7bwk10.png" alt="Context meter showing 90k tokens used" />
+      <p class="img-caption">Context meter showing 90k tokens used</p>
+      <h2>Steps To Complete</h2>
+      <h3>Set Up the Skills</h3>
+      <ul class="checklist"><li>Run <code>npm run reset</code> to reset to the <code>implement-skill</code> lesson commit</li></ul>
+      <p>This adds the <code>/implement</code>, <code>/tdd</code>, and <code>/code-review</code> skills to your <code>.agents/skills</code> directory.</p>
+      <ul class="checklist"><li>Open <code>.agents/skills/implement/SKILL.md</code> and review it</li></ul>
+      <p>Notice how simple it is. It delegates to <code>/tdd</code> and <code>/code-review</code>.</p>
+      <ul class="checklist"><li>Open <code>.agents/skills/tdd/SKILL.md</code> and review the TDD workflow</li></ul>
+      <p>Pay attention to:</p>
+      <ul class="body-list"><li>The &quot;What a good test is&quot; section</li><li>The &quot;Seams - where tests go&quot; section</li><li>The anti-patterns: implementation-coupled, tautological, horizontal slicing</li><li>The rules of the loop: red before green, one slice at a time</li></ul>
+      <ul class="checklist"><li>Open <code>.agents/skills/code-review/SKILL.md</code> and review the two-axis review</li></ul>
+      <p>Notice how it runs two sub-agents in parallel - one for Standards, one for Spec.</p>
+      <h3>Implement the First Ticket</h3>
+      <ul class="checklist"><li>Open your spec issue on GitHub and scroll to the first sub-issue</li></ul>
+      <p>The first sub-issue should be unblocked and ready to start.</p>
+      <ul class="checklist"><li>Copy the link to the first sub-issue</li></ul>
+      <p>Right-click the issue link and copy the URL.</p>
+      <ul class="checklist"><li>In your agent, run <code>/implement</code> with the issue URL as the argument</li></ul>
+      <pre><code>/implement &lt;issue-url&gt;</code></pre>
+      <p>This will kick off the implementation. The agent will:</p>
+      <ol class="body-list"><li>Use <code>/tdd</code> to write tests first, then implement the feature</li><li>Run typechecking and tests regularly</li><li>Use <code>/code-review</code> to review the work</li><li>Commit the work to the current branch</li></ol>
+      <ul class="checklist"><li>Watch the agent work through the implementation</li></ul>
+      <p>You&#x27;ll see it:</p>
+      <ul class="body-list"><li>Propose test seams and confirm them with you</li><li>Write failing tests (red)</li><li>Implement the feature (green)</li><li>Run <code>/code-review</code> to catch issues</li><li>Fix any issues the review found</li><li>Commit the work</li></ul>
+      <h3>Review and Close the Ticket</h3>
+      <ul class="checklist"><li>Review the code review output</li></ul>
+      <p>The agent will show you both the Standards review and the Spec review. Check that:</p>
+      <ul class="body-list"><li>No documented standards were violated</li><li>No baseline smells were introduced</li><li>All requirements from the spec were implemented</li><li>No scope creep snuck in</li></ul>
+      <ul class="checklist"><li>Close the first sub-issue on GitHub</li></ul>
+      <p>This is good hygiene. Once you close the first one, the second one will be unblocked.</p>
+      <p>You can do this manually, or get your agent to do it for you.</p>
+      <h3>Decide: Clear, Compact, or Continue</h3>
+      <ul class="checklist"><li>Check your <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> usage in your agent</li></ul>
+      <p>Look at the token count in the status line.</p>
+      <ul class="checklist"><li>Decide whether to clear, compact, or continue</li></ul>
+      <p>If you&#x27;re at ~90k tokens or higher, consider clearing. The spec and tickets are outside of context, so the conversation history is now disposable.</p>
+      <p>If you&#x27;re under that, you might be able to continue to the next ticket.</p>
+      <ul class="checklist"><li>If you decide to clear, clear the context and start a fresh session for the next ticket</li></ul>
+      <p>If you decide to compact, the next session might not have to do so much exploration.</p>
+      <p>If you decide to continue, move on to the next ticket immediately.</p>
+      <h3>Implement the Remaining Tickets</h3>
+      <ul class="checklist"><li>Repeat the process for each remaining sub-issue</li></ul>
+      <p>For each ticket:</p>
+      <ol class="body-list"><li>Copy the issue URL</li><li>Run <code>/implement &lt;url&gt;</code></li><li>Watch the agent work</li><li>Review the code review output</li><li>Close the ticket</li><li>Decide whether to clear, compact, or continue</li></ol>
+      <h3>QA the Implementation</h3>
+      <ul class="checklist"><li>Once all tickets are complete, run the app locally</li></ul>
+      <p>Start your dev server and navigate to the analytics dashboard.</p>
+      <ul class="checklist"><li>Verify all features work as specified</li></ul>
+      <p>Check that each feature from the spec is present and working correctly.</p>
+      <ul class="checklist"><li>Check for errors in the console</li></ul>
+      <p>Open your browser&#x27;s developer console and verify no errors appear.</p>
+      <ul class="checklist"><li>Verify the UI looks correct</li></ul>
+      <p>Ensure the analytics dashboard displays properly and matches the design.</p>
+      <ul class="checklist"><li>Verify the analytics dashboard shows the expected data</li></ul>
+      <p>Check that the data displayed makes sense and matches what you&#x27;d expect from the seed data.</p>
+    </section>
+
+    <section class="chapter" id="executing-your-tickets-solution">
+      <h1 class="chapter-title">Executing Your Tickets Solution</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">implement-skill</span>
+          <span>Start the lesson: the <code>/implement</code>, <code>/tdd</code> and <code>/code-review</code> skills added</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">analytics-groundwork</span>
+          <span>After run 1: indexes, the seed rewrite and the progress prefactor</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">analytics-page</span>
+          <span>After run 2: the revenue overview, chart and range control</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">analytics-audience</span>
+          <span>After run 3: buyers, the leaderboard, questions and ratings</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">analytics-course-detail</span>
+          <span>After run 4: course progress, finished count and the drop-off funnel</span>
+        </div>
+        <div class="commit-map-item">
+          <span class="commit-id">analytics-quiz-and-geography</span>
+          <span>After run 5: quiz pass rates and revenue by country</span>
+        </div>
+    </div>
+      <p>Alright, let&#x27;s do it. Let&#x27;s send off <code>/implement</code> with just the first issue.</p>
+      <h2>Run 1 - The groundwork ticket</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751277/ai-hero-images/rtxjtwcmd476562lndca.png" alt="Claude Code exploring the codebase after reading issue #5" />
+      <p class="img-caption">Claude Code exploring the codebase after reading issue #5</p>
+      <p>We can see it&#x27;s read the issue. It&#x27;s now exploring the code base. And it&#x27;s not using a <a href="https://www.aihero.dev/ai-coding-dictionary/subagent">sub-agent</a> for this, interestingly. It&#x27;s just going straight ahead.</p>
+      <p>And then bam, we are in with the first update. So it&#x27;s updating <code>includeQuizzes</code>. It is doing the stuff described in the first issue it looks like.</p>
+      <h3>Auto Mode</h3>
+      <p>One thing, by the way, that&#x27;s really very important for these situations is <a href="https://www.aihero.dev/ai-coding-dictionary/agent-mode">Auto Mode</a>, which is the ability to just run it and have a classifier just checking the <a href="https://www.aihero.dev/ai-coding-dictionary/permission-request">permission requests</a>.</p>
+      <p>So I can probably leave this for a bit and come back and the implementation for the first phase should be finished as well as hopefully the review.</p>
+      <p>This is a Claude Code-only feature, though I&#x27;m fairly sure that other <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harnesses</a> also will implement their own version of Auto Mode.</p>
+      <h3>The seed script</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751279/ai-hero-images/euxcw7spix4dymf1ehha.png" alt="Terminal output showing the seed script creating database entries" />
+      <p class="img-caption">Terminal output showing the seed script creating database entries</p>
+      <p>It&#x27;s gone through and added a bunch of stuff to the seed script. It&#x27;s also run a database migration. It looks like it&#x27;s done all of that according to the stuff that&#x27;s in the local <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> too, which is nice.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751280/ai-hero-images/tspctub63eztzfxgrv3p.png" alt="Token counter showing 95k tokens used" />
+      <p class="img-caption">Token counter showing 95k tokens used</p>
+      <p>Now up to 95k, still going on this seed script.</p>
+      <p>It looks like running the seed script itself produced some errors. Here we go. No seeded students with that email.</p>
+      <p>And so now it&#x27;s going ahead and fixing them, which is nice.</p>
+      <h3>Verification loops</h3>
+      <p>These kind of verification loops can absolutely eat <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a>, which is part of the reason why we&#x27;re so careful with making sure the tasks are the right size.</p>
+      <p>If it hits any trouble with the implementation or it&#x27;s something isn&#x27;t behaving how it wants, then it can burn tokens trying to get where it needs to.</p>
+      <p>It&#x27;s now doing some final verification. So it is doing the tests and the <a href="https://www.aihero.dev/ai-coding-dictionary/automated-check">type checking</a>. And now it&#x27;s gone over to run the code review.</p>
+      <h3>The review process</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751281/ai-hero-images/ozjn52ahhewvmllbo7yf.png" alt="Code review skill being invoked with two sub-agents" />
+      <p class="img-caption">Code review skill being invoked with two sub-agents</p>
+      <p>A code review is a model-invokable skill, so it&#x27;s able to just chain them together without asking you. And we can see it&#x27;s initialized two <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a> here. So it&#x27;s initialized the standards review and the spec review.</p>
+      <p>Both of these are going to come back with a report that we can then take a look at to see if we want to change anything about the way it was implemented.</p>
+      <p>This is really great because we basically reset our smart zones. So with the sub-agents, because they&#x27;re working in their own <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>, we don&#x27;t need to worry about the fact they&#x27;re going to be made dumb by this $113k token <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> that we&#x27;ve got.</p>
+      <p>These two agents have now finished the standards review and the spec review and it has had four things come back and it&#x27;s immediately gone and fixed them.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751283/ai-hero-images/ajkfmvnvylsb1cmp44bh.png" alt="List of four findings from the code review" />
+      <p class="img-caption">List of four findings from the code review</p>
+      <p>It looks like it found some duplicated code, it looked at some inaccurate percentages in a comment, there&#x27;s some remaining hard-coded intermediate logs, and a misleading variable name.</p>
+      <p>So I didn&#x27;t have to confirm that, it just went ahead and made those updates.</p>
+      <p>And if we zoom down to the bottom and zoom out a touch as well, then we end up with about 125k tokens used and it&#x27;s got a summary of what landed.</p>
+      <h3>Deciding how to continue</h3>
+      <p>So at this point, we need to decide how to continue. We could potentially do QA on this commit and on this issue right now, but I think I want to save my QA until right at the end.</p>
+      <p>So what I&#x27;m going to do is I&#x27;m going to open up this issue and as I&#x27;m going to immediately close it, which should then open up this issue to be worked on. So now it&#x27;s number six.</p>
+      <p>I&#x27;m going to copy the link address and then we&#x27;re going to implement this issue next.</p>
+      <h3>Clearing the context</h3>
+      <p>The next question is what do we do with our context window? It&#x27;s currently at 125k. I would usually just straight up <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> this context window.</p>
+      <p>The reason for that is that we have a really rich amount of <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> outside of the context window. We have the <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a>. We have the next <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">ticket</a>. We even have the previous ticket if it wanted to look at the intention of what was supposed to be done. And we have the commit in the commit history that it can read to see what was done.</p>
+      <p>So I&#x27;m feeling pretty positive that we can just clear the context and, you know, instantly done and we&#x27;re able to implement the next issue.</p>
+      <h2>Run 2 - The page shell</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751284/ai-hero-images/ueuyeonl8ffh3ckh1qcv.png" alt="Issue #6 being fetched by the agent" />
+      <p class="img-caption">Issue #6 being fetched by the agent</p>
+      <p>So let&#x27;s crack this off and let&#x27;s see what it does.</p>
+      <p>There we go, issue six depends on five, which the latest commit appears to have landed. And it&#x27;s now going to re-explore the code base structure.</p>
+      <p>This, by the way is where all of those <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">navigation pointers</a> that we&#x27;ve laid in pay off. Having a repo that&#x27;s easy to explore means that it spends fewer tokens finding the information it needs which means that clearing is more possible which means you can move a bit faster.</p>
+      <h3>Identifying the seams</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751285/ai-hero-images/yy7pbf4zm3zjcugj9yve.png" alt="Agent stating the seams under test" />
+      <p class="img-caption">Agent stating the seams under test</p>
+      <p>It&#x27;s nice here that it says it&#x27;s specifically saying the seams under test are X, Y and Y. No tests against route or component internals. All arithmetic and range resolution live behind that boundary. Very cool.</p>
+      <h3>The red-green loop</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751286/ai-hero-images/rn96pzxdrxak3iduvedp.png" alt="Test-driven development loop in action" />
+      <p class="img-caption">Test-driven development loop in action</p>
+      <p>We can see that the red green loop is starting to kick off now so it&#x27;s creating a minimal set of tests here in the analytics service. It creates a few more tests here and then it&#x27;s going to once it&#x27;s got the test harness in actually create the minimal implementation.</p>
+      <p>So now it&#x27;s doing the green step here where it&#x27;s actually creating the code and then the tests are going to go green. So we can see it ran the one shell command here if we look inside here then we can see that that individual test file is now passing.</p>
+      <p>This is a fast loop as well. This runs in under a second and it means that it can get very quick feedback on the code that it&#x27;s working on.</p>
+      <p>It looks like its implementation is mostly done. 106k tokens, pretty good. And now we&#x27;re into code review. So standards and spec review again.</p>
+      <h3>Reviewing the changes</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751287/ai-hero-images/olmihr9fjuharke7odcy.png" alt="VS Code source control showing changed files" />
+      <p class="img-caption">VS Code source control showing changed files</p>
+      <p>In VS Code, we can look through the changed files by just looking at the source control tab here. And there&#x27;s a bunch of stuff in here. We&#x27;ve got tests for the analytics service, tests for the analytics themselves.</p>
+      <p>It looks like some, we&#x27;ve got some pure functions in here, functions that don&#x27;t emit like strange effects or anything. So those are good candidates for tests.</p>
+      <p>And then we&#x27;ve also got tests around the service itself. So we got the analytics service and then the <code>analyticsService.test.ts</code> that tests all of that stuff. And this test file is fairly large, about 400 lines.</p>
+      <p>One cool thing about the review is not only is it reviewing the code, it&#x27;s also reviewing the tests that test the code. So it&#x27;s going to test or check for edge cases that you haven&#x27;t considered, things in the spec that should be tested that aren&#x27;t being tested.</p>
+      <h3>Working while the agent cooks</h3>
+      <p>By the way, while these long implementation <a href="https://www.aihero.dev/ai-coding-dictionary/session">sessions</a> are happening, I&#x27;m usually off planning something else and kind of trying to make myself useful somewhere else in the code base, perhaps on a different branch or in a different work tree.</p>
+      <p>There&#x27;s no real reason to sit around while the agent cooks here. You know, this is currently five, six minutes. And what the cool thing about this loop is that it&#x27;s really minimal input from you. You just say, okay, do the next one now.</p>
+      <h3>The tautological test</h3>
+      <p>Okay, it found some findings here. So it looks like it needs to delete some tests, I think. Ah, here we go. This is a classic tautological test.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751289/ai-hero-images/eho0xzgezarxon4y9pfd.png" alt="Code showing a test that just checks a constant equals itself" />
+      <p class="img-caption">Code showing a test that just checks a constant equals itself</p>
+      <p>It&#x27;s literally just testing that a constant here called <code>platformFeeRate</code> is this value. Well, that&#x27;s just configuration. You don&#x27;t need to test that.</p>
+      <pre><code>it(&quot;takes a fifth of gross as the platform fee&quot;, () =&gt; {
+  expect(PLATFORM_FEE_RATE).toBe(0.2);
+});</code></pre>
+      <p>Looks like there were a fair few fixes, and it looks like this context window is just under the smart zone, so done a pretty good job nailing these estimates.</p>
+      <h3>Verification methods</h3>
+      <p>It&#x27;s doing some more verification and it looks like it&#x27;s trying to run the actual live page. Having a look at it and trying to find the stuff in the UI on the page, which is an interesting verification process.</p>
+      <p>The feedback loops that your agent uses to get information are super important and so designing your code base so that you can produce better feedback loops and get the agent better output is so so important.</p>
+      <p>We&#x27;re doing a pretty good job with our type checking and our tests because type checking is sort of checking the correctness of the code, tests is checking how it performs at runtime.</p>
+      <p>But we don&#x27;t really have a way for it to verify a running application. For that, you could use something like the Chrome DevTools <a href="https://www.aihero.dev/ai-coding-dictionary/mcp">MCP</a> server or similar. It can take photos of things. There&#x27;s even agent-browser as well. That&#x27;s a good one.</p>
+      <h3>Judgement calls</h3>
+      <p>Okay, so it looks like we&#x27;re up to 137k tokens, very nice. We&#x27;ve got 401 tests, so 32 new tests, and we&#x27;ve got some judgment calls to make too.</p>
+      <p>There&#x27;s a kind of scoping error here. So it says that the course detail tab has real content. It looks like it actually went ahead and implemented something it wasn&#x27;t supposed to but that&#x27;s it says it&#x27;s fine because it&#x27;s easy to strip back.</p>
+      <p>It went ahead and adjusted something to basically add a gross and net instead of just gross. I mean, that&#x27;s fine, I suppose.</p>
+      <p>Mostly, we don&#x27;t have to worry about these too much. I&#x27;m going to do a final QA when everything lands.</p>
+      <h2>Run 3 - Compacting vs clearing</h2>
+      <p>Just for variety let&#x27;s actually run <a href="https://www.aihero.dev/ai-coding-dictionary/compaction">compact</a> this time instead of clear. I&#x27;m going to run compact to run the next phase here and this is going to compact the conversation and we&#x27;ll see if this makes any difference in terms of how much exploration it does.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751290/ai-hero-images/jdwbzpkpbz9cjl6dui7f.png" alt="Copying the link address for issue #7" />
+      <p class="img-caption">Copying the link address for issue #7</p>
+      <p>I&#x27;m going to close the next issue here, number six, close it like that, and then the next two are open here. So I&#x27;ll grab this one by copying the link address.</p>
+      <p>Now I can go back into my conversation, I can say implement and then implement this ticket. And this will then be queued up for when the compaction ends.</p>
+      <h3>The cost of compacting</h3>
+      <p>To tell you the truth, I mostly use just clear after each conversation, so I&#x27;m intrigued to see if compact speeds things up a little bit, gives it a little bit more context, or whether it&#x27;s just not needed.</p>
+      <p>It&#x27;s certainly slower, of course. We are paying in <a href="https://www.aihero.dev/ai-coding-dictionary/output-tokens">output tokens</a> to produce a summary of the previous conversation. I sort of wish it showed you exactly how many output tokens it was spending because it has to be a fair chunk.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751292/ai-hero-images/vaoayldqdtepaet1madc.png" alt="Compacted summary showing restored files" />
+      <p class="img-caption">Compacted summary showing restored files</p>
+      <p>We can see it&#x27;s compacted and it kept some tests here, which I assume are needed for the next... It&#x27;s kept quite a few files. It&#x27;s restored the skill code review, so I understand we might need that too.</p>
+      <p>It&#x27;s fetched the issue and it&#x27;s still just continuing to explore. So it&#x27;s doing, obviously it still needs to explore more than what it has. And I suppose the question is, is the compacted summary actually relevant to what it&#x27;s doing? Not sure.</p>
+      <p>It is absolutely roasting here, so I&#x27;ve taken off my flannel shirt. Apologies.</p>
+      <h3>The hard violation</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751293/ai-hero-images/lkxiawqqikrmranckhqu.png" alt="Code review showing hard violation found by both axes" />
+      <p class="img-caption">Code review showing hard violation found by both axes</p>
+      <p>We now have another implementation complete, the review has been completed, both axes independently flagged the same hard violation, question count filters rows in the route. That sounds like instead of filtering on the server, they were piling them all into the client and it was doing client-side filtering. That&#x27;s really bad.</p>
+      <p>The reason it&#x27;s bad is that lots of material is traveling over the network just to be filtered away in the browser. That&#x27;s super wasteful.</p>
+      <p>All right, this was a long one. This was 17 minutes 30 to build that ticket. We reached 140K tokens.</p>
+      <p>The spec axis caught a real gap, never enrolled was suppressed for team buyers.</p>
+      <p>You notice how far the implementation agent can actually deviate from the spec. And so having a review step does a pretty good job in catching those.</p>
+      <h3>Back to clearing</h3>
+      <p>So let&#x27;s now close number seven. Let&#x27;s now head to eight, copy the link address and plug it in.</p>
+      <p>I don&#x27;t think compacting really gave us anything, so I&#x27;m just going to clear, it&#x27;s much faster, it&#x27;s much cheaper, and we&#x27;re just going to say implement eight.</p>
+      <p>The rule of thumb is if you have a if it&#x27;s 50/50 between clear and compact then you should choose clear because it&#x27;s cheaper and faster.</p>
+      <h2>Run 4 - The drop-off funnel</h2>
+      <p>We&#x27;re at the spec review for this chunk of work and we&#x27;re at 77.5k tokens. Geez, okay, it&#x27;s doing a really thorough job here.</p>
+      <p>Okay, it looks like it&#x27;s committed again. We get another implemented, reviewed and committed summary. We&#x27;ve got our service, we&#x27;ve got our routes, got our tests.</p>
+      <p>144k tokens. These are creeping up. I&#x27;m going to clear the context.</p>
+      <p>I&#x27;m going to close the issue that we just did here, open up the final one, which is now unblocked, and let&#x27;s go.</p>
+      <h3>Planning for QA</h3>
+      <p>Once this one is done, I think I will do a final QA and just give everything a good crack and see what came back.</p>
+      <p>We&#x27;re at, ooh, 11.25 in video time, but this is more like, I don&#x27;t know, this has been about an hour of filming, I think.</p>
+      <p>While this has been going, I&#x27;ve been answering emails, I&#x27;ve been doing other stuff and checking back in occasionally seeing how things are going.</p>
+      <h3>Nailing the estimates</h3>
+      <p>Okay, implementation is finished and looks like we&#x27;ve basically nailed it again. So it&#x27;s 102.5k tokens, I mean, we&#x27;ve just smashed this.</p>
+      <p>I have to say it never ever goes this well in terms of how like task sizing. I sometimes have tasks that are so big, tickets that are so big that they go 300K tokens or something.</p>
+      <p>In those situations I mostly chalk it up as a learning experience and try to improve the skills so it catches those in future. Often they are something silly like a rename that accidentally touches way more that has a much bigger blast radius than I thought.</p>
+      <h3>The benefit of large context windows</h3>
+      <p>Sometimes you can catch them, and sometimes you just can&#x27;t. And that is one benefit of a large context window, is even if you screw up, it&#x27;s not like it&#x27;s going to compact at a weird moment. It will just keep going, keep going. And that is expensive, but it does mean you can continue, at least.</p>
+      <p>And of course you can still continue even if it compacts at a weird moment, but I find that compacting at strange moments means that it loses context in funny ways and it just doesn&#x27;t end up working quite as well.</p>
+      <h3>The automated review</h3>
+      <p>Alright, again, the reviews have found substantive findings. I&#x27;m really intrigued by that, by when we get the report at the end.</p>
+      <p>It&#x27;s adding more test cases as well, which is interesting.</p>
+      <p>By the way, I think of this <a href="https://www.aihero.dev/ai-coding-dictionary/automated-review">automated review</a> as just like an essential part of the process. I don&#x27;t think of the output and then the review. It&#x27;s like these are coming from the same developer in my head, or at least the same agent in my head, which is the implementation work is not ready until it&#x27;s been reviewed by another agent.</p>
+      <h2>Run 5 - The final ticket</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751294/ai-hero-images/esqz9s7t0g9uftrzrx9z.png" alt="Final commit summary showing 132k tokens used" />
+      <p class="img-caption">Final commit summary showing 132k tokens used</p>
+      <p>Okay, and we&#x27;ve got our final commit, clocking in at 132k tokens. So we&#x27;ve nailed it again.</p>
+      <p>So it has come back with a few judgment calls here and sometimes I will act on these judgment calls but for the purposes of this demo I&#x27;m not going to. I&#x27;m going to keep this fairly sparse. So I think though it&#x27;s time to do some QA.</p>
+      <h2>QA - Testing the implementation</h2>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751295/ai-hero-images/kjnfybp3xlocygqdiewe.png" alt="Running npm run dev to test the application" />
+      <p class="img-caption">Running npm run dev to test the application</p>
+      <p>I&#x27;m going to open up a new terminal here, I&#x27;m going to run <code>npm run dev</code> and let&#x27;s take a look at this application.</p>
+      <p>So I&#x27;ll go into the dev UI, I&#x27;m going to switch over to Priya Nair. This is a new instructor and we&#x27;ve got a bunch of new, whoa, loads of new students.</p>
+      <p>So the seed data must have been significantly altered here. I&#x27;m going to go into her dashboard. I&#x27;ll go into the new analytics page.</p>
+      <p>Okay, usefully, Priya doesn&#x27;t have any courses. Let&#x27;s switch over to Marcus Johnson, who does.</p>
+      <h3>Exploring the analytics</h3>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751296/ai-hero-images/dosz2onfcydp9pon8dok.png" alt="Analytics dashboard showing revenue and top buyers" />
+      <p class="img-caption">Analytics dashboard showing revenue and top buyers</p>
+      <p>Let&#x27;s close that. We&#x27;ve got some tabs up here, so overview and then course detail. We&#x27;ve got revenue over time. We&#x27;ve got some top buyers as well.</p>
+      <p>If we zoom up to the tabs here then we have some course data and then we pick a course.</p>
+      <p>This is really nice and detailed, isn&#x27;t it? I&#x27;m going to go all time here to see if this changes anything.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751297/ai-hero-images/dqjozrl0hneyuwan7ap4.png" alt="Course progress showing 23 of 23 reached, 1 lost inside" />
+      <p class="img-caption">Course progress showing 23 of 23 reached, 1 lost inside</p>
+      <p>This data is actually really cool here. So we can see that 23 out of 23 reached, one lost inside. Slightly funny phrasing here, as though the student has been trapped within the course forever.</p>
+      <p>This is really cool analytics though, I would love to have this for my courses.</p>
+      <p>We&#x27;ve got some quiz results here, and we&#x27;ve got some revenue by country too.</p>
+      <p>This is looking really, really smart.</p>
+      <h3>Admin view</h3>
+      <p>What happens now if we go into the dev ui and look as an admin here? What can the admin see?</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751298/ai-hero-images/whox4wrw0moqxk0koha2.png" alt="Admin view of the analytics dashboard" />
+      <p class="img-caption">Admin view of the analytics dashboard</p>
+      <p>It looks like along with this we have now an admin page too. So it looks like in the course detail they can see everything. So an introduction to TypeScript.</p>
+      <p>They can see the drop-off here. If we look into overview, then we see the entire setup and they can filter down by instructors.</p>
+      <h3>Overall assessment</h3>
+      <p>Overall, this is working, you know, outrageously well, really, really nicely done.</p>
+      <p>There is some stuff I would prefer to QA, for instance. There&#x27;s lots of visual bugs I don&#x27;t like. I can see that the text here, the hierarchy doesn&#x27;t look quite right to me.</p>
+      <p>This little piece of UI doesn&#x27;t look quite right.</p>
+      <h3>The importance of feedback loops</h3>
+      <p>You can see though the stuff that the agent had a feedback loop for, such as the way things actually functioned and the way they worked, that seems to all be done really well.</p>
+      <p>So we can see that the analytics, I mean I haven&#x27;t gone into the data to see if they&#x27;re all correct, but they look plausible.</p>
+      <p>But the stuff it doesn&#x27;t have a good feedback loop for, such as the user interface itself, is a little bit less refined.</p>
+      <p>Overall, I am pretty happy with this and I&#x27;m going to close the final ticket of the spec.</p>
+      <h2>Wrap-up</h2>
+      <p>And with that, I&#x27;m going to consider this monster recording complete.</p>
+      <p>So well done for hanging in there. I would love to understand the decisions that you made during this exercise too.</p>
+      <h3>Key observations</h3>
+      <p>Did you notice a difference between clearing and compacting? Did you find that the tickets that you&#x27;d created were properly vertically sliced?</p>
+      <p>I noticed that another reason this worked quite well is that the tickets were nicely vertically sliced and a lot of them just built on previous work.</p>
+      <h3>This approach scales</h3>
+      <p>This approach scales to really, really big tasks. I&#x27;ve had specs that contain 30 tickets underneath them and they take a while to complete, but the amount of work you can pile through using this is incredible.</p>
+      <p>Especially because you&#x27;ve got the reviewer in there reviewing every commit before it lands.</p>
+      <p>So, well done, nice work, and I&#x27;ll see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="should-you-keep-your-specs">
+      <h1 class="chapter-title">Should You Keep Your Specs?</h1>
+
+      <p>One question I get all the time is: what should I do with my <a href="https://www.aihero.dev/ai-coding-dictionary/spec">specs</a> once I&#x27;ve completed them? Once they exist in the code, what should I do with them?</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751440/ai-hero-images/srlqoogz2du9bbbq3p6b.png" alt="GitHub issue #4 showing the Instructor Analytics Dashboard spec with its detailed user stories and implementation decisions" />
+      <p class="img-caption">GitHub issue #4 showing the Instructor Analytics Dashboard spec with its detailed user stories and implementation decisions</p>
+      <p>This spec is like a pretty nice representation of how the code actually works and looks. It&#x27;s just written in plain text that the user can understand and that the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> could understand.</p>
+      <p>It feels like there&#x27;s some value in keeping them around, surely, as maybe documentation for how the code works, or even just a historical record.</p>
+      <h2>The Shocking Answer</h2>
+      <p>Well, let me shock you. Now that this is represented in the code, I&#x27;m going to close the spec.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751441/ai-hero-images/au0geneqexmxfx2sxxrl.png" alt="Matt closing issue #4 as completed on GitHub" />
+      <p class="img-caption">Matt closing issue #4 as completed on GitHub</p>
+      <h2>Primary and Secondary Sources</h2>
+      <p>We can think about specs and codebases as the primary and secondary source thing that we looked at before.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751441/ai-hero-images/dqdb6twh4u9cym5uouow.png" alt="Whiteboard diagram showing Codebase labeled as Primary Source and Spec labeled as Secondary Source" />
+      <p class="img-caption">Whiteboard diagram showing Codebase labeled as Primary Source and Spec labeled as Secondary Source</p>
+      <p>A spec is really a condensed version of how a codebase works or even just a part of a codebase works.</p>
+      <p>And of course, the issue with a <a href="https://www.aihero.dev/ai-coding-dictionary/secondary-source">secondary source</a> is it&#x27;s only a projection. It&#x27;s a summary of how the thing actually works.</p>
+      <h2>The Drift Problem</h2>
+      <p>And the worst part is the codebase can very quickly move away from the spec.</p>
+      <p>In other words, if you&#x27;re not constantly keeping the spec up to date with the codebase, they are going to drift apart.</p>
+      <h2>Why Not Spec-Driven Development?</h2>
+      <p>There&#x27;s a very popular approach called spec-driven development. One of the ways you can do spec-driven development is you take these specs, save them in the repo, and they become the source of truth instead of the code.</p>
+      <p>However, it&#x27;s this exact drift risk that makes me terrified of that approach. If your agent is exploring your local repo and finding these old, ancient specs on how the code works, it&#x27;s very likely to trust the out-of-date spec - the secondary source - instead of the <a href="https://www.aihero.dev/ai-coding-dictionary/primary-source">primary source</a>.</p>
+      <p>The secondary source is often easier to explore, smaller, denser. So it&#x27;s unlikely to go and actually touch the primary source, which is more verbose and harder to explore, if it&#x27;s seen that.</p>
+      <h2>The Code Doesn&#x27;t Lie</h2>
+      <p>The issue is, of course, that the codebase doesn&#x27;t lie about itself. If you look at the executable parts of the codebase - the functions themselves - they are unlikely to lie about what the code actually does.</p>
+      <p>This is assuming you don&#x27;t have weird, stale parts of your codebase, like:</p>
+      <ul class="body-list"><li>Functions that are no longer called</li><li>A part of the system that&#x27;s kept there for legacy purposes</li><li>Throwaway <a href="https://www.aihero.dev/ai-coding-dictionary/prototyping">prototypes</a> in the repo</li></ul>
+      <h2>Archive, Don&#x27;t Delete</h2>
+      <p>All this to say: get rid of your specs as soon as they are put into code.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751442/ai-hero-images/fwluyvj2rlasfonp5z1b.png" alt="GitHub issues list showing closed issue #4 alongside its five child tickets, all marked as completed" />
+      <p class="img-caption">GitHub issues list showing closed issue #4 alongside its five child tickets, all marked as completed</p>
+      <p>I really like this issues approach because you can close an issue, it gets moved out of the way of the main views, and it&#x27;s kind of archived, specifically marked as archived. But if the agent needs to come back to it to have a look at how something was implemented or why something was implemented, then the spec is there for it to explore.</p>
+      <h2>Why GitHub Issues Work</h2>
+      <p>Not only that, but your team can see them. If your spec is local markdown on your laptop, then it&#x27;s just yours. Whereas a spec in the tracker is the team&#x27;s. It&#x27;s reviewable, commentable, and findable by someone who was not in the room.</p>
+      <p>Not only that, but if you keep these <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a> out of the local setup, it means that they&#x27;re durable if you&#x27;re switching worktrees, if you&#x27;re switching laptops. The state is not colliding with your local setup.</p>
+      <h2>The Verdict</h2>
+      <p>So that is my message to you: archive your specs.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751443/ai-hero-images/vl6ngbevkhqarw0rfzv3.png" alt="Closing title card reading &#x27;Archive Your Specs&#x27; with subtitle about specs being temporary artifacts" />
+      <p class="img-caption">Closing title card reading &#x27;Archive Your Specs&#x27; with subtitle about specs being temporary artifacts</p>
+      <p>Your specs are meant to be temporary artifacts that define a piece of work. They are not the source of truth for how the code works.</p>
+      <p>I&#x27;m very happy to debate you in Discord if you feel otherwise. There are lots of frameworks who say persist your specs, use them as a source of truth. I have found that doesn&#x27;t work very well.</p>
+      <p>So hopefully that makes sense for what you should do with your specs once you&#x27;ve finished a multi-session piece of work.</p>
+      <p>Nice work, and I will see you in the next one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="close-the-spec-once-shipped">
+        <p class="quiz-q-text">The last ticket under your spec is merged and the work is live. What do you do with the spec?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Close it in the tracker, so it is archived but still findable</li>
+          <li>Commit it into the repo as documentation of how the code works</li>
+          <li>Delete it outright, so nothing stale can ever be read again</li>
+          <li>Keep it open and update it each time the code changes underneath</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          A closed issue moves out of the main views but stays there for the agent or a teammate to revisit. Committing it into the repo is what makes an agent trust an ageing summary instead of the code. Deleting it throws away the historical record you get for free. And keeping it in sync by hand is the maintenance you were trying to avoid.
+        </div>
+      </div>
+      <div class="quiz-question" id="spec-drift-secondary-source">
+        <p class="quiz-q-text">Why is an old spec sitting in the repo risky once the code has moved on?</p>
+        <ul class="quiz-choices">
+          <li class="correct">It is a secondary source, and the agent trusts it over the code itself</li>
+          <li>It is verbose, so reading it burns a large share of the window</li>
+          <li>It conflicts with the tickets, and the agent cannot resolve that</li>
+          <li>It is local to your laptop, so nobody on the team can read it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          A spec is a projection of the codebase, and it is smaller and denser than the code, so an agent that finds it stops there and never reads the primary source that cannot lie about itself. Size is not the danger, since the spec is the compact one. Tickets are gone by then. And being private is an argument for the tracker, not the reason drift bites.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="rerouting-when-the-destination-changes">
+      <h1 class="chapter-title">Rerouting: When The Destination Changes</h1>
+
+      <p>Imagine a situation where you have a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a> and you&#x27;ve put together some <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a> for it. Halfway through, maybe you&#x27;re reviewing the tickets as they come in, and you realize: oh dear, this is just the wrong approach.</p>
+      <p>What do we do when we get two tickets in and we realize we need to change things?</p>
+      <h2>Tickets Are Disposable</h2>
+      <p>The thing you need to consider here is that these tickets are disposable.</p>
+      <p>If we realize that this set of tickets - maybe we&#x27;ve implemented the first two, but the second two we haven&#x27;t implemented - we can just delete the tickets that we haven&#x27;t implemented.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751537/ai-hero-images/ud5qocqqhvme0vkggynn.png" alt="Whiteboard showing &#x27;Tickets - Disposable&#x27; and &#x27;Spec - Editable&#x27; badges" />
+      <p class="img-caption">Whiteboard showing &#x27;Tickets - Disposable&#x27; and &#x27;Spec - Editable&#x27; badges</p>
+      <p>Then we can go back to the spec, and the spec is editable.</p>
+      <p>So we can maybe have a <a href="https://www.aihero.dev/ai-coding-dictionary/grilling">grilling</a> session about where we are right now. We&#x27;ve had two tickets and we&#x27;re not happy with the way they&#x27;re coming out, so we need to go back to the spec to edit it.</p>
+      <h2>The Spec Is The Destination</h2>
+      <p>In other words, the spec is the destination and we are changing the destination.</p>
+      <p>What I would do is go back to the spec, have a new grilling session, and then once I&#x27;m happy with my edits to the spec, I would create a new set of tickets.</p>
+      <p>This new set of tickets might change the scope of the work a little bit, so we end up with maybe just a bit more that we&#x27;re doing. But it means that we&#x27;ve found the journey to our new destination from where we are.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751538/ai-hero-images/ref3q19ypuciwm4wzrmo.png" alt="Whiteboard showing six ticket boxes with the spec bar extended underneath" />
+      <p class="img-caption">Whiteboard showing six ticket boxes with the spec bar extended underneath</p>
+      <h2>The Flow</h2>
+      <p>The whole flow looks like this:</p>
+      <p><strong>1. &quot;Oh no, this needs to change&quot;</strong></p>
+      <p>Realize that you want to change the destination. This is not turning out how you wanted.</p>
+      <p><strong>2. Close the tickets</strong></p>
+      <p>Delete any existing tickets that haven&#x27;t yet been implemented. But you keep the spec because you want to modify the spec.</p>
+      <p><strong>3. Modify the spec</strong></p>
+      <p>Use <a href="https://aihero.dev/things-people-get-wrong-with-grill-me-and-grill-with-docs"><code>/grill-me</code></a> to adjust the spec, describing what you want changed. Probably in a new <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>.</p>
+      <p><strong>4. Regenerate the tickets</strong></p>
+      <p>Once you&#x27;re happy with the spec, regenerate the tickets based on where you are. You use <code>/to-tickets</code> to regenerate the new tickets.</p>
+      <p>So you don&#x27;t throw away your work, probably, unless it&#x27;s really, really bad. And then you continue implementing from that point.</p>
+      <p><strong>5. Continue implementing</strong></p>
+      <p>Use <code>/implement</code> to implement the new tickets.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751539/ai-hero-images/roiidvegkhlydyfwwtds.png" alt="Five-step recipe diagram on the whiteboard" />
+      <p class="img-caption">Five-step recipe diagram on the whiteboard</p>
+      <p>This is a nice simple recipe for what you need to do if you need to change direction mid-flow.</p>
+      <h2>Why Two Documents?</h2>
+      <p>I wanted to add a little video on this because people always ask me this, and it&#x27;s a relatively simple procedure.</p>
+      <p>This is also why we have this two-document design: so that you can have the spec as the destination and the tickets are totally disposable.</p>
+      <p>If they were all part of the same document, then it would get a little bit confusing.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="tickets-disposable-spec-editable">
+        <p class="quiz-q-text">Two tickets in, you review the work and realise the whole approach is wrong. What do you do first?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Delete the tickets you have not implemented yet, and keep the spec</li>
+          <li>Revert the two tickets you shipped and start the spec from scratch</li>
+          <li>Close the spec and write a fresh spec beside the existing tickets</li>
+          <li>Finish the remaining tickets, then fix the direction in the review</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Tickets are disposable and the spec is editable, so the tickets are what you throw away. The work already implemented is usually kept rather than reverted. A new spec written beside the old tickets leaves those tickets pointing at the destination you just abandoned. And finishing tickets you already know are wrong only buys you more code to undo.
+        </div>
+      </div>
+      <div class="quiz-question" id="two-document-split-lifetimes">
+        <p class="quiz-q-text">Why do the destination and the plan live in two separate documents rather than one?</p>
+        <ul class="quiz-choices">
+          <li class="correct">So the destination can be edited while the journey is thrown away</li>
+          <li>So neither document ever grows too large for one context window</li>
+          <li>So you own one document and the agent owns the other one entirely</li>
+          <li>So the destination can be reviewed before any plan has been written</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The two documents have different lifetimes, and one document holding both would make it confusing to discard half of it. Length is not what drives the split. Neither document belongs to only one of you, since you grill the spec with the agent and the agent writes the tickets from it. And a single document could still be reviewed in stages.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="the-goal-command">
+      <h1 class="chapter-title">The Goal Command</h1>
+
+      <p>One of the things people ask me a lot is: why don&#x27;t we use <code>/goal</code> to implement our <a href="https://www.aihero.dev/ai-coding-dictionary/spec">specs</a>?</p>
+      <h2>The <code>/goal</code> Theory</h2>
+      <p>The theory here is we would create a spec, and then we would use <code>/goal</code>, which is a feature of many <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harnesses</a> where the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> pursues a goal in a single <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> until that goal is complete.</p>
+      <p>The goal would be the destination, which is a very, very well-specified destination, and it seems like a great use case for <code>/goal</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751619/ai-hero-images/wrzqrh5xtiygf5hnc1xs.png" alt="Diagram showing spec definition at top with /goal definition below" />
+      <p class="img-caption">Diagram showing spec definition at top with /goal definition below</p>
+      <h2>The Problem: The Dumb Zone</h2>
+      <p>However, all of the implementations of <code>/goal</code> that I&#x27;ve seen don&#x27;t really take advantage of the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a>. It&#x27;s all done in a single context window, relying on <a href="https://www.aihero.dev/ai-coding-dictionary/autocompact">auto-compaction</a> to manage it.</p>
+      <p>And so what you end up with is a little bit of smart zone at the start, and then a whole lot of dumb zone.</p>
+      <p>Every time I&#x27;ve tried this, I see the same setup. So I still believe that the spec-and-tickets approach is better than the spec-and-<code>/goal</code> approach.</p>
+      <h2>The Caveat: If Auto-Compaction Improves</h2>
+      <p>However, if auto-compaction ever got good enough that the dumb zone would not be an issue, then I would consider this to be a really nice setup.</p>
+      <p>You&#x27;re still doing all of the work to kind of think about the spec. It&#x27;s just that the thing you&#x27;re handing it over to now is in charge of:</p>
+      <ul class="body-list"><li>Its own context management</li><li>Its own <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">ticket</a> management</li><li>Understanding all of the tasks that need to be done</li></ul>
+      <p>And you can still do one large <a href="https://www.aihero.dev/ai-coding-dictionary/human-review">code review</a> at the end to check for spec compliance.</p>
+      <h2>My Current Recommendation: Use Tickets</h2>
+      <p>But so far my current recommendation is to use tickets instead.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1785751619/ai-hero-images/vjn0dbsluoyezktgsuv3.png" alt="Diagram showing four equal-width rectangles each containing green &#x27;Smart&#x27;, with shorter duration bar underneath" />
+      <p class="img-caption">Diagram showing four equal-width rectangles each containing green &#x27;Smart&#x27;, with shorter duration bar underneath</p>
+      <h3>Why Tickets Give You More Control</h3>
+      <p>Tickets just give you a lot more control. They, I think, are often cheaper to use because you&#x27;re doing most of your work in a lot of smart zones.</p>
+      <p>Creating tickets from the spec is often a really, really short job. It usually just takes me a couple of minutes.</p>
+      <p>On some of my workflows, which we&#x27;re not really discussing in the course, I even generate tickets <a href="https://www.aihero.dev/ai-coding-dictionary/afk">AFK</a>, so I don&#x27;t even review them.</p>
+      <h2>Comparison: Spec-and-Tickets vs Spec-and-<code>/goal</code></h2>
+      <div class="table-wrap"><table><thead><tr><th>Approach</th><th>Context Management</th><th>Cost</th><th>Zone Quality</th></tr></thead><tbody><tr><td><strong>Spec-and-Tickets</strong></td><td>Multiple smart zones</td><td>Often cheaper</td><td>Mostly smart</td></tr><tr><td><strong>Spec-and-<code>/goal</code></strong></td><td>Single context window</td><td>Potentially more expensive</td><td>Small smart zone, large dumb zone</td></tr></tbody></table></div>
+      <p>I think right now this feels a lot more robust than just using <code>/goal</code>.</p>
+      <h2>Your Experience May Vary</h2>
+      <p>I would love to know, of course, if you have had different results from me, if you trust your auto-compaction more than I do, and <code>/goal</code> definitely seems like a good idea if it can work.</p>
+      <p>Nice work and I will see you in the next one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="goal-single-window-dumb-zone">
+        <p class="quiz-q-text">Your harness offers a command that pursues a goal in a single context window until it is complete. You have a well-specified spec. Why still split it into tickets?</p>
+        <ul class="quiz-choices">
+          <li class="correct">One window gives a small smart zone and then a lot of dumb zone</li>
+          <li>A spec is too vague to serve as a goal for the agent to pursue</li>
+          <li>You get no chance to review the work against the spec at the end</li>
+          <li>Making tickets from a spec is slow, and a goal skips that step</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          A single window leans on auto-compaction, so the run starts smart and spends the rest of its life dumb, while tickets keep you in several smart zones and are often cheaper for it. A spec is a very well-specified destination, which is what makes the goal idea tempting in the first place. You can still do one large review for spec compliance at the end. And turning a spec into tickets usually takes a couple of minutes.
+        </div>
+      </div>
+      <div class="quiz-question" id="goal-needs-better-autocompaction">
+        <p class="quiz-q-text">What would have to improve before pursuing a goal in one window became a good setup?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Auto-compaction, enough that the dumb zone stopped being an issue</li>
+          <li>Context windows, enough to hold a whole project&#x27;s work at once</li>
+          <li>Token prices, enough to make one very long run the cheap option</li>
+          <li>Code review, enough to run inside the same window as the work</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The blocker is the dumb zone, and auto-compaction is what is being relied on to manage it. A bigger window does not help, because the problem is the quality of the later part of the window rather than running out of room. Price is a symptom, not the cause. And review already works fine as one large pass after the fact.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="enforcing-your-coding-standards">
+      <h1 class="chapter-title">Enforcing Your Coding Standards</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">add-coding-standards</span>
+          <span>Start the lesson: a one-line <code>CODING_STANDARDS.md</code> added to the repo</span>
+        </div>
+    </div>
+      <p>There is a line inside the <code>/implement</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> that is easy to gloss over:</p>
+      <pre><code>Once done, use /code-review to review the work.</code></pre>
+      <p>It is worth stopping on. Code review is where you get to impose your own coding standards on the <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786109399/ai-hero-images/ikostxyi7dtrewrfwqwn.png" alt="The /implement skill showing the code review line" />
+      <p class="img-caption">The /implement skill showing the code review line</p>
+      <h2>Three Levels Of Checks</h2>
+      <p>There are really three levels of checks you want running on your code before you ship it.</p>
+      <div class="table-wrap"><table><thead><tr><th>Level</th><th>What it catches</th><th>What it costs</th></tr></thead><tbody><tr><td>Automated checks</td><td>Mechanical failures</td><td>Nothing</td></tr><tr><td>Automated review</td><td>Judgement-shaped problems</td><td><a href="https://www.aihero.dev/ai-coding-dictionary/token">Tokens</a></td></tr><tr><td>Human review</td><td>Everything else</td><td>Your attention</td></tr></tbody></table></div>
+      <h3>Automated Checks</h3>
+      <p><a href="https://www.aihero.dev/ai-coding-dictionary/automated-check">Automated checks</a> are linting, typecheck, and unit tests. They matter because they are deterministic. The agent can run them and always get back the same pass or fail.</p>
+      <p>They also cost you no tokens to run. They are essentially free. If everything could be done in automated checks, we would live in a dream world.</p>
+      <p>But you cannot catch every bug in an automated check. A test suite proves only the properties you asserted. So you need some kind of reviewing system on top.</p>
+      <h3>Human Review</h3>
+      <p>Before AI, that reviewing system was a human. Someone looked at the pull request and said: that does not look right. That test is not doing what we think it is doing. Have you considered this approach?</p>
+      <p>In other words, the human was providing qualitative feedback. Saying, I am not sure about this.</p>
+      <p>And <a href="https://www.aihero.dev/ai-coding-dictionary/human-review">human review</a> was always everyone&#x27;s least favourite part of development. You would always have a stack of pull requests you needed to review, and it was painful.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786109399/ai-hero-images/sdnryyet4az1ro9akv85.png" alt="Stack of pull requests waiting for review" />
+      <p class="img-caption">Stack of pull requests waiting for review</p>
+      <h3>Automated Review</h3>
+      <p>Now agents can help. <a href="https://www.aihero.dev/ai-coding-dictionary/automated-review">Automated review</a> means the agent reviews your work and provides the qualitative feedback itself.</p>
+      <p>Crucially, this does not replace human review. It makes human review easier, because the agent has already walked through the diff and done a first pass. Automated review catches more than you would catch without it. You still want a human doing a sanity check on top for most types of work.</p>
+      <p>That is what the code review skill is doing. You implement in one <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>, then you review in a fresh one.</p>
+      <h2>The Two Axes</h2>
+      <p>The review runs along two axes. The Spec axis asks whether the code faithfully implements what was asked for:</p>
+      <pre><code>- **Spec** — does the code faithfully implement the originating issue / PRD / spec?</code></pre>
+      <p>The other axis is standards. Coding standards matter because you do not want your agent making the same mistake again and again and again. Those steering instructions have to live somewhere.</p>
+      <p>Slotting them into <code>CLAUDE.md</code> is painful, and it has real downsides. Code review is an interesting case, though, because the skill lets you customise it. You create your own <code>CODING_STANDARDS.md</code> file.</p>
+      <h2>CODING_STANDARDS.md</h2>
+      <p>The file just sits there and captures the coding standards for the repo. When you notice the agent doing something weird, you put it in the standards file, and the review catches it next time.</p>
+      <p>A brand new one can be a single line:</p>
+      <pre><code>Don&#x27;t do stupid stuff.</code></pre>
+      <p>The skill finds it during its third step, when it works out where this repo documents how code should be written:</p>
+      <pre><code>Anything in the repo that documents how code should be written, such as `CODING_STANDARDS.md` or `CONTRIBUTING.md`.</code></pre>
+      <p>That step is the seam you are writing into.</p>
+      <h2>Why Standards Belong In Review</h2>
+      <p>The reason this makes sense is that code review is a lot less constrained than implementation is.</p>
+      <p>When you implement something, you have to explore where it fits in the codebase, write all the files, and then debug it to see whether it actually works. Three demands, all in one context window.</p>
+      <p>Code review has none of them. You do not need the exploration, because the exploration has already been done and you are handed the right file straight away. You do not need to make many changes, because you are reading what is there. And you carry no burden for testing that everything works, because the tests have been written and run already.</p>
+      <div class="table-wrap"><table><thead><tr><th></th><th><code>/implement</code></th><th>Code review</th></tr></thead><tbody><tr><td>Explore the codebase</td><td>Yes</td><td>No</td></tr><tr><td>Write the files</td><td>Yes</td><td>No</td></tr><tr><td>Debug and test</td><td>Yes</td><td>No</td></tr></tbody></table></div>
+      <p>So it makes much more sense to load the coding standards into code review than to try to make the implementer get it right first time. The review agent has a lot more space in its context window, and far fewer demands on it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786109400/ai-hero-images/aufn60fjsehd37ywisn9.png" alt="Comparison of demands on the implementer vs the code review agent" />
+      <p class="img-caption">Comparison of demands on the implementer vs the code review agent</p>
+      <h2>What A Real Standards File Looks Like</h2>
+      <p>A mature standards file is loose, and that is fine. Every line in one arrives the same way: you noticed the agent do something stupid, and you wrote it down.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786109402/ai-hero-images/c2vq3ht40orxwv9vjyke.png" alt="A real CODING_STANDARDS.md file from the course video manager repo" />
+      <p class="img-caption">A real CODING_STANDARDS.md file from the course video manager repo</p>
+      <pre><code>Context menu items should always include a leading icon (from `lucide-react`), matching the style of the surrounding items. When adding a new menu item, pick an icon that conveys the action.</code></pre>
+      <p>That one exists because, for some reason, the agent just was not adding icons.</p>
+      <pre><code>All files in `./app/routes` will be exposed publicly as routes. Do not include test files or utility files there.</code></pre>
+      <p>You could break a file like this down and put parts of it behind <a href="https://www.aihero.dev/ai-coding-dictionary/context-pointer">context pointers</a>. If a rule only makes sense for front-end work, that is where it belongs. But since the standards file is only ever loaded during code review, its size matters much less than it would in an always-on steering file. It is fine for it to get quite large.</p>
+      <h2>The Baseline You Get For Free</h2>
+      <p>Even with no standards file at all, the Standards axis still carries a set of code smells drawn from Martin Fowler&#x27;s <em>Refactoring</em>:</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786109403/ai-hero-images/hr71xvfksiwidzt3m4s2.png" alt="Code smells from Martin Fowler&#x27;s Refactoring book listed in the skill" />
+      <p class="img-caption">Code smells from Martin Fowler&#x27;s Refactoring book listed in the skill</p>
+      <pre><code>- **Feature Envy** — a method that reaches into another object&#x27;s data more than its own. → move the method onto the data it envies.</code></pre>
+      <p>Shotgun Surgery. Divergent Change. Mysterious Name. These are classic coding terms, so agents already know all about them. The review will often find something even when you have documented nothing.</p>
+      <p>Your own file sits on top of that baseline and overrides it. Where your repo endorses something the baseline would flag, the flag goes away.</p>
+      <h2>Don&#x27;t Shout At The Agent</h2>
+      <p>Here is the habit worth building. Next time you finish an implementation and notice something you do not like, do not shout at the agent.</p>
+      <p>Write it into <code>CODING_STANDARDS.md</code> instead, so the reviewer catches it.</p>
+      <p>Nice work, and I will see you in the next one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="standards-live-in-review-not-implement">
+        <p class="quiz-q-text">You keep noticing the agent write code that breaks one of your repo conventions. Where do you write the rule down?</p>
+        <ul class="quiz-choices">
+          <li class="correct">In CODING_STANDARDS.md, so the review catches it</li>
+          <li>In CLAUDE.md, so the implementer reads it every time</li>
+          <li>In the prompt, restated for each piece of work</li>
+          <li>Nowhere, because the linter should catch it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Implementation already carries three demands on one context window: explore, write, debug. Review carries none of them, so it has the room to hold your standards. CLAUDE.md pays for the rule in every window whether it applies or not, a per-task prompt is a rule you have to remember, and a convention that a linter can enforce would not have needed writing down.
+        </div>
+      </div>
+      <div class="quiz-question" id="automated-check-vs-automated-review">
+        <p class="quiz-q-text">What separates an automated check from an automated review?</p>
+        <ul class="quiz-choices">
+          <li class="correct">A check is deterministic and free; a review is qualitative and costs tokens</li>
+          <li>A check runs faster, but they catch the same class of problem</li>
+          <li>A check runs before the commit; a review runs after it</li>
+          <li>A check is run by tooling; a review is only ever run by a human</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Linting, typecheck and tests give the same pass or fail every run and cost nothing, which is exactly why they cannot deliver judgement. Review is the judgement layer, and it is paid for in tokens. Both can run at the same stage, and a review can be run by an agent or a human.
+        </div>
+      </div>
+      <div class="quiz-question" id="code-review-smell-baseline">
+        <p class="quiz-q-text">You run the code review skill in a repo with no CODING_STANDARDS.md. What does the Standards axis have to work with?</p>
+        <ul class="quiz-choices">
+          <li class="correct">A built-in set of code smells drawn from Refactoring</li>
+          <li>Nothing, so the Standards axis reports no findings</li>
+          <li>Whatever happens to be in CLAUDE.md at the time</li>
+          <li>Conventions it infers by reading the whole codebase first</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Feature Envy, Shotgun Surgery, Divergent Change and the rest ship with the skill, so a repo that documents nothing still gets a review. Your own file sits on top and overrides that baseline rather than replacing it.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="ask-matt">
+      <h1 class="chapter-title">Ask Matt</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">add-ask-matt-skill</span>
+          <span>Start the lesson: the <code>/ask-matt</code> skill added</span>
+        </div>
+    </div>
+      <p>You are going to finish this course with questions. That is normal. The problem is what you do in the gap between having the question and getting an answer.</p>
+      <p>You can always ask me in <a href="https://aihero.dev/discord">Discord</a>. I am happy to answer, and so is the rest of the community. But while you are waiting for a reply, there is something you can try.</p>
+      <p>There is a tool for asking my advice without me being in the room.</p>
+      <h2>Reset To The Skill</h2>
+      <p>Open a terminal and reset to the lesson that adds the skill.</p>
+      <pre><code>npm run reset add-ask-matt-skill</code></pre>
+      <p>That commit drops an <code>/ask-matt</code> <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skill</a> into the repo. Reset your current branch onto it, open your <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>, and you can ask Matt.</p>
+      <h2>Ask It A Real Question</h2>
+      <p>The skill takes a situation, not a keyword. Here is the one I put to it.</p>
+      <pre><code>/ask-matt What&#x27;s the best flow for fixing a bug once I&#x27;ve finished doing an implementation on a spec and all the tickets are closed?</code></pre>
+      <p>That is a real position to be in. The <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a> is built. Every <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">ticket</a> is closed. Then something turns out to be broken. There is no obvious next command to type, because the flow you were following has run out.</p>
+      <h2>What It Answered</h2>
+      <p>The router opened with this.</p>
+      <pre><code>**Short answer: `/clear`, then `/diagnosing-bugs`.**</code></pre>
+      <p>Two moves. First empty the <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>, because the spec thread is spent and a bug is a new starting point rather than a continuation of the build. Then reach for the skill that handles bugs.</p>
+      <p>It went further than the headline. It said to check whether you can make the bug go red with one command: if you can, and the cause is obvious, write the failing test and fix it. If you cannot, that is when the diagnosis skill earns its place. It also named two things not to do. Do not triage the bug, because triage is only for issues you did not create. Do not reopen the closed spec, because a spec that turns out to be wrong is a new idea, not a patch.</p>
+      <h2>It Knows Skills The Course Does Not Cover</h2>
+      <p>The skill it recommended is one we have not encountered. It does exist in my real skillset.</p>
+      <p>That is the point. This course covers the main flow and a fair few very important skills, but it does not cover everything in the skillset. There is still stuff to learn, and <strong><code>/ask-matt</code> is the way you learn it</strong>. It is listed under Getting Started, and it is a good way to get up to speed with the rest of the skills.</p>
+      <p>A <strong>flow</strong> is a path through the skills, not a single skill. Most work travels along one main flow. A couple of on-ramps merge onto it. The rest are standalone, or a vocabulary layer running underneath. When you name your situation, the router puts you on a flow at the right step, which is often a different answer from the skill whose name matches your words.</p>
+      <h2>The Phase Boundary Checklist</h2>
+      <p>One particularly useful thing lives inside the skill itself: a <strong>phase boundary checklist</strong>.</p>
+      <p>A phase is a chunk of work inside a <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>: the grilling, the implementation, the QA. The boundary is the gap between two of them, and it is where you decide what happens to your <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>. That decision is genuinely hard. You have five options and no obvious way to pick.</p>
+      <div class="table-wrap"><table><thead><tr><th>Option</th><th>What it does</th></tr></thead><tbody><tr><td>Continue</td><td>Stay in the session. No context switch at all.</td></tr><tr><td>Clear</td><td>Empty the context window and start from nothing.</td></tr><tr><td><a href="https://www.aihero.dev/ai-coding-dictionary/handoff">Handoff</a></td><td>Write a portable markdown file and seed a session anywhere with it.</td></tr><tr><td><a href="https://www.aihero.dev/ai-coding-dictionary/subagent">Subagent</a></td><td>Send the task to its own context window and get a report back.</td></tr><tr><td>Compact</td><td>Compress this context and seed a fresh session with the summary.</td></tr></tbody></table></div>
+      <p>So when you are not sure whether to continue, clear, hand off, send it to a subagent, or <a href="https://www.aihero.dev/ai-coding-dictionary/compaction">compact</a>, the skill can walk you through it. It works the options top to bottom and the first yes wins, which turns a vague feeling into an ordered set of questions.</p>
+      <h2>Take Its Answers With A Pinch Of Salt</h2>
+      <p>Look back at the answer it gave me. It said to clear. I would say the best thing there is probably to compact instead, because some of that implementation context is worth carrying into the bug hunt. And to be honest, you might not need the <code>/diagnosing-bugs</code> skill at all. That skill is only for very, very tricky bugs. If it is a simple bug, you might just be able to sort it yourself.</p>
+      <p>So treat it like any agent. It is a router, not an oracle. It is a nice way to ask questions about the skills and figure out what you might want to use next, and you still apply your own judgement to what comes back.</p>
+      <p>If you notice it giving any weird answers, raise an issue on the skills repo itself. That is how the router gets better.</p>
+      <p>People have found this useful for getting to grips with the skills, as a first port of call for the things they do not quite understand yet.</p>
+      <p>Nice work, and I will see you in the next one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="ask-matt-is-a-router">
+        <p class="quiz-q-text">What does the /ask-matt skill give you back?</p>
+        <ul class="quiz-choices">
+          <li class="correct">A recommendation of which flow and skill to use next</li>
+          <li>A finished implementation of the change you described</li>
+          <li>A spec written from the situation you described</li>
+          <li>A list of every skill installed in the repo</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          It is a router. You name the situation you are in and it names the flow that fits, along with the next thing to type. It does not build the change for you, it does not write a spec, and it is not a directory listing. The other three are jobs other skills own.
+        </div>
+      </div>
+      <div class="quiz-question" id="ask-matt-judgement-required">
+        <p class="quiz-q-text">The router tells you to clear and then run the /diagnosing-bugs skill. What should you do?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Weigh it against your own read of the situation before you act</li>
+          <li>Run both commands exactly as given, since the skill holds the full map</li>
+          <li>Ignore it, because a router cannot see your codebase</li>
+          <li>Ask it again until two runs agree on the same answer</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The router is useful and it is also wrong sometimes. Here compacting may beat clearing, and a simple bug may not need the diagnosis skill at all. Following it blindly ignores that, dismissing it throws away a good starting point, and asking repeatedly just gives you two guesses instead of one.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="where-you-go-from-here">
+      <h1 class="chapter-title">Where You Go From Here</h1>
+
+      <p>Hopefully this course has given you something solid that you can take immediately into your workplace.</p>
+      <p>The five-step process covered in this course is an essential part of how to build software:</p>
+      <ol class="body-list"><li><strong><a href="https://www.aihero.dev/ai-coding-dictionary/grilling">Grill</a> the idea</strong> - align with the AI before you get going</li><li><strong>Create a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a></strong> - decide where you&#x27;re going</li><li><strong>Create <a href="https://www.aihero.dev/ai-coding-dictionary/ticket">tickets</a></strong> - split things up to parallelize work, or to make sure you stay in the <a href="https://www.aihero.dev/ai-coding-dictionary/smart-zone">smart zone</a></li><li><strong>Implement</strong> - work through the tickets</li><li><strong>Review</strong> - check things that couldn&#x27;t have been done during implementation</li></ol>
+      <p>Even though things have changed over time, this process still fits into this format. And this core set of five steps is going to stick.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014924/ai-hero-images/ncwdvbbgk9netq6zztxn.png" alt="The five-step process overview" />
+      <p class="img-caption">The five-step process overview</p>
+      <h2>What To Do Next</h2>
+      <p>Your next task, now that this course is finished, is to go and deepen these steps.</p>
+      <p>Consider the following areas to explore:</p>
+      <ul class="body-list"><li><strong><a href="https://www.aihero.dev/ai-coding-dictionary/afk">AFK loops</a></strong> - instead of sitting there babysitting the implementation, delegate that to an AFK (away from keyboard) <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> loop</li><li><strong><a href="https://www.aihero.dev/ai-coding-dictionary/prototyping">Prototyping</a> and research</strong> - how might these help you during the initial ideation phase, before you approach a spec?</li><li><strong><a href="https://www.aihero.dev/ai-coding-dictionary">The AI Coding Dictionary</a></strong> - firm up your mental model for all of this: <a href="https://www.aihero.dev/ai-coding-dictionary/model-provider-request">model provider requests</a>, turns and context windows, tools, and more</li><li><strong><a href="https://github.com/mattpocock/sandcastle">Sandcastle</a></strong> - an open source attempt to do AFK agents inside isolated <a href="https://www.aihero.dev/ai-coding-dictionary/sandbox">sandboxes</a></li></ul>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1786014924/ai-hero-images/nuzqmriyctjqxh3ywi1m.png" alt="Sandcastle GitHub repository" />
+      <p class="img-caption">Sandcastle GitHub repository</p>
+      <h2>Keep Learning</h2>
+      <p>Check out Wayfinder, Prototype, and the other <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> in development. AI coding will change, and the shape of this process will be iterated on, made more complex, and developed further.</p>
+      <p>Cohorts run on AI Hero are opportunities to deepen all of this work too, so keep your eyes peeled if you or your company are interested.</p>
+      <h2>Join the Community</h2>
+      <p>The <a href="https://aihero.dev/discord">Discord</a> and the community inside it are going nowhere.</p>
+      <p>If you run into something in the real world that you find confusing, don&#x27;t know how to adapt the agent to do, or if the course raised questions you need answering, come to the Discord. We&#x27;ll have a good time figuring it out together.</p>
+      <p>Thank you so much for watching and joining. See you very soon.</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('section.chapter');
+  const navLinks = document.querySelectorAll('nav.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`nav.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

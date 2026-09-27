@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>03 Getting to know claude code</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1e2333;
+      --border: #2a3045;
+      --accent: #6c8ef5;
+      --accent2: #a78bfa;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --code-bg: #0d1117;
+      --code-border: #30363d;
+      --green: #34d399;
+      --yellow: #fbbf24;
+      --red: #f87171;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .page-wrap { display: flex; min-height: 100vh; }
+
+    nav.sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.5rem 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-logo span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-logo strong {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    nav.sidebar ul { list-style: none; padding: 0 0.75rem; }
+
+    nav.sidebar li a {
+      display: block;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    nav.sidebar li a:hover { background: var(--surface2); color: var(--text); }
+    nav.sidebar li a.active { background: rgba(108,142,245,0.15); color: var(--accent); }
+
+    nav.sidebar .nav-section {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 1rem 1.5rem 0.3rem;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 3rem 2rem 6rem;
+      max-width: 820px;
+    }
+
+    .chapter {
+      margin-bottom: 5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chapter:last-child { border-bottom: none; }
+
+    h1.chapter-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    h1.chapter-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -2px;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    h2 { font-size: 1.3rem; font-weight: 700; color: var(--text); margin: 2.5rem 0 0.75rem; }
+    h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent2); margin: 1.75rem 0 0.5rem; }
+    h4 { font-size: 0.95rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.4rem; }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(108,142,245,0.3);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    a:hover { border-color: var(--accent); color: #8facff; }
+    strong { color: var(--text); font-weight: 700; }
+    em { color: var(--muted); font-style: italic; }
+
+    .lesson-img {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .img-caption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: -0.75rem;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.875em;
+      background: rgba(108,142,245,0.12);
+      color: #a5b4fc;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+    }
+
+    pre code { background: none; padding: 0; color: #c9d1d9; }
+    .diff-add { color: var(--green); }
+
+    .table-wrap { overflow-x: auto; margin: 1rem 0 1.25rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr { background: var(--surface2); }
+    th, td { padding: 0.6rem 1rem; border: 1px solid var(--border); text-align: left; }
+    th { font-weight: 700; color: var(--text); }
+    td { color: var(--muted); }
+    td code { color: #a5b4fc; }
+    td strong { color: var(--text); }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+    .checklist { list-style: none; padding: 0; margin: 0.75rem 0 1.25rem; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.45rem 0;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .checklist li::before {
+      content: '☐';
+      color: var(--accent);
+      font-size: 1.1em;
+      flex-shrink: 0;
+      margin-top: 0.05em;
+    }
+
+    .callout {
+      border-left: 4px solid var(--yellow);
+      background: rgba(251,191,36,0.07);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+    .callout strong { color: var(--yellow); }
+    .callout-info { border-color: var(--accent); background: rgba(108,142,245,0.08); }
+    .callout-info strong { color: var(--accent); }
+
+    blockquote {
+      border-left: 4px solid var(--accent2);
+      background: rgba(167,139,250,0.08);
+      border-radius: 0 8px 8px 0;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .commit-map {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.875rem;
+    }
+    .commit-map-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .commit-map-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.4rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .commit-map-item:first-of-type { border-top: none; }
+    .commit-id {
+      font-family: 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      background: rgba(108,142,245,0.15);
+      color: var(--accent);
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 0.1em;
+    }
+
+    .prompt-block {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-left: 4px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    ul.body-list, ol.body-list {
+      padding-left: 1.5rem;
+      margin: 0.5rem 0 1.25rem;
+    }
+    ul.body-list li, ol.body-list li { margin-bottom: 0.35rem; }
+
+    .quiz-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 2rem 0 1.5rem;
+    }
+    .quiz-block-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 1rem;
+    }
+    .quiz-question {
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+    .quiz-question:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+    .quiz-q-text { font-weight: 600; margin-bottom: 0.75rem; color: var(--text); }
+    .quiz-choices { list-style: none; padding: 0; margin: 0 0 0.75rem; }
+    .quiz-choices li {
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.3rem;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .quiz-choices li.correct {
+      background: rgba(52,211,153,0.1);
+      border-color: rgba(52,211,153,0.3);
+      color: var(--green);
+    }
+    .quiz-answer {
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+    .quiz-answer-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+
+    @media (max-width: 768px) {
+      nav.sidebar { display: none; }
+      main { padding: 2rem 1.25rem 4rem; }
+      h1.chapter-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <span>Section 03</span>
+      <strong>Getting to know claude code</strong>
+    </div>
+    <p class="nav-section">Lessons</p>
+    <ul>
+      <li><a href="#intro">Intro</a></li>
+      <li><a href="#managing-your-claude-code-session">Managing Your Claude Code Session</a></li>
+      <li><a href="#prompting-in-the-terminal">Prompting in the Terminal</a></li>
+      <li><a href="#claude-and-your-ide">Claude and Your IDE</a></li>
+      <li><a href="#going-forwards-and-backwards-in-time">Going Forwards and Backwards in Time</a></li>
+      <li><a href="#running-bash-commands">Running Bash Commands</a></li>
+      <li><a href="#permissions">Permissions</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section class="chapter" id="intro">
+      <h1 class="chapter-title">Intro</h1>
+
+      <p>In this course, I&#x27;m going to be primarily using <a href="https://code.claude.com/docs/en/setup">Claude Code</a> as my <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> for driving the lessons, demonstrating things, and showing you how agents in general work.</p>
+      <p>I&#x27;m doing this because it&#x27;s a very popular <a href="https://www.aihero.dev/ai-coding-dictionary/harness">harness</a>, you may have used it yourself, and it&#x27;s the one that I personally use the most right now.</p>
+      <p><strong>However, this course is harness agnostic.</strong> You can choose whatever harness you like, as long as it runs in a CLI. Pick the tool that works best for you.</p>
+      <h2>An Optional Primer Section</h2>
+      <p>For folks who&#x27;ve never used a coding harness before, or who just want to get more out of Claude Code, I&#x27;ve provided an optional primer section so that you can get the basics before we get started.</p>
+      <p>It will give you a nice grounding of all of the things that you&#x27;ll need to know about your agent before getting started with the course.</p>
+      <p>And if you&#x27;re already experienced with your harness of choice, you&#x27;ll probably still pick up a few tips - because I&#x27;m not just covering the basics. There are a couple of advanced things in there too.</p>
+      <p>So nice work, and I will see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="managing-your-claude-code-session">
+      <h1 class="chapter-title">Managing Your Claude Code Session</h1>
+
+      <p>Make sure you have Claude Code set up and ready to go. If you haven&#x27;t completed this yet, head back to the Before We Start section and work through the setup steps to get it installed on your system.</p>
+      <p>For this entire course, we&#x27;re going to be running Claude from inside VS Code. We&#x27;ll talk about the relationship between Claude and VS Code itself, but for now it&#x27;s perfectly fine to run it in the integrated terminal.</p>
+      <h2>Opening Claude Code And The Input Box</h2>
+      <p>Kick off by simply running Claude in your terminal and bump the zoom level up a little bit for clarity.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208739/ai-hero-images/drhuy9ftsr8f4rihhfq2.png" alt="VS Code with Claude Code launched in the integrated terminal showing the chat interface" />
+      <p class="img-caption">VS Code with Claude Code launched in the integrated terminal showing the chat interface</p>
+      <p>What you&#x27;ll see is a UI with an enormous text box at the bottom. This is where you&#x27;ll type all your prompts.</p>
+      <h2>Your First Message</h2>
+      <p>Let&#x27;s start simple. You can say anything to Claude, just like any chat app you&#x27;ve used.</p>
+      <pre><code>hello, how are you?</code></pre>
+      <p>The <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> will process your message and respond naturally. This familiar chat-like interface makes it easy to get started.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208740/ai-hero-images/ysojubklhfwvfe2xc6al.png" alt="Claude Code responding to a greeting with friendly acknowledgment" />
+      <p class="img-caption">Claude Code responding to a greeting with friendly acknowledgment</p>
+      <h2>Terminal Setup And Multi-Line Input</h2>
+      <p>Before we go further, there&#x27;s one important command to run: <code>/terminal-setup</code>.</p>
+      <pre><code>/terminal-setup</code></pre>
+      <p>Type the forward slash, then find <code>terminal setup</code> from the autocomplete. The command should turn a nice shade of lilac once you&#x27;ve found the right one.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208741/ai-hero-images/ymjoq8uviweja7xyry0v.png" alt="The /terminal-setup command highlighted in lilac in the autocomplete menu" />
+      <p class="img-caption">The /terminal-setup command highlighted in lilac in the autocomplete menu</p>
+      <p>Press Enter to run it.</p>
+      <p>This command sets up key bindings for you, specifically for Shift+Enter. Depending on your operating system, you may need to run this manually (like on Windows Subsystem Linux), but most users can just run it and be good to go.</p>
+      <p>Without this setup, you might experience strange key binding issues. Once installed, Shift+Enter lets you add new lines in your prompt:</p>
+      <pre><code>hello,
+and then press Shift+Enter here
+you can write multi-line prompts</code></pre>
+      <p>This is essential for writing more complex instructions to the agent.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208742/ai-hero-images/vj1dvha8bwggkpdnutp7.png" alt="Multi-line prompt in Claude Code using Shift+Enter" />
+      <p class="img-caption">Multi-line prompt in Claude Code using Shift+Enter</p>
+      <h2>Checking Your Usage</h2>
+      <p>To see how much of your plan&#x27;s allowance you have left, run the <code>/usage</code> command:</p>
+      <pre><code>/usage</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208743/ai-hero-images/k998yoxtgqpoyn75cgvw.png" alt="Usage display showing context window limits and current session tokens" />
+      <p class="img-caption">Usage display showing context window limits and current session tokens</p>
+      <p>This shows you:</p>
+      <ul class="body-list"><li>How much usage you have left in your current <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a></li><li>Your weekly limit</li><li>Your current usage against that limit</li></ul>
+      <p>The specific numbers and labels may look different depending on your plan, and they may change between agent versions. But this is how you check your remaining allowance at any time.</p>
+      <p>Once you reach the end of your usage window, you won&#x27;t be able to continue using the agent until your limit resets.</p>
+      <p>Press Escape to exit the usage view and return to your chat.</p>
+      <h2>Visualizing Your Context Window</h2>
+      <p>Run the <code>/context</code> command to see what&#x27;s currently in your <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a>:</p>
+      <pre><code>/context</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208745/ai-hero-images/mrlhyo3koxhmbck4xkci.png" alt="Context visualization showing token breakdown across system prompt, skills, and messages" />
+      <p class="img-caption">Context visualization showing token breakdown across system prompt, skills, and messages</p>
+      <p>This display is really useful when you need to debug your setup. You can see:</p>
+      <ul class="body-list"><li><strong><a href="https://www.aihero.dev/ai-coding-dictionary/system-prompt">System prompt</a> tokens</strong>: Instructions given to the agent</li><li><strong>Skills tokens</strong>: Custom <a href="https://www.aihero.dev/ai-coding-dictionary/skill">skills</a> you&#x27;ve added</li><li><strong>Message tokens</strong>: Conversation history</li><li><strong>Context window size</strong>: The total <a href="https://www.aihero.dev/ai-coding-dictionary/token">token</a> capacity (for example, Claude 3.5 Opus has 1 million tokens)</li></ul>
+      <p>Understanding what fills your context window is key to using agents efficiently. We&#x27;ll dive deeper into <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a> management throughout this course.</p>
+      <h2>Clearing The Context</h2>
+      <p>To reset your context window and start fresh, run <code>/clear</code>:</p>
+      <pre><code>/clear</code></pre>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208746/ai-hero-images/jauv0f4iwtyrl6irkv0l.png" alt="Context window after clearing, showing drastically reduced token count" />
+      <p class="img-caption">Context window after clearing, showing drastically reduced token count</p>
+      <p>This removes all messages from your current conversation, giving you a blank slate. You can verify it worked by running <code>/context</code> again.</p>
+      <p>Compare the token counts before and after:</p>
+      <div class="table-wrap"><table><thead><tr><th>State</th><th>Approximate Tokens</th></tr></thead><tbody><tr><td>With conversation history</td><td>~9,000</td></tr><tr><td>After <code>/clear</code></td><td>~6,600</td></tr></tbody></table></div>
+      <p>This demonstrates that <a href="https://www.aihero.dev/ai-coding-dictionary/model">models</a> are <a href="https://www.aihero.dev/ai-coding-dictionary/stateless">stateless</a>. Once you <a href="https://www.aihero.dev/ai-coding-dictionary/clearing">clear</a> the context, the agent has no knowledge of your previous conversation.</p>
+      <p>Alternatively, you can press Ctrl+C twice to exit and open a brand-new session. This also gives you a clean context window with no memory of the previous conversation.</p>
+      <h2>Interrupting The Agent</h2>
+      <p>Sometimes you&#x27;ll need to stop the agent mid-run. Press Escape to interrupt:</p>
+      <pre><code>explore the code base</code></pre>
+      <p>If the agent starts working and you decide you want it to stop, just press Escape. The agent will cancel everything it was doing.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208821/ai-hero-images/ogumpia6yrtxyomq0env.png" alt="Claude Code showing an &#x27;interrupted&#x27; message after pressing Escape" />
+      <p class="img-caption">Claude Code showing an &#x27;interrupted&#x27; message after pressing Escape</p>
+      <p>After interrupting, the context window shows an <code>interrupted</code> message asking what Claude should do instead. You can then redirect it or ask it to continue.</p>
+      <p>You might accidentally trigger this by pressing Escape at the wrong moment. If that happens, just type:</p>
+      <pre><code>carry on</code></pre>
+      <p>And the agent will resume where it left off.</p>
+      <h2>Summary</h2>
+      <p>You&#x27;ve now learned the essential commands for working with Claude Code:</p>
+      <ul class="body-list"><li><strong>Open and chat</strong>: Launch the agent in your terminal and type messages like any chat app</li><li><strong>Multi-line input</strong>: Use Shift+Enter to write complex, multi-line prompts</li><li><strong>Check limits</strong>: Run <code>/usage</code> to see your remaining allowance</li><li><strong>Inspect context</strong>: Run <code>/context</code> to visualize what&#x27;s filling your context window</li><li><strong>Reset</strong>: Run <code>/clear</code> to start with a fresh context</li><li><strong>Interrupt</strong>: Press Escape to stop the agent mid-run, then redirect it</li></ul>
+      <p>You&#x27;re ready to start working with the agent. Nice work, and I&#x27;ll see you in the next one.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="clear-resets-to-a-stateless-start">
+        <p class="quiz-q-text">You have finished one task and want to start something unrelated in the same terminal, with none of the earlier conversation influencing the agent. What do you do?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Run /clear to empty the conversation history</li>
+          <li>Run /context to inspect the token breakdown</li>
+          <li>Ask the agent to ignore the earlier messages</li>
+          <li>Press Escape to interrupt the current run</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          /clear removes all the messages, and because the model is stateless it then has no knowledge of what came before. /context only shows you what is filling the window; it removes nothing. Asking the agent to ignore the earlier messages leaves those messages in the window, which /context would still count. Escape stops a run that is in progress and leaves the conversation intact.
+        </div>
+      </div>
+      <div class="quiz-question" id="escape-interrupts-a-running-agent">
+        <p class="quiz-q-text">The agent is midway through a job and is clearly heading in the wrong direction. What is the cheapest way to stop it and put it back on track?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Press Escape to stop it, then redirect it</li>
+          <li>Run /clear and set the whole task up again</li>
+          <li>Press Ctrl+C twice to open a fresh session</li>
+          <li>Wait for it to finish, then correct it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Escape cancels everything the agent was doing and leaves an interrupted marker asking what it should do instead, so you keep the conversation and simply redirect. /clear throws away every message, and Ctrl+C twice opens a session with no memory of the work at all, so both make you re-explain the task. Waiting lets it finish work you already know is wrong.
+        </div>
+      </div>
+      <div class="quiz-question" id="context-command-versus-usage-command">
+        <p class="quiz-q-text">You want to see the token breakdown of what is loaded right now: system prompt, skills and conversation history. Which command shows it?</p>
+        <ul class="quiz-choices">
+          <li class="correct">/context</li>
+          <li>/usage</li>
+          <li>/clear</li>
+          <li>/terminal-setup</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          /context visualises what is filling the window and the total token capacity. /usage answers a different question: how much of your plan&#x27;s allowance is left in this session and this week. /clear empties the conversation rather than showing it. /terminal-setup only installs the key bindings, such as Shift+Enter for a new line.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="prompting-in-the-terminal">
+      <h1 class="chapter-title">Prompting in the Terminal</h1>
+
+      <p>Now that you understand the basics of prompting, here are some built-in features you can use to improve how you work with <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a>.</p>
+      <h2>Referencing Files With @</h2>
+      <p>You may want to reference individual files in your agent. To do this, press <code>@</code> to open the file picker.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208949/ai-hero-images/z6oyekrfm7u2j6avr61f.png" alt="Claude Code interface showing the @ file picker with fuzzy search filtering through project files" />
+      <p class="img-caption">Claude Code interface showing the @ file picker with fuzzy search filtering through project files</p>
+      <p>You can then:</p>
+      <ul class="body-list"><li>Use arrow keys to browse through files</li><li>Type to fuzzy search for specific files like <code>routes.ts</code></li><li>Press return to pull that file into your text box</li></ul>
+      <p>You can add multiple files this way - just repeat the process. For instance, you might add <code>components.json</code> after <code>drizzle.config.ts</code>. You can also use tab to pull files into your text window.</p>
+      <p>Once you press enter, both files get read into the <a href="https://www.aihero.dev/ai-coding-dictionary/context-window">context window</a> immediately. The agent reads the files directly on the first request without needing extra <a href="https://www.aihero.dev/ai-coding-dictionary/tool-call">tool calls</a>.</p>
+      <p>This is especially useful when you need to pass in a <a href="https://www.aihero.dev/ai-coding-dictionary/spec">spec</a> or specific configuration file that the agent should reference directly.</p>
+      <h2>Stashing A Prompt With Ctrl+S</h2>
+      <p>Sometimes you&#x27;re not ready to send a prompt, but you don&#x27;t want to lose it. You can stash it instead.</p>
+      <p>Type your prompt - for example: &quot;hello, how are you&quot;</p>
+      <p>If you&#x27;re not ready to send it, press <code>Ctrl+S</code> to stash it.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208950/ai-hero-images/yhx1xupf5cuggzbyo3tb.png" alt="The agent interface showing a stashed prompt marker" />
+      <p class="img-caption">The agent interface showing a stashed prompt marker</p>
+      <p>You&#x27;ll see a &quot;stashed&quot; indicator. Now you can type something else into the text box. When you&#x27;re ready, the stashed prompt will rehydrate back into your input.</p>
+      <p>For example:</p>
+      <ul class="body-list"><li>Stash: &quot;hello, how are you&quot;</li><li>Type something new: &quot;hello&quot;</li><li>Press return</li><li>The original stashed prompt gets restored into the text box</li></ul>
+      <p>This is really useful when you&#x27;re giving the agent feedback. You might send something, realize you&#x27;re not ready, pull back, insert something else in the middle, and then finalize your prompt before sending it.</p>
+      <h2>Pasting In Images</h2>
+      <p>You can copy and paste images directly into the agent - even screenshots.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208950/ai-hero-images/abrqn57ei83mel35sezw.png" alt="A browser showing a Wikipedia image of Lake Bled in Slovenia" />
+      <p class="img-caption">A browser showing a Wikipedia image of Lake Bled in Slovenia</p>
+      <p>For example, here&#x27;s an <a href="https://en.wikipedia.org/wiki/Lake_Bled#/media/File:Lake_Bled_from_the_Mountain.jpg">image of Lake Bled in Slovenia</a>. Right-click on an image and copy it. Then paste it into the text box. You&#x27;ll see a &quot;pasting&quot; indicator in the bottom left, and the image appears in your input.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208951/ai-hero-images/brb1bpz1d0wdju6ojg8x.png" alt="The agent interface with an image pasted into the text box" />
+      <p class="img-caption">The agent interface with an image pasted into the text box</p>
+      <p>You can now ask the agent about the image. It will analyze it and respond.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784208952/ai-hero-images/kdabva7izboeuiskqdjn.png" alt="The agent responding with details about Lake Bled, mentioning the Church of the Assumption and its bell tower" />
+      <p class="img-caption">The agent responding with details about Lake Bled, mentioning the Church of the Assumption and its bell tower</p>
+      <p>Images become part of your prompt, so you can reference screenshots, mockups, and other visuals directly without uploading them separately.</p>
+      <h2>Summary</h2>
+      <p>You now know three powerful prompting techniques:</p>
+      <ul class="body-list"><li><strong>Reference files</strong> using <code>@</code> to pull specific files into <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a></li><li><strong>Stash prompts</strong> with <code>Ctrl+S</code> to save half-written prompts and rehydrate them later</li><li><strong>Paste images</strong> from your clipboard to include screenshots and visuals in your prompts</li></ul>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="at-reference-loads-file-on-first-request">
+        <p class="quiz-q-text">You already know the exact config file the agent has to follow. What happens when you pull it in with @ rather than describing it in words?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Its contents are in the context window on the first request</li>
+          <li>The agent opens it in your editor for you to review first</li>
+          <li>The agent is told to read it later if it turns out to matter</li>
+          <li>A link to the file is stored and resolved only when needed</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The file picker reads the file straight into the context window, so the agent has it on the first request with no extra tool call. It is not a deferred instruction or a stored link that gets resolved later, and nothing is opened in your editor: @ only fills your text box.
+        </div>
+      </div>
+      <div class="quiz-question" id="stash-a-half-written-prompt">
+        <p class="quiz-q-text">You are halfway through a long prompt when you realise the agent needs one quick correction first. What do you do with the draft?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Press Ctrl+S to stash it, send the short one, and it returns</li>
+          <li>Copy the draft into a scratch file, then paste it back after</li>
+          <li>Send the half-written prompt now and finish your thought after</li>
+          <li>Delete the draft, send the short message, and type it out again</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Ctrl+S holds the draft and rehydrates it into the text box once the other message has gone. A scratch file and retyping both do by hand what the stash does for you, and sending the half-written prompt hands the agent instructions you had not finished, which it will act on.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="claude-and-your-ide">
+      <h1 class="chapter-title">Claude and Your IDE</h1>
+
+      <p>Claude Code integrates with your editor of choice through the <code>/ide</code> command. You don&#x27;t have to use VS Code like this course does - you can use Cursor, Windsurf, Antigravity, or whatever tools are available to you.</p>
+      <p>The <code>/ide</code> command lets you manage your IDE integrations and check their status.</p>
+      <pre><code>/ide</code></pre>
+      <p>When you run this command, it shows you which editor you&#x27;re connected to.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209071/ai-hero-images/sd29y01a0go4rdmo7wbf.png" alt="Terminal showing Visual Studio Code connection status" />
+      <p class="img-caption">Terminal showing Visual Studio Code connection status</p>
+      <p>In this case, we&#x27;re connected to Visual Studio Code because the Claude Code for VS Code extension has been installed.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209072/ai-hero-images/xxf3s3vkctucxkka0osl.png" alt="Claude Code for VS Code extension installed in the editor" />
+      <p class="img-caption">Claude Code for VS Code extension installed in the editor</p>
+      <p>If you run <code>/ide</code> in your terminal, it will show you how to install the matching extension for whatever IDE you&#x27;re using.</p>
+      <p>Once you confirm and exit the command, you&#x27;re ready to start using the integration.</p>
+      <h2>Reviewing Diffs in Your Editor</h2>
+      <p>The main reason to connect your editor is for diff management. This comes up constantly when working with <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agents</a>.</p>
+      <p>For example, if you prompt the agent to &quot;remove the test watch command from package.json,&quot; it will read the file and make updates to it.</p>
+      <p>Without an editor connection, the diff would display in the terminal as text, which is awkward and hard to <a href="https://www.aihero.dev/ai-coding-dictionary/human-review">review</a>. But with your editor connected, you see the diff displayed right inside your IDE.</p>
+      <p>This is much better. You can:</p>
+      <ul class="body-list"><li>Scroll through the file to see context</li><li>Review the exact changes the agent made</li><li>Accept all changes with the &quot;Accept Proposed Changes&quot; button</li><li>Click into the diff and make manual tweaks before saving</li><li>Save the file to confirm the changes</li></ul>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209072/ai-hero-images/ylxahtet8o6pqcaf7oc3.png" alt="Reviewing the decent edit in VS Code&#x27;s diff view" />
+      <p class="img-caption">Reviewing the decent edit in VS Code&#x27;s diff view</p>
+      <p>Being able to dive in and tweak the agent&#x27;s output directly in your editor is powerful. And reviewing diffs in a proper IDE instead of the terminal makes the whole workflow much smoother.</p>
+      <h2>Why Use an Editor?</h2>
+      <p>There are more features and more ways your editor can integrate with agents, but the diff feature is the one you&#x27;ll use 99% of the time. It&#x27;s the primary reason to run your agent inside your editor rather than just in the terminal.</p>
+      <p>If you&#x27;re following along, feel free to go back through the video if you get stuck, or ask questions in the <a href="https://aihero.dev/discord">Discord</a> if you run into trouble.</p>
+      <p>Nice work - see you in the next one.</p>
+    </section>
+
+    <section class="chapter" id="going-forwards-and-backwards-in-time">
+      <h1 class="chapter-title">Going Forwards and Backwards in Time</h1>
+
+      <p>One really important thing that an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> allows you to do is go backwards and forwards in the conversation. This is essential when you&#x27;re trying something out that you later want to revert.</p>
+      <h2>Reverting Changes</h2>
+      <p>In a previous video, you made a change where you removed a dev script. Now you can simply say to the agent:</p>
+      <pre><code>revert that, please</code></pre>
+      <p>The agent will undo the change by rewriting and re-adding it back in. You accept this by pressing <code>Control S</code> to save the diff.</p>
+      <p>But there&#x27;s a more powerful option available - rewind mode.</p>
+      <h2>Using Rewind Mode</h2>
+      <p>Press <code>Escape</code> twice in quick succession to enter rewind mode. In this mode, you get to restore your code and conversation to any earlier point in the <a href="https://www.aihero.dev/ai-coding-dictionary/session">session</a>.</p>
+      <p>For instance, if you want to revert the command you just did, you can select the previous checkpoint. The one at the bottom is your current state, and the one above it is the point at which you said &quot;revert that please&quot;.</p>
+      <p>Select it with <code>Enter</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784279343/ai-hero-images/crtl1jtitc1wxy7mxc0s.png" alt="Rewind mode interface showing checkpoint history" />
+      <p class="img-caption">Rewind mode interface showing checkpoint history</p>
+      <h2>Choosing What to Restore</h2>
+      <p>Now you have a few different options:</p>
+      <div class="table-wrap"><table><thead><tr><th>Option</th><th>What It Does</th></tr></thead><tbody><tr><td><strong>Restore the code and the conversation</strong></td><td>Rewind your entire session to the point before this code edit was made</td></tr><tr><td><strong>Restore the conversation but keep the code</strong></td><td>Keep your current code state while reverting the conversation</td></tr><tr><td><strong>Restore the code but keep the conversation</strong></td><td>Keep your conversation history while reverting the code</td></tr></tbody></table></div>
+      <p>The option you&#x27;ll use most often is to restore the full code and conversation. Once you do, the code is reverted and you&#x27;re back to the point where you had the previous state.</p>
+      <p>If you want to go back further, open the rewind mode again with <code>Escape</code> twice and choose an earlier checkpoint. You can step backward through the entire history of your session.</p>
+      <p>There&#x27;s also a <code>summarize from here</code> command available, but that&#x27;s a topic for another time. If you want to cancel rewind mode, simply choose &quot;nevermind&quot; and stick to your current state.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784279344/ai-hero-images/ode1lxlwmeiuor7rucux.png" alt="Rewind mode showing multiple checkpoints to navigate through" />
+      <p class="img-caption">Rewind mode showing multiple checkpoints to navigate through</p>
+      <h2>Persisting and Resuming Sessions</h2>
+      <p>One other thing that&#x27;s really important is the fact that an agent actually persists its sessions locally. This means you can quit out by pressing <code>Ctrl C</code> twice, and then you can resume it in multiple ways.</p>
+      <h3>Option 1: Resume with UUID</h3>
+      <p>When you quit, you&#x27;ll get output that shows a command you can run directly:</p>
+      <pre><code>claude --resume [UUID]</code></pre>
+      <p>Just run this command and you&#x27;ll go back into the exact state you left previously.</p>
+      <h3>Option 2: Resume in a Fresh Session</h3>
+      <p>Alternatively, you can <code>Ctrl C</code> twice to exit and open a new session by typing:</p>
+      <pre><code>claude</code></pre>
+      <p>This opens a totally fresh session. Inside, you can press:</p>
+      <pre><code>/resume</code></pre>
+      <p>Now you&#x27;ll see all of the conversations you&#x27;ve had in this repository. You can even search through all of the sessions if you want. Select the one you were just using and press <code>Return</code> to go back into that same session.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784279345/ai-hero-images/gnuaah32q9mvufyg1w2e.png" alt="Resume menu showing list of previous sessions" />
+      <p class="img-caption">Resume menu showing list of previous sessions</p>
+      <h3>Option 3: Continue the Previous Session</h3>
+      <p>If your session is interrupted for any reason, you can always resume it because the agent persists sessions locally.</p>
+      <p>Another way to pick up where you left off is to run:</p>
+      <pre><code>claude --continue</code></pre>
+      <p>This pulls you directly into exactly where you were, without needing to go through the resume menu.</p>
+      <h2>Summary</h2>
+      <p>The agent allows you to navigate backwards and forwards in your conversation in several ways:</p>
+      <ul class="body-list"><li><strong>Enter rewind mode</strong> - Press <code>Escape</code> twice to zoom through all checkpoints</li><li><strong>Choose what to restore</strong> - Pick whether to rewind code, conversation, or both</li><li><strong>Persist sessions locally</strong> - Quit and resume without losing progress</li><li><strong>Multiple resume methods</strong> - Use <code>--continue</code>, <code>/resume</code>, or the UUID command</li></ul>
+      <p>With these tools, you can experiment freely knowing you can always step back to any previous point in your session.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="rewind-restore-both-code-and-conversation">
+        <p class="quiz-q-text">You tried an approach, the agent edited files, and you want the whole attempt gone: the edits and the messages that produced them. Which rewind option do you pick?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Restore both the code and the conversation</li>
+          <li>Restore the conversation but keep the code</li>
+          <li>Restore the code but keep the conversation</li>
+          <li>Choose nevermind and undo the files by hand</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Only the full restore rewinds the session to the point before the edit was made. Keeping the code leaves on disk exactly the edits you wanted gone, and keeping the conversation leaves the failed attempt in your history. Nevermind cancels rewind altogether and sticks you with your current state.
+        </div>
+      </div>
+      <div class="quiz-question" id="resume-picks-a-specific-past-session">
+        <p class="quiz-q-text">You are back in a repository you worked in last week and want a particular older conversation, not the one you were in most recently. How do you get to it?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Run /resume and search the list of past sessions</li>
+          <li>Run claude --continue and steer it back yourself</li>
+          <li>Press Escape twice and pick an earlier checkpoint</li>
+          <li>Start a new session and describe the old one to it</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          /resume lists every conversation held in this repository and lets you search them, so you can pick the exact one. --continue pulls you into the session you were last in, which is not the one you want. Escape twice opens rewind, which moves within the session you are already in rather than switching to another. And a new session holds none of that history, since it lives in the persisted session.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="running-bash-commands">
+      <h1 class="chapter-title">Running Bash Commands</h1>
+
+      <p>One super important part of working with Claude Code is running bash commands. Bash commands turn your <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a> from just a passive code writer into something that can actually seek feedback loops, can actually work with your project and can use all the power of bash at its disposal to find information and to do stuff.</p>
+      <p>Now we can&#x27;t just manually ask Claude &quot;OK, run the dev server for me&quot;, and because it&#x27;s quite smart it will understand &quot;OK, I need to read the <code>package.json</code>, I need to find where the dev server is, and then I need to run it like this.&quot; But suffice to say, there are some times when you just know what command you want to run, and you just want to run it, and then put the result into the agent&#x27;s <a href="https://www.aihero.dev/ai-coding-dictionary/context">context</a>.</p>
+      <p>There are really three main approaches to running bash commands in an agent:</p>
+      <ol class="body-list"><li>Run commands directly and let the agent see the output</li><li>Background long-running processes and monitor them</li><li>Suspend the agent to run commands it won&#x27;t see</li></ol>
+      <h2>Running commands with bash mode</h2>
+      <p>The way you run commands that the agent can see is by using <strong>bash mode</strong>. I&#x27;ve just restarted my agent instance. I&#x27;m going to just put an exclamation mark and now I&#x27;ve entered bash mode.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209316/ai-hero-images/xrtyomhrfwizm4mthajj.png" alt="Terminal showing the ! prefix to enter bash mode" />
+      <p class="img-caption">Terminal showing the ! prefix to enter bash mode</p>
+      <pre><code>!</code></pre>
+      <p>Anything you put in here will be turned into a bash command and actually run for the agent. For instance, you can run <code>npm run typecheck</code> inside here and now it just runs the command after you press enter.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209317/ai-hero-images/zmfo6m2c9okz1u8ck8je.png" alt="Terminal showing npm run typecheck being executed with the ! prefix in bash mode" />
+      <p class="img-caption">Terminal showing npm run typecheck being executed with the ! prefix in bash mode</p>
+      <p>Now because I haven&#x27;t run <code>npm install</code> in my setup here, I&#x27;m getting a lot of errors. These errors are now present to the agent in its context. So I&#x27;m going to get it to help me solve these errors and it will be able to see the errors and actually work with them.</p>
+      <p>It figures out that Zod is in <code>package.json</code>, but not installed. So it suggests that you should run <code>npm install</code>. There we go.</p>
+      <h2>Backgrounding long-running processes</h2>
+      <p>This works well for commands that essentially have a start and an end. But what about commands that are supposed to persist, like long-running dev servers?</p>
+      <p>For that you can run <code>npm run dev</code> inside bash mode here:</p>
+      <pre><code>! npm run dev</code></pre>
+      <p>And while it&#x27;s running you can actually press <strong>Ctrl-B</strong> to run it in the background. In this version of Claude Code, something appears that says &quot;command was manually backgrounded with <code>userID</code> this.&quot;</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209318/ai-hero-images/izo7fexocnkddnw8xetv.png" alt="Message confirming the command was manually backgrounded with a userID" />
+      <p class="img-caption">Message confirming the command was manually backgrounded with a userID</p>
+      <p>Any output from that task goes into a local file. You can see that underneath your status line there is a little background task showing. You can zoom downwards with the down arrow there, and you can press return to see it. Now you can actually view the shell and see what&#x27;s going on.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209319/ai-hero-images/tjzglv8owvxdfdtsmsnu.png" alt="Background task panel showing the dev server running on localhost 5175" />
+      <p class="img-caption">Background task panel showing the dev server running on localhost 5175</p>
+      <p>You&#x27;ve got lots of options here. You can stop it with X if you want to, or you can just press left to go back and now you&#x27;re back in your agent instance.</p>
+      <p>This is really useful when you&#x27;re debugging a problem with your dev server, because the agent can see where all of the logs are being written to. It can try something out in the UI, maybe, or send a curl request, and then it can actually see the output of the dev server.</p>
+      <h2>Suspending the agent to run hidden commands</h2>
+      <p>I&#x27;ve just reset my instance here so we can see another feature which is suspending the agent. If, for instance, you want to run something that you don&#x27;t want the agent to see the results of, or you don&#x27;t care to show it, and you have some <a href="https://www.aihero.dev/ai-coding-dictionary/stateful">state</a> inside the agent that you want to preserve, then you can use suspend.</p>
+      <p>You can press <strong>Ctrl-Z</strong> inside here and the agent has been suspended. This means you can now run any command you want to.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209368/ai-hero-images/dpnfygieil8tzupfc7fm.png" alt="Running echo foo in a suspended terminal session" />
+      <p class="img-caption">Running echo foo in a suspended terminal session</p>
+      <pre><code>echo foo</code></pre>
+      <p>This is not visible to the agent.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209369/ai-hero-images/bfrsjj3knmfcmfwo80lg.png" alt="Running fg to bring the agent back with its state intact" />
+      <p class="img-caption">Running fg to bring the agent back with its state intact</p>
+      <p>If you want to bring the agent back, you can just run <code>fg</code> here, and you get your agent instance back with all of its state.</p>
+      <p>This is great if you just want to say &quot;OK, don&#x27;t care about the agent, do something like whatever command I want, and then <code>fg</code> to bring it back.&quot;</p>
+      <h2>When to use each approach</h2>
+      <p>The decision tree for this really looks like this:</p>
+      <div class="table-wrap"><table><thead><tr><th>Goal</th><th>Approach</th><th>Shortcut</th></tr></thead><tbody><tr><td>Agent needs to see the output</td><td>Use bash mode</td><td><code>!</code> prefix</td></tr><tr><td>Long-running process (dev servers)</td><td>Background with Ctrl-B</td><td>After <code>!</code> command</td></tr><tr><td>Command should be hidden from agent</td><td>Suspend the agent</td><td>Ctrl-Z, then <code>fg</code> to return</td></tr></tbody></table></div>
+      <p>If you want the output of the bash command you&#x27;re running to be visible to the agent, then you can use bash mode by using the exclamation mark, and you can background that with Ctrl-B and then manage those backgrounded tasks.</p>
+      <p>Really, really useful for dev servers. You don&#x27;t use it every single time, but when you do use it, it&#x27;s usually for debugging some kind of dev server issue.</p>
+      <p>But if you want the command to be totally hidden from the agent, you can just suspend it quickly with Ctrl-Z.</p>
+      <p>Note: these are keyboard shortcuts that work on most systems, but you might need to do something different if you&#x27;re on Mac.</p>
+      <p>So those are all the different ways that you can manage bash commands in your agent setup.</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="bash-mode-puts-output-in-context">
+        <p class="quiz-q-text">You want to run your type check yourself and then have the agent fix whatever it reports. How do you run it?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Prefix it with ! so the agent sees the output</li>
+          <li>Suspend with Ctrl-Z, run it, then return with fg</li>
+          <li>Run it in a second terminal and paste the errors</li>
+          <li>Background it with Ctrl-B and watch the panel</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Bash mode runs the command and puts its output straight into the agent&#x27;s context, so it can work with the errors immediately. Suspending exists precisely to hide output from the agent, so it would have nothing to go on. A second terminal makes you copy the errors across by hand. And Ctrl-B is for processes that keep running; a type check ends on its own.
+        </div>
+      </div>
+      <div class="quiz-question" id="background-a-long-running-dev-server">
+        <p class="quiz-q-text">You start the dev server in bash mode and it never hands the prompt back, because it is not going to exit. What do you do?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Press Ctrl-B to background it and carry on</li>
+          <li>Press Ctrl-Z to suspend, then fg to come back</li>
+          <li>Press Ctrl-C to kill it and let the agent start it</li>
+          <li>Wait for it to finish before prompting again</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Ctrl-B backgrounds the running command, sends its output to a local file the agent can read, and gives you a background task under the status line to view or stop. Ctrl-Z suspends the whole agent rather than the server, and fg only brings the agent back. Killing it leaves you with no running server and no logs to debug against. And a dev server does not finish, so waiting stalls you indefinitely.
+        </div>
+      </div>
+      <div class="quiz-question" id="suspend-hides-a-command-from-the-agent">
+        <p class="quiz-q-text">You need to run a command whose output the agent must not see, and you want the agent&#x27;s state intact afterwards. What do you do?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Press Ctrl-Z, run the command, then fg</li>
+          <li>Run it in bash mode and ignore the output</li>
+          <li>Ask the agent to disregard what it sees</li>
+          <li>Quit the agent and run it afterwards</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          Ctrl-Z suspends the agent so the command runs where it cannot see it, and fg brings the agent back with all of its state. Bash mode exists to feed output into the context, so running it there puts in front of the agent the very thing you wanted hidden, as does asking it to disregard output it has already been given. Quitting hides the command but throws away the state you wanted to keep.
+        </div>
+      </div>
+    </div>
+    </section>
+
+    <section class="chapter" id="permissions">
+      <h1 class="chapter-title">Permissions</h1>
+
+          <div class="commit-map">
+      <div class="commit-map-title">Commit Map</div>
+        <div class="commit-map-item">
+          <span class="commit-id">make-a-schema-change</span>
+          <span>Start the lesson: the repo as the migrations exercise left it</span>
+        </div>
+    </div>
+      <p>When working with an <a href="https://www.aihero.dev/ai-coding-dictionary/agent">agent</a>, you always need to think about risk versus reward, especially in how much power you give over to it. If you give an agent infinite power, it could do something dangerous by accident, like delete your entire <a href="https://www.aihero.dev/ai-coding-dictionary/filesystem">file system</a>.</p>
+      <p>To mitigate this risk, Claude Code has a very detailed permissions model. By default, it&#x27;s very strict with itself about what it allows the agent to actually go and do.</p>
+      <h2>The Approval Flow</h2>
+      <p>Let&#x27;s say you ask an agent to run a simple command like <code>echo hello</code>. Because <code>echo</code> is an extremely safe command, the agent thinks this command is fine for it to run without asking.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209889/ai-hero-images/ovmugnfusfd7sybovzpc.png" alt="Echo command running without permission" />
+      <p class="img-caption">Echo command running without permission</p>
+      <p>But if you ask it to do something like run a type check on the project, it might do something different. Instead of running it automatically, the agent <a href="https://www.aihero.dev/ai-coding-dictionary/permission-request">requests permission</a> first.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209890/ai-hero-images/e5yepuoy7itc4awlb3az.png" alt="Permission request for pnpm typecheck command" />
+      <p class="img-caption">Permission request for pnpm typecheck command</p>
+      <p>When the agent asks for permission, you&#x27;ll see:</p>
+      <ul class="body-list"><li>The exact command it&#x27;s going to run</li><li>The reason it wants to run it</li><li>Three options for how to respond</li></ul>
+      <p>For example, when asking to run <code>pnpm typecheck</code>, you might see that it wants to run a type check using <code>react-router-typegen</code> and <code>tsc</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209891/ai-hero-images/yr0xzhtw2dfbrhrzezrz.png" alt="Three permission options: allow once, allow always, or reject" />
+      <p class="img-caption">Three permission options: allow once, allow always, or reject</p>
+      <p>Your three options are:</p>
+      <ol class="body-list"><li><strong>Allow once</strong> - Yes, you&#x27;re allowed to do this this time</li><li><strong>Allow always</strong> - Yes, and you&#x27;re allowed to then from now on run any <code>pnpm typecheck</code> command inside this project</li><li><strong>Reject and suggest</strong> - No, and you can suggest a different command instead</li></ol>
+      <p>If you don&#x27;t want the agent to run a specific command, you can reject it and suggest an alternative. For instance, if you&#x27;d rather use <code>npx tsc</code> instead of <code>pnpm typecheck</code>, you can press Tab and give that reason.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209892/ai-hero-images/mdqopc8r8omaclqqrqh0.png" alt="Suggesting an alternative command with npx tsc" />
+      <p class="img-caption">Suggesting an alternative command with npx tsc</p>
+      <p>The agent will then ask if it can run <code>npx tsc</code> instead. If you approve it with &quot;allow always&quot;, you&#x27;ll see something like <code>Bash(npx tsc *)</code> added to your permissions.</p>
+      <h2>Editing Permissions in Settings</h2>
+      <p>Your permission preferences are recorded in a file at <code>.claude/settings.local.json</code>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209893/ai-hero-images/ay8zh771boo7a8gpokuu.png" alt="The .claude folder showing settings.local.json file" />
+      <p class="img-caption">The .claude folder showing settings.local.json file</p>
+      <p>The syntax is important to understand here. You can actually edit this file yourself ahead of time to allow things to happen in the repo without needing to approve them each time.</p>
+      <p>If you want to allow a specific command, you can add it to the <code>allow</code> array:</p>
+      <pre><code>{
+  &quot;permissions&quot;: {
+    &quot;allow&quot;: [
+      &quot;Bash(pnpm typecheck)&quot;
+    ]
+  }
+}</code></pre>
+      <p>If you want to say that all <code>pnpm</code> commands are available, you can use a wildcard:</p>
+      <pre><code>{
+  &quot;permissions&quot;: {
+    &quot;allow&quot;: [
+      &quot;Bash(pnpm *)&quot;
+    ]
+  }
+}</code></pre>
+      <p>You can also disallow the agent from doing things by using the <code>deny</code> array.</p>
+      <p>For instance, if you don&#x27;t want it to run <code>git push</code>, you might deny all git push commands:</p>
+      <pre><code>{
+  &quot;permissions&quot;: {
+    &quot;deny&quot;: [
+      &quot;Bash(git push *)&quot;
+    ]
+  }
+}</code></pre>
+      <h2>Permissions Beyond Bash</h2>
+      <p>It&#x27;s not just bash commands that the agent needs permission to run. An agent can also search the web and fetch web pages to back up what it&#x27;s seeing locally.</p>
+      <p>For example, you might ask it to fetch information about <code>react-router-typegen</code> from the web. The agent will ask you to approve a web search for &quot;React router typegen&quot;.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209893/ai-hero-images/ew3jeyvecxkitgxs5spp.png" alt="Permission request for web search" />
+      <p class="img-caption">Permission request for web search</p>
+      <p>If you say yes and don&#x27;t ask again, the agent adds it to <code>settings.local.json</code> and fetches from websites like <a href="https://reactrouter.com">ReactRouter.com</a>.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209894/ai-hero-images/mrgzb9zgeseaz2avndpu.png" alt="Fetching from ReactRouter.com website" />
+      <p class="img-caption">Fetching from ReactRouter.com website</p>
+      <p>The permission is added as <code>WebFetch(domain:reactrouter.com)</code> in your settings file.</p>
+      <p>Once it fetches the information, it can give you a summary of how React Router typegen works based on the actual documentation.</p>
+      <h2>Sharing Permissions With Your Team</h2>
+      <p>By default, <code>settings.local.json</code> is in your project and ignored by version control. This means the permissions apply only to you.</p>
+      <p>But if you want to share these permissions with your team and have a specific set of things always allowed within the repo, you can rename <code>settings.local.json</code> to <code>settings.json</code>.</p>
+      <p>This file can then be checked into version control and shared with your team.</p>
+      <p>When anyone on your team runs the agent on the repo, it will pick up these permissions automatically. This is incredibly powerful for anyone starting on your repo for the first time. They just run the agent, and it already knows what&#x27;s allowed for that repo. This is a lot faster than having to manually set up the permissions yourself each time.</p>
+      <h2>Auto Mode vs Manual Permission Handling</h2>
+      <p>There&#x27;s another way to work with permissions: <strong><a href="https://www.aihero.dev/ai-coding-dictionary/agent-mode">auto mode</a></strong>. You can see the mode selector in the bottom left of Claude Code and cycle between them using Shift+Tab.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209895/ai-hero-images/xfufdaijimu1fybc9ucs.png" alt="Mode selector showing manual, edits, plan, and auto modes" />
+      <p class="img-caption">Mode selector showing manual, edits, plan, and auto modes</p>
+      <p>The available modes are:</p>
+      <ul class="body-list"><li>Manual mode</li><li>Edits mode</li><li>Plan mode</li><li>Auto mode</li></ul>
+      <p>Auto mode uses an LLM classifier to look at your conversation and check if the thing the agent is about to run is safe. For example, you can run <code>npm run typecheck</code> and the agent will run the shell command without asking for permission first.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209896/ai-hero-images/qecy4laukd9n9yq34ihj.png" alt="Running npm run typecheck in auto mode without permission prompt" />
+      <p class="img-caption">Running npm run typecheck in auto mode without permission prompt</p>
+      <p>This is different from manual mode. The agent is able to classify itself whether the command is dangerous or not. This does mean some <a href="https://www.aihero.dev/ai-coding-dictionary/token">tokens</a> are spent to check whether the command is safe, which costs a bit of time. So auto mode is a little bit slower, but it means you can run these things pretty much without needing to intervene.</p>
+      <p>The main classifier <a href="https://www.aihero.dev/ai-coding-dictionary/model">model</a> is probably Claude Haiku. However, the classifier isn&#x27;t perfect. It does allow some things you don&#x27;t want to happen (like migrating databases sometimes), and it blocks some things you do want to happen (like creating GitHub issues).</p>
+      <p>But for most use cases, it&#x27;s on the right side of OK. It does block most of the bad things that would happen, especially the stuff that&#x27;s always bad like <code>rm -rf</code> on your file system. It also doesn&#x27;t drive up your usage limits too much, making it a pretty good trade-off.</p>
+      <p>The <code>settings.json</code> file is still really useful with auto mode. The agent checks <code>settings.json</code> first, before running the command through the classifier. This means you can speed up common operations and not have to worry about the classifier by just having something in <code>settings.json</code>.</p>
+      <p>To set auto mode as your default, go into config and select <code>default permission mode</code>. You can choose this by pressing Enter or Space.</p>
+      <img class="lesson-img" src="https://res.cloudinary.com/total-typescript/image/upload/v1784209896/ai-hero-images/hbixwvn8uzcnrptb9wdg.png" alt="Config menu showing default permission mode setting" />
+      <p class="img-caption">Config menu showing default permission mode setting</p>
+          <div class="quiz-block">
+      <div class="quiz-block-title">Quiz</div>
+      <div class="quiz-question" id="share-repo-permissions-via-settings-json">
+        <p class="quiz-q-text">Everyone on your team keeps approving the same handful of commands on a shared repo. How do you make the repo&#x27;s rules arrive with the checkout?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Rename settings.local.json to settings.json</li>
+          <li>Ask each person to pick allow always once</li>
+          <li>Tell the team to switch on auto mode instead</li>
+          <li>Paste your local settings into the README</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          settings.local.json is ignored by version control, so what you approve never leaves your machine. Renamed to settings.json it can be checked in, and anyone running the agent on the repo picks the permissions up on their first run. Allow always still means every person approves everything once each. Auto mode makes a fresh judgement per command rather than recording the repo&#x27;s rules. And a README is read by people, not by the agent.
+        </div>
+      </div>
+      <div class="quiz-question" id="auto-mode-classifier-tradeoff">
+        <p class="quiz-q-text">You switch to auto mode so the agent decides for itself whether a command is safe. What does that cost you?</p>
+        <ul class="quiz-choices">
+          <li class="correct">Each command is a little slower while it is checked</li>
+          <li>Permissions in settings.json stop being consulted</li>
+          <li>Every command runs, including rm -rf on your disk</li>
+          <li>Your usage limits climb sharply as it checks</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The check is a classifier model call, so tokens are spent and each command takes a little longer. settings.json is still read first, before the classifier ever runs, which is exactly how you speed common commands back up. The classifier is not a blank cheque either: it blocks the things that are always bad, such as rm -rf on your file system. And it does not drive usage limits up much, which is what makes the trade worth taking.
+        </div>
+      </div>
+      <div class="quiz-question" id="deny-array-blocks-a-command-outright">
+        <p class="quiz-q-text">There is one command you never want the agent to run in this repo, whatever it judges at the time: git push. What do you set up?</p>
+        <ul class="quiz-choices">
+          <li class="correct">A deny entry of Bash(git push *) in settings</li>
+          <li>An allow entry for every command except push</li>
+          <li>Auto mode, which classifies pushes as unsafe</li>
+          <li>A note in your prompt telling it not to push</li>
+        </ul>
+        <div class="quiz-answer">
+          <div class="quiz-answer-label">Answer</div>
+          The deny array is the one of these that stops the command outright. Allow-listing everything else is unmaintainable and still says nothing about push itself. The classifier is imperfect in both directions, letting through things you did not want, so auto mode is not a guarantee. And an instruction in a prompt is not a permission rule: the rules live in the settings file.
+        </div>
+      </div>
+    </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('section.chapter');
+  const navLinks = document.querySelectorAll('nav.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`nav.sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
